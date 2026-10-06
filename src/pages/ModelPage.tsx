@@ -1,151 +1,136 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowDown, ChevronRight } from 'lucide-react'
-import Card from '../components/common/Card'
+import { ChevronRight } from 'lucide-react'
 import clsx from 'clsx'
+import { sources } from '../data/sources'
+import { communicationTypes } from '../data/communicationTypes'
+import { levels } from '../data/levels'
+import { channelCategories, channels } from '../data/channels'
+import { foundationOptions, strategyOptions, valueOptions } from '../data/classificationOptions'
 
-interface ModelLevel {
+interface Stage {
   id: string
   title: string
   subtitle: string
   color: string
+  clause: string
   details: string[]
 }
 
-const levels: ModelLevel[] = [
+const stages: Stage[] = [
   {
     id: 'sources',
-    title: 'Источники смыслов',
-    subtitle: 'Где появляется информация',
-    color: '#ed1b24',
-    details: [
-      'Совет директоров / ГД — стратегические решения',
-      'Ежемесячная встреча руководителей — управленческие решения',
-      'Комитеты — изменения процессов',
-      'Проектные офисы — проектные обновления',
-      'HR — кадровые изменения',
-      'Маркетинг / коммерция — клиентские инициативы',
-    ],
+    title: 'Смыслообразование',
+    subtitle: 'Информация рождается на площадке смыслообразования',
+    color: '#f26b21',
+    clause: 'п. 5.2',
+    details: sources.map((s) => `${s.name} — ${s.produces.toLowerCase()} (${s.frequency.toLowerCase()})`),
   },
   {
     id: 'classification',
-    title: 'Классификация информации',
-    subtitle: 'Паспорт информационного сообщения',
-    color: '#d97706',
+    title: 'Классификация',
+    subtitle: 'Сообщению присваивается «паспорт» из четырёх свойств',
+    color: '#f5a300',
+    clause: 'п. 5.3–5.7',
     details: [
       'Масштаб влияния: компания / дирекция / подразделение',
-      'Срочность: кризис / срочно / планово',
-      'Тип воздействия: действие / понимание / информирование / вдохновение',
-      'Сложность: простая / средняя / сложная',
-      'Чувствительность: публичная / рабочая / ограниченная',
+      'Срочность: критично / срочно / планово / фоново (без чётких сроков)',
+      'Ожидаемый тип воздействия: действие / информирование / ценностная мотивация',
+      'Тональность: официальная / неформальная / экспертная / эмоциональная / сдержанная',
+      `Фундамент: ${foundationOptions.map((o) => o.label).join(', ')}`,
+      `Стратегия: ${strategyOptions.map((o) => o.label).join(', ')}`,
+      `Ценности: ${valueOptions.map((o) => o.label).join(', ')}`,
     ],
   },
   {
     id: 'type',
-    title: 'Тип коммуникации',
-    subtitle: '11 типов корпоративных коммуникаций',
-    color: '#3b82f6',
-    details: [
-      'Стратегические — направление развития',
-      'Изменения — трансформация процессов',
-      'Распорядительные — обязательные решения',
-      'Разъяснительные — объяснение решений',
-      'Операционные — текущая деятельность',
-      'Проектные — управление проектами',
-      'Отчётные — результаты деятельности',
-      'Документационные — фиксация решений',
-      'Оценочные — обратная связь',
-      'Социальная ответственность — культура',
-      'CRM — коммуникации о клиентах',
-    ],
+    title: 'Определение типа коммуникации',
+    subtitle: '10 типов — тип определяет глубину, каналы и базовую тональность',
+    color: '#4f6bed',
+    clause: 'п. 5.8',
+    details: communicationTypes.map((t) => `${t.name} ${t.depthLabel} — ${t.includes.toLowerCase()}`),
   },
   {
     id: 'depth',
-    title: 'Глубина каскадирования',
-    subtitle: 'До какого уровня доводится информация',
-    color: '#8b5cf6',
+    title: 'Определение глубины каскадирования',
+    subtitle: 'Нижний уровень по шкале У.01–У.06, до которого доводится информация',
+    color: '#7c5cdb',
+    clause: 'п. 4, 5.9',
     details: [
-      'У01 — Генеральный директор',
-      'У02 — Директора дирекций',
-      'У03 — Руководители отделов',
-      'У04 — Руководители групп',
-      'У05 — Старшие специалисты',
-      'У06 — Линейные специалисты',
-      'Глубина определяется автоматически по типу + свойствам',
+      ...levels.map((l) => `${l.short} — ${l.who}. Точка входа: ${l.entryPoint.toLowerCase()}`),
+      'Стратегические, проектные, кризисные, ценностные, HR / социальные и продуктовые → до У.06 (все сотрудники)',
+      'Разъяснительные, распорядительные и отчётные → до У.04 (с углублением до У.06 при необходимости)',
+      'Документационные (служебные) → до У.03',
     ],
   },
   {
     id: 'channels',
-    title: 'Каналы распространения',
-    subtitle: 'Транспорт информации',
-    color: '#14b8a6',
+    title: 'Выбор каналов распространения',
+    subtitle: 'Обязательный минимум задан по типам; руководитель может добавить, но не исключить',
+    color: '#12a6a0',
+    clause: 'п. 6',
     details: [
-      'Личные: встречи, оперативки',
-      'Управленческие: совещания руководителей, комитеты',
-      'Цифровые: портал, email, мессенджер',
-      'Публичные: конференции, общие собрания',
+      ...channelCategories.map((cat) => `${cat.name}: ${channels.filter((c) => c.category === cat.id).map((c) => c.name.toLowerCase()).join(', ')}`),
+      'Для кризисных коммуникаций первым источником должен быть руководитель (устное доведение), а не цифровой канал',
     ],
   },
   {
     id: 'feedback',
-    title: 'Проверка понимания',
-    subtitle: 'Обратная связь и пульс-опросы',
-    color: '#22c55e',
+    title: 'Осмысление и проверка усвоения',
+    subtitle: 'Адаптация под аудиторию и контроль понимания',
+    color: '#2fa84f',
+    clause: 'п. 7–8',
     details: [
-      'Пульс-опросы по подразделениям',
-      'Карта осведомлённости компании',
-      'Оценка уровня информированности',
-      'Корректировка каналов и глубины при необходимости',
+      'Три фазы работы руководителя: актуализация, осмысление, рефлексия',
+      'Пульс-опрос на «Петлокале» — раз в месяц, 2–3 вопроса, не более минуты',
+      'Информированность — не менее 80%, понимание — не менее 70%, доверие к источнику — 100% принявших участие',
+      'Опрос взаимодействия — июнь и декабрь; опрос вовлечённости — апрель и октябрь (3 недели)',
     ],
   },
 ]
 
 export default function ModelPage() {
-  const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [expandedId, setExpandedId] = useState<string | null>('type')
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <p className="text-sm text-gray-500 mb-6">
-        Corporate Cascade Communication Model — нажмите на уровень для подробностей
+    <div className="mx-auto max-w-3xl">
+      <p className="mb-5 text-sm text-ink-soft">
+        Любое сообщение проходит шесть этапов — нажмите на этап, чтобы увидеть, что на нём определяет Положение.
       </p>
 
-      <div className="space-y-3">
-        {levels.map((level, i) => {
-          const isExpanded = expandedId === level.id
+      <div className="relative space-y-3">
+        <div className="absolute bottom-6 left-[2.15rem] top-6 w-0.5 bg-gray-200" aria-hidden="true" />
+        {stages.map((stage, i) => {
+          const isExpanded = expandedId === stage.id
           return (
-            <div key={level.id}>
-              <motion.button
-                onClick={() => setExpandedId(isExpanded ? null : level.id)}
-                whileHover={{ scale: 1.01 }}
+            <div key={stage.id} className="relative">
+              <button
+                onClick={() => setExpandedId(isExpanded ? null : stage.id)}
                 className={clsx(
-                  'w-full rounded-xl border-2 p-5 text-left transition-all',
-                  isExpanded
-                    ? 'border-current shadow-lg'
-                    : 'border-gray-100 bg-white hover:shadow-md'
+                  'relative w-full rounded-2xl bg-white p-4 text-left shadow-card transition-all hover:shadow-lift',
+                  isExpanded && 'ring-2',
                 )}
-                style={isExpanded ? { borderColor: level.color, backgroundColor: level.color + '08' } : undefined}
+                style={isExpanded ? { boxShadow: `0 0 0 2px ${stage.color}` } : undefined}
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div
-                      className="flex h-12 w-12 items-center justify-center rounded-xl text-white font-bold text-lg"
-                      style={{ backgroundColor: level.color }}
-                    >
-                      {i + 1}
-                    </div>
-                    <div>
-                      <div className="font-semibold text-brand-dark">{level.title}</div>
-                      <div className="text-sm text-gray-500">{level.subtitle}</div>
-                    </div>
+                <div className="flex items-center gap-4">
+                  <div
+                    className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl font-display text-lg font-bold text-white"
+                    style={{ backgroundColor: stage.color }}
+                  >
+                    {i + 1}
                   </div>
-                  <ChevronRight
-                    size={20}
-                    className={clsx('text-gray-400 transition-transform', isExpanded && 'rotate-90')}
-                  />
+                  <div className="min-w-0 flex-1">
+                    <div className="font-medium leading-snug text-ink">{stage.title}</div>
+                    <div className="text-sm text-ink-soft">{stage.subtitle}</div>
+                  </div>
+                  <span className="hidden rounded-full px-2 py-0.5 text-[11px] font-medium sm:block" style={{ backgroundColor: stage.color + '1f', color: stage.color }}>
+                    {stage.clause}
+                  </span>
+                  <ChevronRight size={20} className={clsx('shrink-0 text-gray-400 transition-transform', isExpanded && 'rotate-90')} />
                 </div>
-              </motion.button>
+              </button>
 
-              <AnimatePresence>
+              <AnimatePresence initial={false}>
                 {isExpanded && (
                   <motion.div
                     initial={{ height: 0, opacity: 0 }}
@@ -154,15 +139,12 @@ export default function ModelPage() {
                     transition={{ duration: 0.2 }}
                     className="overflow-hidden"
                   >
-                    <div className="ml-6 mt-2 rounded-lg border border-gray-100 bg-white p-4">
+                    <div className="ml-16 mt-2 rounded-2xl p-4" style={{ backgroundColor: stage.color + '10' }}>
                       <ul className="space-y-2">
-                        {level.details.map((detail, j) => (
-                          <li key={j} className="flex items-start gap-2 text-sm text-gray-600">
-                            <div
-                              className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full"
-                              style={{ backgroundColor: level.color }}
-                            />
-                            {detail}
+                        {stage.details.map((d, j) => (
+                          <li key={j} className="flex items-start gap-2.5 text-sm text-ink-soft">
+                            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: stage.color }} />
+                            {d}
                           </li>
                         ))}
                       </ul>
@@ -170,12 +152,6 @@ export default function ModelPage() {
                   </motion.div>
                 )}
               </AnimatePresence>
-
-              {i < levels.length - 1 && (
-                <div className="flex justify-center py-1">
-                  <ArrowDown size={18} className="text-gray-300" />
-                </div>
-              )}
             </div>
           )
         })}

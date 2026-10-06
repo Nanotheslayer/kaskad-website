@@ -1,19 +1,33 @@
-export type ChannelCategory = 'personal' | 'management' | 'digital' | 'public'
+/** Направления каналов (п. 6.2 Положения) */
+export type ChannelCategory = 'digital' | 'print' | 'oral' | 'mass' | 'management'
 
 export type ChannelId =
-  | 'one_on_one'
-  | 'team_meeting'
-  | 'management_meeting'
-  | 'committee_session'
-  | 'portal'
+  | 'petlocal_banner'
+  | 'petlocal_feed'
+  | 'petlocal_board'
   | 'email'
-  | 'messenger'
+  | 'vk'
+  | 'tv'
+  | 'digest'
+  | 'digest_hr'
+  | 'magazine'
+  | 'posters'
+  | 'table_tents'
+  | 'info_boards'
+  | 'oral'
+  | 'one_on_one'
   | 'conference'
-  | 'town_hall'
+  | 'live_stream'
+  | 'management_meeting'
+  | 'committee'
+  | 'protocol'
+  | 'order'
+  | 'info_letter'
 
 export interface Channel {
   id: ChannelId
   name: string
   category: ChannelCategory
   icon: string
+  hint?: string
 }

@@ -1,17 +1,12 @@
-export function getAwarenessColor(score: number): string {
-  if (score >= 75) return '#22c55e'  // green
-  if (score >= 55) return '#f59e0b'  // amber
-  return '#ef4444'                    // red
+/** Цвет показателя относительно целевого значения (п. 8.3 Положения) */
+export function getScoreColor(score: number, target: number): string {
+  if (score >= target) return '#2fa84f'
+  if (score >= target - 12) return '#f5a300'
+  return '#e5484d'
 }
 
-export function getAwarenessLabel(score: number): string {
-  if (score >= 75) return 'Высокий'
-  if (score >= 55) return 'Средний'
-  return 'Низкий'
-}
-
-export function getAwarenessBg(score: number): string {
-  if (score >= 75) return 'bg-green-100 text-green-800'
-  if (score >= 55) return 'bg-amber-100 text-amber-800'
-  return 'bg-red-100 text-red-800'
+export function getScoreLabel(score: number, target: number): string {
+  if (score >= target) return 'Цель достигнута'
+  if (score >= target - 12) return 'Близко к цели'
+  return 'Ниже цели'
 }

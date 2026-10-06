@@ -1,60 +1,51 @@
-import type { CommunicationTypeId } from '../types/communication'
+import type { CommunicationTypeId, CascadeLevel } from '../types/communication'
 import type { ChannelId } from '../types/channel'
-import type { Urgency, ImpactScale, Sensitivity, Complexity, ImpactType } from '../types/communication'
 
-export const baseDepthByType: Record<CommunicationTypeId, number> = {
-  strategic: 5,       // У06
-  change: 5,          // У06
-  administrative: 4,  // У05
-  explanatory: 4,     // У05
-  operational: 5,     // У06
-  project: 4,         // У05
-  reporting: 3,       // У04
-  documentation: 2,   // У03
-  evaluation: 3,      // У04
-  social: 5,          // У06
-  crm: 4,             // У05
+/**
+ * Глубина каскадирования по типу коммуникации (п. 5.8–5.9 Положения).
+ * Значение — индекс нижнего уровня по шкале У.01–У.06 (0…5).
+ */
+export const baseDepthByType: Record<CommunicationTypeId, CascadeLevel> = {
+  strategic: 'У06',
+  explanatory: 'У04',
+  directive: 'У04',
+  project: 'У06',
+  reporting: 'У04',
+  crisis: 'У06',
+  values: 'У06',
+  hr_social: 'У06',
+  product: 'У06',
+  documentation: 'У03',
 }
 
-export interface ChannelRule {
-  channelId: ChannelId
-  conditions: {
-    urgency?: Urgency[]
-    impactScale?: ImpactScale[]
-    sensitivity?: Sensitivity[]
-    complexity?: Complexity[]
-    impactType?: ImpactType[]
-  }
+/** Типы, для которых допускается углубление до У.06 «при необходимости» (п. 5.8–5.9) */
+export const extendableTypes: CommunicationTypeId[] = ['explanatory', 'directive', 'reporting']
+
+/** Минимально обязательный набор каналов по типам — таблица п. 6.3 Положения */
+export const requiredChannelsByType: Record<CommunicationTypeId, ChannelId[]> = {
+  strategic: ['petlocal_feed', 'email', 'tv', 'magazine', 'posters', 'digest', 'oral'],
+  explanatory: ['petlocal_feed', 'email', 'digest', 'oral'],
+  directive: ['petlocal_board', 'email', 'digest', 'oral'],
+  project: ['vk', 'petlocal_banner', 'petlocal_feed', 'email', 'tv', 'magazine', 'posters', 'digest', 'oral'],
+  reporting: ['vk', 'petlocal_feed', 'email', 'tv', 'magazine', 'digest', 'oral'],
+  crisis: ['oral', 'email', 'tv', 'posters'],
+  values: ['vk', 'petlocal_feed', 'tv', 'magazine', 'digest'],
+  hr_social: ['vk', 'petlocal_banner', 'petlocal_feed', 'email', 'tv', 'magazine', 'posters', 'digest_hr'],
+  product: ['petlocal_feed', 'tv', 'digest', 'oral'],
+  documentation: ['email'],
 }
 
-export const channelRules: ChannelRule[] = [
-  // Кризис → личные встречи + мессенджер + email
-  { channelId: 'one_on_one', conditions: { urgency: ['crisis'] } },
-  { channelId: 'messenger', conditions: { urgency: ['crisis', 'urgent'] } },
-  { channelId: 'email', conditions: { urgency: ['crisis', 'urgent'], impactScale: ['company', 'directorate'] } },
-
-  // Масштаб компания → совещания + портал
-  { channelId: 'management_meeting', conditions: { impactScale: ['company'] } },
-  { channelId: 'portal', conditions: { impactScale: ['company'] } },
-
-  // Сложная + действие/понимание → личные встречи
-  { channelId: 'one_on_one', conditions: { complexity: ['complex'], impactType: ['action', 'understanding'] } },
-
-  // Действие → оперативки
-  { channelId: 'team_meeting', conditions: { impactType: ['action'] } },
-
-  // Вдохновение + компания → общее собрание
-  { channelId: 'town_hall', conditions: { impactType: ['inspiration'], impactScale: ['company'] } },
-
-  // Срочно + компания → email
-  { channelId: 'email', conditions: { urgency: ['urgent'], impactScale: ['company'] } },
-
-  // Дирекция → совещания
-  { channelId: 'management_meeting', conditions: { impactScale: ['directorate'] } },
+/** Каналы «широкого» охвата — исключаются при метке «Ограниченный доступ» */
+export const publicChannels: ChannelId[] = [
+  'vk',
+  'tv',
+  'magazine',
+  'posters',
+  'table_tents',
+  'petlocal_banner',
+  'petlocal_feed',
+  'petlocal_board',
+  'info_boards',
+  'conference',
+  'live_stream',
 ]
-
-export const scaleCaps: Record<ImpactScale, number> = {
-  company: 5,
-  directorate: 3,
-  department: 2,
-}

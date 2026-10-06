@@ -10,11 +10,11 @@ export default function Badge({ children, color, className }: BadgeProps) {
   return (
     <span
       className={clsx(
-        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
-        !color && 'bg-gray-100 text-gray-700',
-        className
+        'inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium',
+        !color && 'bg-gray-100 text-ink-soft',
+        className,
       )}
-      style={color ? { backgroundColor: color + '20', color } : undefined}
+      style={color ? { backgroundColor: color + '1f', color } : undefined}
     >
       {children}
     </span>
