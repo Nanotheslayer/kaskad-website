@@ -1,65 +1,108 @@
+/** Площадки смыслообразования (п. 5.2 Положения) */
 export type SourceId =
-  | 'board'
+  | 'administration'
   | 'monthly_meeting'
-  | 'committee'
-  | 'project_office'
-  | 'hr'
-  | 'marketing'
+  | 'values_committee'
+  | 'investment_committee'
+  | 'change_committee'
+  | 'workshops'
+  | 'foundation_meetings'
+  | 'live_broadcast'
+  | 'annual_conference'
+  | 'directorate'
 
 export interface Source {
   id: SourceId
   name: string
-  description: string
+  frequency: string
+  produces: string
+  owner: string
   icon: string
 }
 
+/** Типы коммуникаций (п. 5.8 Положения) */
 export type CommunicationTypeId =
   | 'strategic'
-  | 'change'
-  | 'administrative'
   | 'explanatory'
-  | 'operational'
+  | 'directive'
   | 'project'
   | 'reporting'
+  | 'crisis'
+  | 'values'
+  | 'hr_social'
+  | 'product'
   | 'documentation'
-  | 'evaluation'
-  | 'social'
-  | 'crm'
 
 export interface CommunicationType {
   id: CommunicationTypeId
   name: string
-  purpose: string
+  includes: string
+  tone: string
+  /** Глубина по таблице 5.8: уровень, до которого доводится информация */
+  depthLabel: string
   icon: string
   color: string
 }
 
+/** Паспорт инфоповода — свойства (п. 5.3) */
 export type ImpactScale = 'company' | 'directorate' | 'department'
-export type Urgency = 'crisis' | 'urgent' | 'planned'
-export type ImpactType = 'action' | 'understanding' | 'informing' | 'inspiration'
-export type Complexity = 'simple' | 'medium' | 'complex'
-export type Sensitivity = 'public' | 'internal' | 'restricted'
+export type Urgency = 'crisis' | 'urgent' | 'planned' | 'background'
+export type ImpactType = 'action' | 'informing' | 'values'
+export type Tone = 'official' | 'informal' | 'expert' | 'emotional' | 'restrained'
+
+/** Метка конфиденциальности (слайд «Паспорт инфоповода») */
+export type Confidentiality = 'open' | 'internal' | 'restricted'
 
 export interface ClassificationParams {
   impactScale: ImpactScale
   urgency: Urgency
   impactType: ImpactType
-  complexity: Complexity
-  sensitivity: Sensitivity
+  tone: Tone
+}
+
+/** Привязка к фундаменту, стратегии и ценностям (прил. 2) */
+export type FoundationId = 'people' | 'cjm' | 'it' | 'service'
+export type StrategyId = 'core' | 'geography' | 'assortment' | 'renovation'
+export type ValueId = 'people_first' | 'development' | 'overcoming'
+
+export interface Binding {
+  foundation: FoundationId[]
+  strategy: StrategyId[]
+  values: ValueId[]
+}
+
+/** Правило трёх вопросов (п. 5.7) */
+export interface ThreeQuestions {
+  q1: string
+  q2: string
+  q3: string
 }
 
 export type CascadeLevel = 'У01' | 'У02' | 'У03' | 'У04' | 'У05' | 'У06'
 
+export type CommunicationStatus = 'planned' | 'active' | 'completed'
+
 export interface Communication {
   id: string
   title: string
-  description: string
+  /** «Суть» — 2–3 предложения */
+  essence: string
+  keyMessage: string
+  initiator: { name: string; directorate: string }
   sourceId: SourceId
   typeId: CommunicationTypeId
   classification: ClassificationParams
+  confidentiality: Confidentiality
+  binding: Binding
+  questions: ThreeQuestions
   cascadeDepth: CascadeLevel
+  /** true, если глубина расширена до У.06 «при необходимости» */
+  depthExtended: boolean
   requiredChannels: string[]
+  extraChannels: string[]
+  materials: string[]
   createdAt: string
-  isMandatoryCascade: boolean
-  status: 'draft' | 'active' | 'completed'
+  /** Дата доведения до конечных получателей */
+  deadline: string
+  status: CommunicationStatus
 }

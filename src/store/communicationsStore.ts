@@ -1,31 +1,42 @@
+import { useMemo } from 'react'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { Communication } from '../types/communication'
+import type { Communication, CommunicationStatus } from '../types/communication'
 import { seedCommunications } from '../data/timelineEvents'
 
 interface CommunicationsState {
-  communications: Communication[]
+  /** Коммуникации, созданные пользователем через паспорт инфоповода */
+  userCommunications: Communication[]
+  /** Ручные изменения статуса (в том числе для демо-коммуникаций) */
+  statusOverrides: Record<string, CommunicationStatus>
   addCommunication: (comm: Communication) => void
-  updateStatus: (id: string, status: Communication['status']) => void
+  updateStatus: (id: string, status: CommunicationStatus) => void
 }
 
+/**
+ * Демо-коммуникации не хранятся в localStorage: их даты считаются от текущего дня
+ * при каждой загрузке. Сохраняются только созданные пользователем коммуникации
+ * и ручные изменения статуса.
+ */
 export const useCommunicationsStore = create<CommunicationsState>()(
   persist(
     (set) => ({
-      communications: seedCommunications,
+      userCommunications: [],
+      statusOverrides: {},
       addCommunication: (comm) =>
-        set((state) => ({
-          communications: [comm, ...state.communications],
-        })),
+        set((state) => ({ userCommunications: [comm, ...state.userCommunications] })),
       updateStatus: (id, status) =>
-        set((state) => ({
-          communications: state.communications.map((c) =>
-            c.id === id ? { ...c, status } : c
-          ),
-        })),
+        set((state) => ({ statusOverrides: { ...state.statusOverrides, [id]: status } })),
     }),
-    {
-      name: 'kaskad-communications',
-    }
-  )
+    { name: 'kaskad-communications-v2' },
+  ),
 )
+
+export function useAllCommunications(): Communication[] {
+  const user = useCommunicationsStore((s) => s.userCommunications)
+  const overrides = useCommunicationsStore((s) => s.statusOverrides)
+  return useMemo(
+    () => [...user, ...seedCommunications].map((c) => (overrides[c.id] ? { ...c, status: overrides[c.id] } : c)),
+    [user, overrides],
+  )
+}

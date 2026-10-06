@@ -1,13 +1,17 @@
 import type { Division } from '../types/survey'
 
+/** Подразделения верхнего контура (п. 4 Положения). Численность — демо-данные. */
 export const divisions: Division[] = [
-  { id: 'it', name: 'Информационные технологии', shortName: 'ИТ', employeeCount: 85, color: '#3b82f6' },
-  { id: 'hr', name: 'Управление персоналом', shortName: 'HR', employeeCount: 32, color: '#ec4899' },
-  { id: 'sales', name: 'Коммерческая дирекция', shortName: 'Продажи', employeeCount: 210, color: '#f97316' },
-  { id: 'marketing', name: 'Маркетинг', shortName: 'Маркетинг', employeeCount: 28, color: '#8b5cf6' },
-  { id: 'production', name: 'Производство', shortName: 'Производство', employeeCount: 340, color: '#22c55e' },
-  { id: 'logistics', name: 'Логистика', shortName: 'Логистика', employeeCount: 180, color: '#14b8a6' },
-  { id: 'finance', name: 'Финансы', shortName: 'Финансы', employeeCount: 45, color: '#eab308' },
-  { id: 'legal', name: 'Юридический', shortName: 'Юр.', employeeCount: 15, color: '#6b7280' },
-  { id: 'admin', name: 'Администрация', shortName: 'Админ.', employeeCount: 25, color: '#ef4444' },
+  { id: 'do', name: 'Операционная дирекция', shortName: 'ДО', kind: 'directorate', employeeCount: 420, color: '#f26b21' },
+  { id: 'dk', name: 'Коммерческая дирекция', shortName: 'ДК', kind: 'directorate', employeeCount: 310, color: '#4f6bed' },
+  { id: 'dm', name: 'Дирекция по маркетингу', shortName: 'ДМ', kind: 'directorate', employeeCount: 74, color: '#e255a1' },
+  { id: 'dp', name: 'Дирекция по персоналу', shortName: 'ДП', kind: 'directorate', employeeCount: 196, color: '#2fa84f' },
+  { id: 'dr', name: 'Дирекция по развитию', shortName: 'ДР', kind: 'directorate', employeeCount: 58, color: '#7c5cdb' },
+  { id: 'du', name: 'Дирекция по правовым вопросам', shortName: 'ДЮ', kind: 'directorate', employeeCount: 36, color: '#7b8794' },
+  { id: 'df', name: 'Финансовая дирекция', shortName: 'ДФ', kind: 'directorate', employeeCount: 112, color: '#f5a300' },
+  { id: 'dit', name: 'Дирекция по IT', shortName: 'ДИТ', kind: 'directorate', employeeCount: 167, color: '#0ea5e9' },
+  { id: 'szfo', name: 'Дивизион СЗФО', shortName: 'СЗФО', kind: 'division', employeeCount: 1380, color: '#12a6a0' },
+  { id: 'cfo', name: 'Дивизион ЦФО', shortName: 'ЦФО', kind: 'division', employeeCount: 1120, color: '#d11f3a' },
+  { id: 'ufo', name: 'Дивизион УФО', shortName: 'УФО', kind: 'division', employeeCount: 640, color: '#f26b21' },
+  { id: 'kc', name: 'Контакт-центр', shortName: 'КЦ', kind: 'service', employeeCount: 530, color: '#4f6bed' },
 ]
