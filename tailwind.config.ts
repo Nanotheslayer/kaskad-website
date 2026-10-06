@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss'
+import containerQueries from '@tailwindcss/container-queries'
 
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
@@ -53,5 +54,7 @@ export default {
       },
     },
   },
-  plugins: [],
+  // Раскладка страниц реагирует на ширину области контента, а не окна:
+  // при открытом сайдбаре контенту достаётся на ~290px меньше
+  plugins: [containerQueries],
 } satisfies Config

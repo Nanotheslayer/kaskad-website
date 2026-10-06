@@ -54,18 +54,24 @@ interface Bucket {
 }
 
 interface ScaleConfig {
+  /** Комфортная ширина колонки */
   minWidth: number
+  /** Минимальная ширина в компактном режиме; если не помещается и так — включается прокрутка */
+  compactWidth: number
   bead: number
   /** Диаметр узла со счётчиком на линии */
   node: number
 }
 
 const scaleConfig: Record<Scale, ScaleConfig> = {
-  week: { minWidth: 110, bead: 26, node: 36 },
-  month: { minWidth: 34, bead: 14, node: 28 },
-  quarter: { minWidth: 72, bead: 20, node: 32 },
-  year: { minWidth: 76, bead: 20, node: 32 },
+  week: { minWidth: 110, compactWidth: 44, bead: 26, node: 36 },
+  month: { minWidth: 34, compactWidth: 22, bead: 14, node: 28 },
+  quarter: { minWidth: 72, compactWidth: 40, bead: 20, node: 32 },
+  year: { minWidth: 76, compactWidth: 36, bead: 20, node: 32 },
 }
+
+/** Внутренние отступы области прокрутки (px-4 слева и справа) */
+const TRACK_PADDING = 32
 
 const MAX_ZONE = 200
 const MIN_ZONE = 84
@@ -173,6 +179,8 @@ export default function TimelinePage() {
   const [selectedBucket, setSelectedBucket] = useState<string | null>(null)
   const [openId, setOpenId] = useState<string | null>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
+  const [trackWidth, setTrackWidth] = useState(0)
+  const [edges, setEdges] = useState({ left: false, right: false })
 
   const allTypesActive = activeTypes.size === communicationTypes.length
   const range = useMemo(() => getRange(scale, anchor), [scale, anchor])
@@ -231,6 +239,21 @@ export default function TimelinePage() {
   const openComm = communications.find((c) => c.id === openId) ?? null
   const selectedLabel = buckets.find((b) => b.key === selectedBucket)
 
+  // Следим за шириной дорожки, чтобы подобрать размер колонок под окно
+  useEffect(() => {
+    const box = scrollRef.current
+    if (!box) return
+    const ro = new ResizeObserver(() => setTrackWidth(box.clientWidth - TRACK_PADDING))
+    ro.observe(box)
+    return () => ro.disconnect()
+  }, [])
+
+  const updateEdges = () => {
+    const box = scrollRef.current
+    if (!box) return
+    setEdges({ left: box.scrollLeft > 4, right: box.scrollLeft + box.clientWidth < box.scrollWidth - 4 })
+  }
+
   // Прокрутка к «сегодня» или выбранному интервалу
   useEffect(() => {
     const box = scrollRef.current
@@ -239,7 +262,8 @@ export default function TimelinePage() {
       box.querySelector<HTMLElement>('[data-selected="true"]') ?? box.querySelector<HTMLElement>('[data-today="true"]')
     if (target) box.scrollLeft = target.offsetLeft - box.clientWidth / 2 + target.clientWidth / 2
     else box.scrollLeft = 0
-  }, [scale, anchor])
+    updateEdges()
+  }, [scale, anchor, trackWidth])
 
   const changeScale = (s: Scale) => {
     setScale(s)
@@ -266,8 +290,15 @@ export default function TimelinePage() {
 
   // Высота зоны с точками подстраивается под самый «загруженный» интервал
   const busiest = Math.max(0, ...Array.from(byBucket.values()).map((l) => l.length))
-  const zoneHeight = Math.min(MAX_ZONE, Math.max(MIN_ZONE, busiest * (cfg.bead + 4) + 28))
-  const maxBeads = Math.floor(zoneHeight / (cfg.bead + 4))
+  // Размеры колонок: комфортные, компактные или (если и так не влезает) с прокруткой
+  const fitWidth = trackWidth > 0 ? trackWidth / buckets.length : cfg.minWidth
+  const compact = fitWidth < cfg.minWidth
+  const colWidth = compact ? Math.max(cfg.compactWidth, Math.floor(fitWidth)) : cfg.minWidth
+  const nodeSize = compact ? Math.min(cfg.node, Math.max(20, colWidth - 6)) : cfg.node
+  const beadSize = compact ? Math.min(cfg.bead, Math.max(10, colWidth - 14)) : cfg.bead
+
+  const zoneHeight = Math.min(MAX_ZONE, Math.max(MIN_ZONE, busiest * (beadSize + 4) + 28))
+  const maxBeads = Math.floor(zoneHeight / (beadSize + 4))
   const isCurrentPeriod = isWithinInterval(now, range)
 
   return (
@@ -285,8 +316,8 @@ export default function TimelinePage() {
             >
               <ChevronLeft size={18} />
             </button>
-            <div className="flex min-w-44 items-center justify-center gap-2 px-2 text-[15px] font-medium text-ink">
-              <CalendarDays size={16} className="text-ink-muted" />
+            <div className="flex items-center justify-center gap-2 whitespace-nowrap px-1 text-[15px] font-medium text-ink @md:min-w-44 @md:px-2">
+              <CalendarDays size={16} className="hidden text-ink-muted @md:block" />
               {getRangeLabel(scale, anchor)}
             </div>
             <button
@@ -316,7 +347,7 @@ export default function TimelinePage() {
               </button>
             )}
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="-mx-5 flex gap-2 overflow-x-auto px-5 pb-1 @2xl:mx-0 @2xl:flex-wrap @2xl:overflow-visible @2xl:px-0 @2xl:pb-0">
             {communicationTypes.map((t) => (
               <Chip
                 key={t.id}
@@ -332,7 +363,7 @@ export default function TimelinePage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex min-w-0 max-w-full flex-wrap items-center gap-2">
             <span className="text-xs font-medium uppercase tracking-wide text-ink-muted">Срочность</span>
             <Segmented
               options={[{ value: 'all', label: 'Любая' }, ...urgencyOptions.map((o) => ({ value: o.value, label: o.label }))]}
@@ -355,9 +386,22 @@ export default function TimelinePage() {
       </Card>
 
       {/* Горизонтальная линия времени */}
-      <Card padding={false} className="overflow-hidden">
-        <div ref={scrollRef} className="overflow-x-auto px-4 pb-4 pt-5">
-          <div className="relative flex" style={{ minWidth: buckets.length * cfg.minWidth }}>
+      <Card padding={false} className="relative overflow-hidden">
+        {/* Затемнения по краям подсказывают, что линию можно прокрутить */}
+        <div
+          className={clsx(
+            'pointer-events-none absolute bottom-10 left-0 top-0 z-20 w-10 bg-gradient-to-r from-white to-transparent transition-opacity',
+            edges.left ? 'opacity-100' : 'opacity-0',
+          )}
+        />
+        <div
+          className={clsx(
+            'pointer-events-none absolute bottom-10 right-0 top-0 z-20 w-10 bg-gradient-to-l from-white to-transparent transition-opacity',
+            edges.right ? 'opacity-100' : 'opacity-0',
+          )}
+        />
+        <div ref={scrollRef} onScroll={updateEdges} className="overflow-x-auto px-4 pb-4 pt-5">
+          <div className="relative flex" style={{ minWidth: buckets.length * colWidth }}>
             {/* Линия */}
             <div
               className="pointer-events-none absolute left-0 right-0 z-[1] h-[4px] rounded-full bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200"
@@ -378,7 +422,7 @@ export default function TimelinePage() {
                     'relative flex min-w-0 flex-1 flex-col items-center rounded-2xl transition-colors',
                     isSelected ? 'bg-tint-sky/60' : b.hasToday ? 'bg-brand-red-light/50' : b.weekend ? 'bg-gray-50' : '',
                   )}
-                  style={{ minWidth: cfg.minWidth }}
+                  style={{ minWidth: colWidth }}
                 >
                   {/* Бусины-коммуникации */}
                   <div className="flex w-full flex-col-reverse items-center justify-start gap-1 pb-1" style={{ height: zoneHeight }}>
@@ -391,7 +435,7 @@ export default function TimelinePage() {
                           aria-label={c.title}
                           onClick={() => setOpenId(c.id)}
                           className="shrink-0 rounded-full border-2 border-white shadow transition-transform hover:z-10 hover:scale-125"
-                          style={{ width: cfg.bead, height: cfg.bead, backgroundColor: t?.color }}
+                          style={{ width: beadSize, height: beadSize, backgroundColor: t?.color }}
                         />
                       )
                     })}
@@ -400,36 +444,38 @@ export default function TimelinePage() {
 
                   {/* Узел на линии со счётчиком */}
                   <div className="flex h-8 items-center justify-center">
-                  <button
-                    onClick={() => setSelectedBucket(isSelected ? null : b.key)}
-                    aria-label={`${b.top} ${b.bottom}: ${pluralComm(count)}`}
-                    aria-pressed={isSelected}
-                    style={{ width: cfg.node, height: cfg.node }}
-                    className={clsx(
-                      'relative z-10 flex shrink-0 items-center justify-center rounded-full border-[3px] text-xs font-bold tabular-nums transition-all',
-                      count === 0 && 'border-gray-300 bg-white text-transparent hover:border-gray-400',
-                      count > 0 && !isSelected && 'border-ink bg-white text-ink hover:bg-gray-50',
-                      isSelected && 'scale-110 border-brand-red bg-brand-red text-white',
-                    )}
-                  >
-                    {count > 0 ? count : '0'}
-                  </button>
+                    <button
+                      onClick={() => setSelectedBucket(isSelected ? null : b.key)}
+                      aria-label={`${b.top} ${b.bottom}: ${pluralComm(count)}`}
+                      aria-pressed={isSelected}
+                      style={{ width: nodeSize, height: nodeSize }}
+                      className={clsx(
+                        'relative z-10 flex shrink-0 items-center justify-center rounded-full font-bold tabular-nums transition-all',
+                        nodeSize < 26 ? 'border-2 text-[10px]' : 'border-[3px] text-xs',
+                        count === 0 && 'border-gray-300 bg-white text-transparent hover:border-gray-400',
+                        count > 0 && !isSelected && 'border-ink bg-white text-ink hover:bg-gray-50',
+                        isSelected && 'scale-110 border-brand-red bg-brand-red text-white',
+                      )}
+                    >
+                      {count > 0 ? count : '0'}
+                    </button>
                   </div>
 
                   {/* Подписи */}
                   <button
                     onClick={() => setSelectedBucket(isSelected ? null : b.key)}
-                    className="mt-2 flex flex-col items-center gap-0.5 px-1 pb-2 text-center"
+                    className={clsx('mt-2 flex flex-col items-center gap-0.5 pb-2 text-center', compact ? 'px-0' : 'px-1')}
                   >
                     <span
                       className={clsx(
-                        'rounded-md px-1.5 text-sm font-medium leading-5',
+                        'rounded-md font-medium leading-5',
+                        compact ? 'px-1 text-xs' : 'px-1.5 text-sm',
                         b.hasToday ? 'bg-brand-red text-white' : b.weekend ? 'text-accent-rose' : 'text-ink',
                       )}
                     >
                       {b.top}
                     </span>
-                    <span className="text-[11px] leading-4 text-ink-muted">{b.bottom}</span>
+                    <span className={clsx('leading-4 text-ink-muted', compact ? 'text-[10px]' : 'text-[11px]')}>{b.bottom}</span>
                   </button>
                 </div>
               )
@@ -472,7 +518,7 @@ export default function TimelinePage() {
                   {fmt(day, 'EEEE, d MMMM')}
                   {isSameDay(day, now) && <span className="rounded-full bg-brand-red px-2 py-0.5 text-[11px] font-medium text-white">сегодня</span>}
                 </div>
-                <div className="grid gap-3 xl:grid-cols-2">
+                <div className="grid grid-cols-1 gap-3 @4xl:grid-cols-2 @[110rem]:grid-cols-3">
                   {items.map((c) => (
                     <CommunicationCard key={c.id} comm={c} selected={openId === c.id} onClick={() => setOpenId(c.id)} />
                   ))}

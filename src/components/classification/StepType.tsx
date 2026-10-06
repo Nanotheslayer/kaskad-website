@@ -15,7 +15,7 @@ export default function StepType({ selected, onSelect }: Props) {
       <p className="mb-4 mt-1 text-sm text-ink-soft">
         Тип определяет глубину каскадирования, обязательные каналы и базовую тональность (п. 5.8 Положения).
       </p>
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 @xl:grid-cols-2 @5xl:grid-cols-3 @[100rem]:grid-cols-4">
         {communicationTypes.map((type) => {
           const Icon = getIcon(type.icon)
           const isSelected = selected === type.id

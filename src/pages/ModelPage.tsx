@@ -123,7 +123,7 @@ export default function ModelPage() {
                     <div className="font-medium leading-snug text-ink">{stage.title}</div>
                     <div className="text-sm text-ink-soft">{stage.subtitle}</div>
                   </div>
-                  <span className="hidden rounded-full px-2 py-0.5 text-[11px] font-medium sm:block" style={{ backgroundColor: stage.color + '1f', color: stage.color }}>
+                  <span className="hidden rounded-full px-2 py-0.5 text-[11px] font-medium @xl:block" style={{ backgroundColor: stage.color + '1f', color: stage.color }}>
                     {stage.clause}
                   </span>
                   <ChevronRight size={20} className={clsx('shrink-0 text-gray-400 transition-transform', isExpanded && 'rotate-90')} />

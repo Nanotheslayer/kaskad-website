@@ -100,7 +100,7 @@ export default function AlgorithmPage() {
   return (
     <div className="space-y-6">
       {/* Три фазы */}
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 @4xl:grid-cols-3">
         {phases.map((p, i) => (
           <motion.div key={p.n} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}>
             <Card className="h-full" style={{ borderTop: `4px solid ${p.color}` }}>
@@ -133,7 +133,7 @@ export default function AlgorithmPage() {
           <MessageSquareQuote size={20} className="text-brand-red" />
           <h2 className="font-display text-lg font-semibold text-ink">Правило трёх вопросов</h2>
         </div>
-        <div className="grid gap-3 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 @4xl:grid-cols-3">
           {questions.map((q) => (
             <div key={q.n} className="rounded-2xl bg-white p-4 shadow-card">
               <div className="mb-2 flex items-center gap-2">

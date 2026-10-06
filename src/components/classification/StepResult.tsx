@@ -47,7 +47,7 @@ export default function StepResult({ typeId, draft, depth, depthReason, extended
         </div>
       </div>
 
-      <div className="grid gap-5 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 @4xl:grid-cols-2">
         <div className="rounded-2xl bg-white p-5 shadow-card">
           <h3 className="mb-1 font-display text-sm font-semibold text-ink">
             Глубина каскадирования — до {lvl.short}

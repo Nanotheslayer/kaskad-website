@@ -24,11 +24,11 @@ export default function Sidebar({ open, onClose }: Props) {
       {open && <div className="fixed inset-0 z-30 bg-black/30 lg:hidden" onClick={onClose} />}
       <aside
         className={clsx(
-          'fixed inset-y-0 left-0 z-40 flex w-72 flex-col bg-white transition-transform lg:static lg:z-auto lg:translate-x-0',
+          'fixed inset-y-0 left-0 z-40 flex w-72 max-w-[85vw] flex-col bg-white transition-transform lg:static lg:z-auto lg:w-64 lg:translate-x-0 xl:w-72',
           open ? 'translate-x-0' : '-translate-x-full',
         )}
       >
-        <div className="flex h-20 shrink-0 items-center justify-between px-6">
+        <div className="flex shrink-0 items-start justify-between gap-2 px-5 pb-4 pt-5">
           <Logo />
           <button className="rounded-lg p-1.5 text-ink-muted hover:bg-gray-100 lg:hidden" onClick={onClose} aria-label="Закрыть меню">
             <X size={20} />
@@ -38,11 +38,11 @@ export default function Sidebar({ open, onClose }: Props) {
         <div className="flex-1 overflow-y-auto px-4 pb-4">
           {/* Быстрый доступ */}
           <div>
-            <div className="flex items-center gap-3 px-2 py-2">
+            <div className="flex items-center gap-2.5 px-2 py-2 xl:gap-3">
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gray-100 text-ink-soft">
                 <Bookmark size={18} />
               </div>
-              <span className="flex-1 text-[15px] font-medium leading-tight text-ink">Быстрый доступ</span>
+              <span className="flex-1 whitespace-nowrap text-sm font-medium leading-tight text-ink xl:text-[15px]">Быстрый доступ</span>
               <Pencil size={15} className="text-ink-muted" />
               <button
                 onClick={() => setQuickOpen((v) => !v)}
@@ -53,13 +53,13 @@ export default function Sidebar({ open, onClose }: Props) {
               </button>
             </div>
             {quickOpen && (
-              <div className="mb-1 ml-14 space-y-0.5">
+              <div className="mb-1 ml-12 space-y-0.5 xl:ml-14">
                 {quickLinks.map((l) => (
                   <NavLink
                     key={l.to}
                     to={l.to}
                     onClick={onClose}
-                    className="block rounded-lg px-2 py-2 text-[14px] leading-tight text-ink hover:bg-gray-100"
+                    className="block rounded-lg px-2 py-2 text-[13px] leading-tight text-ink hover:bg-gray-100 xl:text-[14px]"
                   >
                     {l.label}
                   </NavLink>
@@ -79,7 +79,7 @@ export default function Sidebar({ open, onClose }: Props) {
                 onClick={onClose}
                 className={({ isActive }) =>
                   clsx(
-                    'group flex items-center gap-3 rounded-xl px-2 py-2.5 text-[15px] font-medium transition-colors',
+                    'group flex items-center gap-2.5 rounded-xl px-2 py-2.5 text-sm font-medium transition-colors xl:gap-3 xl:text-[15px]',
                     isActive ? 'bg-gray-100 text-ink' : 'text-ink hover:bg-gray-50',
                   )
                 }

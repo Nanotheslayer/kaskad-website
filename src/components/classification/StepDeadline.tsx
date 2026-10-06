@@ -41,7 +41,7 @@ export default function StepDeadline({ deadline, onDeadline, confidentiality, on
 
       <div>
         <div className="mb-2 text-sm font-medium text-ink">Метка конфиденциальности</div>
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 @2xl:grid-cols-3">
           {confidentialityOptions.map((o) => {
             const selected = confidentiality === o.value
             return (
