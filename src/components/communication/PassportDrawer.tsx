@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { X, Quote, Paperclip, ShieldAlert } from 'lucide-react'
 import type { Communication } from '../../types/communication'
@@ -51,7 +52,8 @@ export default function PassportDrawer({ comm, onClose }: Props) {
     return () => window.removeEventListener('keydown', onKey)
   }, [comm, onClose])
 
-  return (
+  // Портал на body: область контента — @container, а он становится «рамкой» для position: fixed
+  return createPortal(
     <AnimatePresence>
       {comm && (
         <>
@@ -77,7 +79,8 @@ export default function PassportDrawer({ comm, onClose }: Props) {
           </motion.aside>
         </>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   )
 }
 
@@ -209,7 +212,7 @@ function PassportBody({ comm, onClose }: { comm: Communication; onClose: () => v
         )}
 
         <Section title="Сроки и конфиденциальность">
-          <div className="grid grid-cols-3 gap-2 text-sm">
+          <div className="grid grid-cols-2 gap-2 text-sm min-[480px]:grid-cols-3">
             <div className="rounded-xl bg-gray-50 px-3 py-2">
               <div className="text-xs text-ink-muted">Создана</div>
               <div className="font-medium text-ink">{fmt(comm.createdAt, 'd MMM, HH:mm')}</div>

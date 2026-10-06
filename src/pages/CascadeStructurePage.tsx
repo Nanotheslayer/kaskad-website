@@ -114,9 +114,9 @@ export default function CascadeStructurePage() {
   return (
     <div className="space-y-5">
       {/* Пилотный баннер + уровни */}
-      <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-brand-yellow-light via-white to-tint-mint/60 p-5 shadow-card">
+      <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-brand-yellow-light via-white to-tint-mint/60 p-4 shadow-card @xl:p-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
-          <div className="max-w-2xl">
+          <div className="max-w-3xl">
             <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-brand-yellow px-3 py-1 text-xs font-bold uppercase tracking-wide text-brand-dark">
               Пилот
             </div>
@@ -128,7 +128,7 @@ export default function CascadeStructurePage() {
           </div>
         </div>
 
-        <div className="mt-4 grid grid-cols-2 gap-2 md:grid-cols-3 xl:grid-cols-6">
+        <div className="mt-4 grid grid-cols-2 gap-2 @2xl:grid-cols-3 @6xl:grid-cols-6">
           {levels.map((l, i) => {
             const row = dpReach[i]
             return (
@@ -148,7 +148,7 @@ export default function CascadeStructurePage() {
       {/* Сценарий каскада */}
       <Card>
         <div className="flex flex-wrap items-end gap-4">
-          <div className="min-w-64 flex-1">
+          <div className="w-full min-w-0 @2xl:w-auto @2xl:min-w-64 @2xl:flex-1">
             <label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-ink-muted" htmlFor="sim-type">
               Проиграть каскад для типа коммуникации
             </label>
@@ -198,7 +198,7 @@ export default function CascadeStructurePage() {
         </div>
 
         {depthInfo && (
-          <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="mt-4 grid gap-3 md:grid-cols-4">
+          <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="mt-4 grid grid-cols-1 gap-3 @xl:grid-cols-2 @5xl:grid-cols-4">
             <div className="rounded-2xl p-3" style={{ backgroundColor: typeById(sim.typeId as CommunicationTypeId)!.color + '1c' }}>
               <div className="text-xs text-ink-muted">Нижний уровень</div>
               <div className="mt-1 flex items-center gap-2">
@@ -224,7 +224,7 @@ export default function CascadeStructurePage() {
         )}
       </Card>
 
-      <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_380px]">
+      <div className="grid grid-cols-1 items-start gap-5 @4xl:grid-cols-[minmax(0,1fr)_320px] @6xl:grid-cols-[minmax(0,1fr)_360px] @7xl:grid-cols-[minmax(0,1fr)_380px]">
         {/* Дерево */}
         <Card padding={false}>
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-gray-100 px-5 py-3">
@@ -241,7 +241,7 @@ export default function CascadeStructurePage() {
               </Button>
             </div>
           </div>
-          <div className="p-3 sm:p-4">
+          <div className="p-2 @xl:p-4">
             <TreeNode
               node={orgById.get(ROOT_ID)!}
               depth={0}
@@ -257,7 +257,7 @@ export default function CascadeStructurePage() {
         </Card>
 
         {/* Детали */}
-        <div className="space-y-4 xl:sticky xl:top-2">
+        <div className="order-first grid grid-cols-1 gap-4 @2xl:grid-cols-2 @4xl:order-none @4xl:sticky @4xl:top-2 @4xl:grid-cols-1">
           <NodeDetails node={selected} path={path} onSelect={select} />
         </div>
       </div>
@@ -296,7 +296,7 @@ function TreeNode({ node, depth, expanded, selectedId, pathIds, activeIdx, playi
         animate={pulsing ? { scale: [1, 1.015, 1] } : { scale: 1 }}
         transition={{ duration: 0.5 }}
         className={clsx(
-          'group flex items-start gap-2 rounded-xl px-2 py-1.5 transition-all',
+          'group flex items-start gap-1 rounded-xl px-1 py-1.5 transition-all @xl:gap-2 @xl:px-2',
           isSelected ? 'bg-tint-sun/70 ring-1 ring-brand-yellow' : onPath ? 'bg-gray-50' : 'hover:bg-gray-50',
           dimmed && 'opacity-35',
           reached && 'bg-tint-mint/40',
@@ -312,9 +312,9 @@ function TreeNode({ node, depth, expanded, selectedId, pathIds, activeIdx, playi
           <ChevronRight size={16} className={clsx('transition-transform', isOpen && 'rotate-90')} />
         </button>
 
-        <button type="button" onClick={() => !isPlaceholder && onSelect(node.id)} className="flex min-w-0 flex-1 items-start gap-2.5 text-left">
+        <button type="button" onClick={() => !isPlaceholder && onSelect(node.id)} className="flex min-w-0 flex-1 flex-wrap items-start gap-x-2.5 gap-y-1 text-left">
           <LevelPill level={node.level} muted={dimmed} className="mt-0.5" />
-          <div className="min-w-0 flex-1">
+          <div className="min-w-[9rem] flex-1">
             <div className={clsx('text-[14px] leading-snug', isTeam ? 'text-ink-soft' : 'font-medium text-ink', isPlaceholder && 'italic text-ink-muted')}>
               {isTeam && <Users size={13} className="mr-1.5 inline -translate-y-px text-ink-muted" />}
               {node.title}
@@ -341,7 +341,7 @@ function TreeNode({ node, depth, expanded, selectedId, pathIds, activeIdx, playi
       </motion.div>
 
       {hasChildren && isOpen && (
-        <div className="ml-[19px] border-l-2 pl-3" style={{ borderColor: lvl.color + '55' }}>
+        <div className="ml-3 border-l-2 pl-1.5 @xl:ml-[19px] @xl:pl-3" style={{ borderColor: lvl.color + '55' }}>
           {node.children.map((id) => {
             const child = orgById.get(id)
             if (!child) return null

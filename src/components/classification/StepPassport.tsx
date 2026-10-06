@@ -108,7 +108,7 @@ export default function StepPassport({ title, essence, keyMessage, questions, bi
       <div>
         <h3 className="mb-1 font-display text-base font-semibold text-ink">Правило трёх вопросов</h3>
         <p className="mb-3 text-xs text-ink-muted">п. 5.7 Положения: вопросы построены на фундаменте, стратегии и ценностях компании</p>
-        <div className="grid gap-3 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 @4xl:grid-cols-3">
           {questionMeta.map((q, i) => (
             <div key={q.key} className="rounded-2xl bg-white p-4 shadow-card">
               <div className="mb-2 flex items-center gap-2">

@@ -24,7 +24,7 @@ export default function StepSource({ sourceId, onSource, initiatorName, onInitia
           Информация попадает в систему только через площадки смыслообразования (п. 5.2 Положения). Откуда она пришла?
         </p>
 
-        <div className="mb-5 grid max-w-2xl gap-3 sm:grid-cols-2">
+        <div className="mb-5 grid grid-cols-1 max-w-2xl gap-3 @xl:grid-cols-2">
           <div>
             <label className="mb-1 block text-sm font-medium text-ink" htmlFor="initiator">ФИО инициатора</label>
             <input
@@ -50,7 +50,7 @@ export default function StepSource({ sourceId, onSource, initiatorName, onInitia
           </div>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 @xl:grid-cols-2 @5xl:grid-cols-3 @[100rem]:grid-cols-4">
           {sources.map((s) => {
             const Icon = getIcon(s.icon)
             const selected = sourceId === s.id

@@ -18,8 +18,11 @@ export default function MainLayout() {
       <div className="flex min-w-0 flex-1 flex-col">
         <Header onMenu={() => setMenuOpen(true)} />
         <main id="main-scroll" className="flex-1 overflow-y-auto px-4 pb-10 pt-2 lg:px-8">
-          <PageHead />
-          <Outlet />
+          {/* @container: страницы подстраиваются под ширину области контента */}
+          <div className="@container mx-auto w-full max-w-[1680px]">
+            <PageHead />
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

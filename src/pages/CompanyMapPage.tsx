@@ -32,19 +32,21 @@ export default function CompanyMapPage() {
 
   return (
     <div className="space-y-5">
-      <Card className="flex flex-wrap items-center gap-4">
-        <Segmented options={metricOptions} value={metric} onChange={setMetric} />
-        <div className="text-sm text-ink-soft">
+      <Card className="flex flex-wrap items-center gap-x-4 gap-y-3">
+        <div className="max-w-full overflow-x-auto">
+          <Segmented options={metricOptions} value={metric} onChange={setMetric} />
+        </div>
+        <div className="min-w-0 flex-1 basis-64 text-sm text-ink-soft">
           <span className="font-medium text-ink">{surveyTargets[metric].question}</span> — {surveyTargets[metric].hint}
         </div>
-        <div className="ml-auto rounded-xl bg-tint-lilac px-3 py-2 text-sm font-medium text-accent-lilac">
+        <div className="rounded-xl bg-tint-lilac px-3 py-2 text-sm font-medium text-accent-lilac">
           Цель: не менее {target}% · в среднем {avg}%
         </div>
       </Card>
 
-      <div className="grid gap-5 lg:grid-cols-3">
-        <div className="space-y-4 lg:col-span-2">
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-5 @4xl:grid-cols-3">
+        <div className="space-y-4 @4xl:col-span-2">
+          <div className="grid grid-cols-2 gap-3 @lg:grid-cols-3 @3xl:grid-cols-4 @4xl:grid-cols-3 @6xl:grid-cols-4">
             {divisions.map((div) => {
               const survey = surveyResults.find((s) => s.divisionId === div.id)!
               const score = survey[metric]
@@ -94,7 +96,7 @@ export default function CompanyMapPage() {
           {/* Ритм опросов */}
           <Card>
             <h3 className="mb-3 font-display text-base font-semibold text-ink">Ритм опросов в году</h3>
-            <div className="grid grid-cols-6 gap-2 sm:grid-cols-12">
+            <div className="grid grid-cols-6 gap-2 @3xl:grid-cols-12">
               {MONTHS.map((m, i) => (
                 <div
                   key={m}
@@ -120,7 +122,7 @@ export default function CompanyMapPage() {
           </Card>
         </div>
 
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 content-start gap-4 @2xl:grid-cols-2 @4xl:grid-cols-1">
           <Card>
             <div className="mb-1 flex items-center gap-2">
               <span className="h-3 w-3 rounded-full" style={{ backgroundColor: selectedDivision.color }} />
@@ -137,7 +139,7 @@ export default function CompanyMapPage() {
                 const color = getScoreColor(value, t)
                 return (
                   <div key={id}>
-                    <div className="mb-1 flex items-baseline justify-between text-sm">
+                    <div className="mb-1 flex flex-wrap items-baseline justify-between gap-x-2 text-sm">
                       <span className={clsx(id === metric ? 'font-medium text-ink' : 'text-ink-soft')}>{surveyTargets[id].label}</span>
                       <span className="font-medium tabular-nums" style={{ color }}>
                         {value}% <span className="text-xs font-normal text-ink-muted">/ цель {t}%</span>

@@ -118,7 +118,7 @@ export default function ClassificationFormPage() {
         <Stepper steps={steps} currentStep={step} onStepClick={setStep} />
       </div>
 
-      <div className={showAside ? 'grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_280px]' : ''}>
+      <div className={showAside ? 'grid items-start gap-6 @5xl:grid-cols-[minmax(0,1fr)_260px] @7xl:grid-cols-[minmax(0,1fr)_280px]' : ''}>
         <AnimatePresence mode="wait">
           <motion.div
             key={step}
@@ -183,7 +183,7 @@ export default function ClassificationFormPage() {
         </AnimatePresence>
 
         {showAside && type && depth && (
-          <Card className="sticky top-2 hidden lg:block">
+          <Card className="sticky top-2 hidden @5xl:block">
             <div className="mb-3 text-xs font-medium uppercase tracking-wide text-ink-muted">Маршрут сейчас</div>
             <div className="mb-3 flex items-center gap-2">
               <span className="h-3 w-3 rounded-full" style={{ backgroundColor: type.color }} />
