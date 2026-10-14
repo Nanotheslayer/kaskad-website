@@ -27,7 +27,7 @@ import { eyebrowClass } from '../ui/styles'
 
 interface PassportDrawerProps {
   comm: Communication | null
-  /** Должен быть стабильной функцией (useCallback): от него зависит подписка на Escape */
+  /** Желательно стабильная функция (useCallback): иначе подписка на Escape пересоздаётся при каждом рендере */
   onClose: () => void
 }
 

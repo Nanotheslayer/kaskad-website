@@ -18,8 +18,12 @@ export const baseDepthByType: Record<CommunicationTypeId, CascadeLevel> = {
   documentation: 'У03',
 }
 
-/** Типы, для которых допускается углубление до У.06 «при необходимости» (п. 5.8–5.9) */
-export const extendableTypes: CommunicationTypeId[] = ['explanatory', 'directive', 'reporting']
+/**
+ * Типы, для которых допускается углубление до У.06 «при необходимости» — по таблице п. 5.8.
+ * Сводка п. 5.9 называет вместо распорядительных отчётные; таблица и матрицы каскадирования
+ * дают для отчётных фиксированное «→ У.04», поэтому следуем таблице.
+ */
+export const extendableTypes: CommunicationTypeId[] = ['explanatory', 'directive']
 
 /** Минимально обязательный набор каналов по типам — таблица п. 6.3 Положения */
 export const requiredChannelsByType: Record<CommunicationTypeId, ChannelId[]> = {

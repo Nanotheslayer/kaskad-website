@@ -29,7 +29,7 @@ export default function DepthScale({ depth, extended }: DepthScaleProps) {
           )
         })}
       </div>
-      {extended && <div className="mt-1.5 text-xs text-ink-muted">Глубина расширена «при необходимости» (п. 5.9)</div>}
+      {extended && <div className="mt-1.5 text-xs text-ink-muted">Глубина расширена «при необходимости» (п. 5.8)</div>}
     </div>
   )
 }

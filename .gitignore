@@ -6,3 +6,4 @@ dist
 .claude
 docs
 *.tsbuildinfo
+.playwright-mcp

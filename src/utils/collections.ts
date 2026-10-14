@@ -1,5 +1,6 @@
 /**
- * Поиск по id для справочников, где id — union-тип: для любого допустимого id элемент существует,
+ * Поиск по id для справочников, где id — union-тип. На неизвестный id бросает ошибку: из кода такой id
+ * не пропустит TypeScript, а данные из localStorage проверяются при загрузке (store/persistedState.ts),
  * поэтому вызывающему коду не нужны проверки на undefined.
  */
 export function indexById<K extends string, T extends { id: K }>(items: readonly T[]): (id: K) => T {

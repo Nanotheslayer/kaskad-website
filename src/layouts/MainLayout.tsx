@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import Sidebar from '../components/navigation/Sidebar'
 import Header from '../components/navigation/Header'
 import PageHead from '../components/navigation/PageHead'
+import PageErrorBoundary from './PageErrorBoundary'
 
 export default function MainLayout() {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -23,7 +24,10 @@ export default function MainLayout() {
           {/* @container: страницы подстраиваются под ширину области контента */}
           <div className="mx-auto w-full max-w-[1680px] @container">
             <PageHead />
-            <Outlet />
+            {/* key: при переходе на другую страницу граница ошибки сбрасывается */}
+            <PageErrorBoundary key={pathname}>
+              <Outlet />
+            </PageErrorBoundary>
           </div>
         </main>
       </div>

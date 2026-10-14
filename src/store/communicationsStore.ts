@@ -3,6 +3,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { Communication, CommunicationStatus } from '../types/communication'
 import { seedCommunications } from '../data/timelineEvents'
+import { sanitizePersistedState } from './persistedState'
 
 interface CommunicationsState {
   /** Коммуникации, созданные пользователем через паспорт инфоповода */
@@ -11,6 +12,8 @@ interface CommunicationsState {
   statusOverrides: Record<string, CommunicationStatus>
   addCommunication: (comm: Communication) => void
   updateStatus: (id: string, status: CommunicationStatus) => void
+  /** Удаляет созданные пользователем коммуникации и ручные статусы */
+  resetUserData: () => void
 }
 
 /**
@@ -25,8 +28,14 @@ export const useCommunicationsStore = create<CommunicationsState>()(
       statusOverrides: {},
       addCommunication: (comm) => set((state) => ({ userCommunications: [comm, ...state.userCommunications] })),
       updateStatus: (id, status) => set((state) => ({ statusOverrides: { ...state.statusOverrides, [id]: status } })),
+      resetUserData: () => set({ userCommunications: [], statusOverrides: {} }),
     }),
-    { name: 'kaskad-communications-v2' },
+    {
+      name: 'kaskad-communications-v2',
+      // При изменении формата записей или id справочников — увеличить version и добавить migrate
+      version: 0,
+      merge: (persisted, current) => ({ ...current, ...sanitizePersistedState(persisted) }),
+    },
   ),
 )
 

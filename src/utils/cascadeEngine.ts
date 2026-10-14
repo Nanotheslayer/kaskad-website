@@ -16,9 +16,10 @@ const RESTRICTED_FALLBACK_CHANNELS: ChannelId[] = ['email', 'oral']
 export const isExtendable = (typeId: CommunicationTypeId) => extendableTypes.includes(typeId)
 
 /**
- * Глубина каскадирования (п. 5.9 Положения).
- * Базовое правило задаёт тип коммуникации; для разъяснительных, распорядительных
- * и отчётных глубина может быть расширена до У.06 «при необходимости».
+ * Глубина каскадирования (п. 5.8–5.9 Положения).
+ * Базовое правило задаёт тип коммуникации; для разъяснительных и распорядительных
+ * глубина может быть расширена до У.06 «при необходимости». Условие расширения
+ * Положение не задаёт — это правило портала.
  */
 export function determineCascadeDepth(
   typeId: CommunicationTypeId,
@@ -27,14 +28,7 @@ export function determineCascadeDepth(
   const base = baseDepthByType[typeId]
 
   if (!isExtendable(typeId)) {
-    return {
-      depth: base,
-      extended: false,
-      reason:
-        typeId === 'documentation'
-          ? 'Документационные (служебные) сообщения доводятся до У.03 и не публикуются широко'
-          : 'Тип коммуникации всегда доводится до всех сотрудников (У.06)',
-    }
+    return { depth: base, extended: false, reason: fixedDepthReason(typeId) }
   }
 
   const wide = classification.impactScale === 'company'
@@ -55,8 +49,16 @@ export function determineCascadeDepth(
     depth: base,
     extended: false,
     reason:
-      'Базовая глубина для типа. Расширится до У.06, если сообщение затрагивает всю компанию и требует действий или срочное',
+      'Базовая глубина для типа. По правилу портала расширится до У.06, если сообщение затрагивает всю компанию и требует действий или срочное',
   }
+}
+
+function fixedDepthReason(typeId: CommunicationTypeId): string {
+  const base = baseDepthByType[typeId]
+  if (typeId === 'documentation')
+    return 'Документационные (служебные) сообщения доводятся до У.03 и не публикуются широко'
+  if (base === 'У06') return 'Тип коммуникации всегда доводится до всех сотрудников (У.06)'
+  return `Для этого типа глубина фиксирована — до ${levelById(base).short}`
 }
 
 /** Краткая запись правила глубины для типа: «→ У.04 (→ У.06 при необх.)» */

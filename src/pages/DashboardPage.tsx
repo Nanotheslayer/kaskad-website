@@ -60,7 +60,7 @@ export default function DashboardPage() {
       { label: 'Запланировано', value: planned, icon: CalendarClock, tint: 'lilac' },
       { label: 'Кризисных сейчас', value: crisis, icon: Siren, tint: 'rose' },
       // Мягкий перенос: длинное слово не вылезает из узкой плитки
-      { label: 'Информи­рованность', value: `${avgAwareness}%`, icon: TrendingUp, tint: 'mint' },
+      { label: 'Информи\u00adрованность', value: `${avgAwareness}%`, icon: TrendingUp, tint: 'mint' },
     ]
   }, [communications, now])
 

@@ -35,8 +35,11 @@ const WAVE_STEP_MS = 750
 const pilot = getNode(PILOT_ID)
 const pilotHeadcount = pilot.headcount ?? 0
 const pilotUnits = unitsInSubtree(PILOT_ID)
+/** Подразделения пилота без самой дирекции */
+const pilotSubunitCount = pilotUnits.length - 1
 const pilotReach = reachByLevel(PILOT_ID)
-const collapsedIds = [ORG_ROOT_ID, PILOT_ID]
+/** Узлы, раскрытые в свёрнутом виде дерева */
+const defaultExpandedIds = [ORG_ROOT_ID, PILOT_ID]
 
 interface Simulation {
   typeId: CommunicationTypeId | null
@@ -59,7 +62,7 @@ interface TreeState {
 export default function CascadeStructurePage() {
   const [selectedId, setSelectedId] = useState(DEFAULT_SELECTED_ID)
   const [expanded, setExpanded] = useState<Set<string>>(
-    () => new Set([...collapsedIds, ...getPath(DEFAULT_SELECTED_ID).map((n) => n.id)]),
+    () => new Set([...defaultExpandedIds, ...getPath(DEFAULT_SELECTED_ID).map((n) => n.id)]),
   )
   const [sim, setSim] = useState<Simulation>({ typeId: null, wide: false })
   /**
@@ -129,8 +132,8 @@ export default function CascadeStructurePage() {
           </div>
           <h2 className="font-display text-xl font-semibold text-ink">{pilot.title}</h2>
           <p className="mt-1 text-sm text-ink-soft">
-            {pilotHeadcount} сотрудников, {pilotUnits.length - 1} подразделений и руководителей. Названия подразделений
-            — по структуре в «Петлокале»; ФИО руководителей и численность условные.
+            {pilotHeadcount} сотрудников, {pilotSubunitCount} подразделений и руководителей. Названия подразделений — по
+            структуре в «Петлокале»; ФИО руководителей и численность условные.
           </p>
         </div>
 
@@ -246,7 +249,7 @@ export default function CascadeStructurePage() {
               <Button variant="secondary" size="sm" onClick={() => setExpanded(new Set(expandableIds))}>
                 <ChevronsUpDown size={14} /> Раскрыть всё
               </Button>
-              <Button variant="secondary" size="sm" onClick={() => setExpanded(new Set(collapsedIds))}>
+              <Button variant="secondary" size="sm" onClick={() => setExpanded(new Set(defaultExpandedIds))}>
                 <ChevronsDownUp size={14} /> Свернуть
               </Button>
             </div>
