@@ -281,48 +281,54 @@ const centers: UnitSpec[] = [
   },
 ]
 
-const nodes: OrgNode[] = []
+/** Корень дерева — генеральный директор */
+export const ORG_ROOT_ID = 'gd'
+/** Пилотная дирекция — Дирекция по персоналу */
+export const PILOT_ID = 'dp'
 
-/** Возвращает численность подразделения вместе с вложенными (включая руководителя) */
-function build(spec: UnitSpec, level: 'У03' | 'У04'): number {
-  const childLevel = 'У04'
-  const childIds: string[] = []
-  let total = 1 + (spec.s5 ?? 0) + (spec.s6 ?? 0)
+const unitNodes: OrgNode[] = []
 
-  const index = nodes.length
-  nodes.push({
+/**
+ * Разворачивает описание подразделения в узлы дерева: руководитель (unit), вложенные подразделения
+ * и команды У.05 / У.06 (team). Команда У.06 вкладывается в У.05, если есть обе.
+ * Возвращает численность подразделения вместе с вложенными, включая руководителя.
+ */
+function addUnit(spec: UnitSpec, level: 'У03' | 'У04'): number {
+  const unit: OrgNode = {
     id: spec.id,
     level,
     kind: 'unit',
     title: spec.title,
     position: spec.position,
     name: spec.name,
-    children: childIds,
+    children: [],
     note: spec.note,
-  })
+  }
+  unitNodes.push(unit)
 
+  let total = 1 + (spec.s5 ?? 0) + (spec.s6 ?? 0)
   for (const child of spec.children ?? []) {
-    childIds.push(child.id)
-    total += build(child, childLevel)
+    unit.children.push(child.id)
+    total += addUnit(child, 'У04')
   }
 
+  const seniorsId = `${spec.id}__u05`
+  const specialistsId = `${spec.id}__u06`
   if (spec.s5) {
-    const id = `${spec.id}__u05`
-    childIds.push(id)
-    nodes.push({
-      id,
+    unit.children.push(seniorsId)
+    unitNodes.push({
+      id: seniorsId,
       level: 'У05',
       kind: 'team',
       title: 'Ведущие менеджеры и старшие специалисты',
       headcount: spec.s5,
-      children: spec.s6 ? [`${spec.id}__u06`] : [],
+      children: spec.s6 ? [specialistsId] : [],
     })
   }
   if (spec.s6) {
-    const id = `${spec.id}__u06`
-    if (!spec.s5) childIds.push(id)
-    nodes.push({
-      id,
+    if (!spec.s5) unit.children.push(specialistsId)
+    unitNodes.push({
+      id: specialistsId,
       level: 'У06',
       kind: 'team',
       title: 'Специалисты и младшие специалисты',
@@ -331,28 +337,22 @@ function build(spec: UnitSpec, level: 'У03' | 'У04'): number {
     })
   }
 
-  nodes[index].headcount = total
+  unit.headcount = total
   return total
 }
 
-let dpTotal = 1
-const centerIds: string[] = []
-const centerNodesStart = nodes.length
-for (const c of centers) {
-  centerIds.push(c.id)
-  dpTotal += build(c, 'У03')
-}
-const centerNodes = nodes.splice(centerNodesStart)
+// Директор дирекции + все подразделения центров
+const pilotHeadcount = 1 + centers.reduce((sum, c) => sum + addUnit(c, 'У03'), 0)
 
 export const orgNodes: OrgNode[] = [
   {
-    id: 'gd',
+    id: ORG_ROOT_ID,
     level: 'У01',
     kind: 'root',
     title: 'Генеральный директор',
     position: 'Генеральный директор ООО «СТД «Петрович»',
     name: gd.name,
-    children: ['dp', 'other_directions'],
+    children: [PILOT_ID, 'other_directions'],
   },
   {
     id: 'other_directions',
@@ -363,16 +363,16 @@ export const orgNodes: OrgNode[] = [
     children: [],
   },
   {
-    id: 'dp',
+    id: PILOT_ID,
     level: 'У02',
     kind: 'unit',
     title: 'Дирекция по персоналу',
     position: 'Директор по персоналу (ДП)',
     name: director.name,
-    headcount: dpTotal,
-    children: centerIds,
+    headcount: pilotHeadcount,
+    children: centers.map((c) => c.id),
   },
-  ...centerNodes,
+  ...unitNodes,
 ]
 
 export const orgById = new Map(orgNodes.map((n) => [n.id, n]))

@@ -1,12 +1,13 @@
 import { Link, useLocation } from 'react-router-dom'
 import { ChevronRight } from 'lucide-react'
-import { routeMeta, tintClasses } from '../../routes'
+import clsx from 'clsx'
+import { routeMeta } from '../../routes'
+import { tintClasses } from '../../theme/tints'
 
 export default function PageHead() {
   const { pathname } = useLocation()
   const meta = routeMeta.find((r) => r.path === pathname) ?? routeMeta[0]
   const Icon = meta.icon
-  const tint = tintClasses[meta.tint]
 
   return (
     <div className="mb-6">
@@ -25,7 +26,10 @@ export default function PageHead() {
       </nav>
       <div className="flex items-start gap-3 @xl:gap-4">
         <div
-          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl @xl:h-12 @xl:w-12 ${tint.bg} ${tint.fg}`}
+          className={clsx(
+            'flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl @xl:h-12 @xl:w-12',
+            tintClasses[meta.tint],
+          )}
         >
           <Icon size={24} />
         </div>

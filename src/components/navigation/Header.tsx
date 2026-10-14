@@ -1,13 +1,16 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Bell, Menu, Search } from 'lucide-react'
+import clsx from 'clsx'
 import Logo from './Logo'
+import { fieldClass } from '../ui/styles'
+import { currentUser } from '../../data/currentUser'
 
-interface Props {
+interface HeaderProps {
   onMenu: () => void
 }
 
-export default function Header({ onMenu }: Props) {
+export default function Header({ onMenu }: HeaderProps) {
   const navigate = useNavigate()
   const [query, setQuery] = useState('')
 
@@ -21,6 +24,7 @@ export default function Header({ onMenu }: Props) {
     <header className="shrink-0 px-4 lg:px-8">
       <div className="mx-auto flex h-16 w-full max-w-[1680px] items-center gap-3">
         <button
+          type="button"
           className="rounded-xl bg-white p-2.5 text-ink-soft shadow-card lg:hidden"
           onClick={onMenu}
           aria-label="Открыть меню"
@@ -39,7 +43,8 @@ export default function Header({ onMenu }: Props) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Поиск по коммуникациям"
-            className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-10 pr-3 text-sm text-ink placeholder:text-ink-muted focus:border-brand-red focus:outline-none"
+            aria-label="Поиск по коммуникациям"
+            className={clsx(fieldClass, 'pl-10')}
           />
         </form>
 
@@ -52,6 +57,7 @@ export default function Header({ onMenu }: Props) {
             <Search size={18} />
           </Link>
           <button
+            type="button"
             className="relative rounded-xl bg-white p-2.5 text-ink-soft shadow-card transition-colors hover:text-ink"
             aria-label="Уведомления"
           >
@@ -62,11 +68,11 @@ export default function Header({ onMenu }: Props) {
           </button>
           <div className="flex items-center gap-2.5">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-brand-yellow to-brand-red text-sm font-bold text-white shadow-card">
-              ИВ
+              {currentUser.initials}
             </div>
             <div className="hidden leading-tight md:block">
-              <div className="text-sm font-medium text-ink">Иванов В.А.</div>
-              <div className="text-xs text-ink-muted">Руководитель</div>
+              <div className="text-sm font-medium text-ink">{currentUser.name}</div>
+              <div className="text-xs text-ink-muted">{currentUser.role}</div>
             </div>
           </div>
         </div>

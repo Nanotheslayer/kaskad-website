@@ -1,9 +1,9 @@
-import type { CommunicationTypeId, CascadeLevel } from '../types/communication'
+import type { CascadeLevel, CommunicationTypeId } from '../types/communication'
 import type { ChannelId } from '../types/channel'
 
 /**
- * Глубина каскадирования по типу коммуникации (п. 5.8–5.9 Положения).
- * Значение — индекс нижнего уровня по шкале У.01–У.06 (0…5).
+ * Базовая глубина каскадирования по типу коммуникации (п. 5.8–5.9 Положения):
+ * нижний уровень шкалы У.01–У.06, до которого доводится информация.
  */
 export const baseDepthByType: Record<CommunicationTypeId, CascadeLevel> = {
   strategic: 'У06',

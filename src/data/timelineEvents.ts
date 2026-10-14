@@ -5,10 +5,15 @@ import type {
   CommunicationStatus,
   CommunicationTypeId,
   Confidentiality,
+  ImpactScale,
+  ImpactType,
   SourceId,
   ThreeQuestions,
+  Tone,
+  Urgency,
 } from '../types/communication'
 import { determineCascadeDepth, determineRequiredChannels } from '../utils/cascadeEngine'
+import { emptyQuestions } from './threeQuestions'
 
 /**
  * Демо-коммуникации. Даты заданы смещением от текущего дня, чтобы таймлайн
@@ -21,9 +26,9 @@ today.setHours(0, 0, 0, 0)
 const at = (offsetDays: number, hour: number, minute = 0) =>
   new Date(today.getTime() + offsetDays * DAY + (hour * 60 + minute) * 60 * 1000).toISOString()
 
-const none: ThreeQuestions = { q1: '', q2: '', q3: '' }
-
+/** Компактная запись демо-коммуникации; ниже разворачивается в полноценную Communication */
 interface Seed {
+  /** Смещение даты создания от сегодняшнего дня */
   day: number
   hour: number
   type: CommunicationTypeId
@@ -32,12 +37,7 @@ interface Seed {
   essence: string
   key: string
   who: [name: string, directorate: string]
-  cls: [
-    ClassificationParams['impactScale'],
-    ClassificationParams['urgency'],
-    ClassificationParams['impactType'],
-    ClassificationParams['tone'],
-  ]
+  cls: [scale: ImpactScale, urgency: Urgency, impact: ImpactType, tone: Tone]
   /** Срок доведения — через сколько дней после создания */
   due: number
   conf?: Confidentiality
@@ -549,7 +549,7 @@ export const seedCommunications: Communication[] = seeds.map((s, i) => {
     classification,
     confidentiality,
     binding: { foundation: [], strategy: [], values: [], ...s.binding },
-    questions: s.q ?? none,
+    questions: s.q ?? emptyQuestions,
     cascadeDepth: depth.depth,
     depthExtended: depth.extended,
     requiredChannels: determineRequiredChannels(s.type, confidentiality),

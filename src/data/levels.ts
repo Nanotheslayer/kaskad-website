@@ -1,4 +1,6 @@
 import type { CascadeLevel } from '../types/communication'
+import { palette } from '../theme/colors'
+import { indexById } from '../utils/collections'
 
 export interface LevelInfo {
   id: CascadeLevel
@@ -17,7 +19,7 @@ export const levels: LevelInfo[] = [
     title: 'Генеральный директор',
     who: 'Генеральный директор (ГД)',
     entryPoint: 'Стратегические решения, комитеты, совет директоров',
-    color: '#d11f3a',
+    color: palette.crimson,
   },
   {
     id: 'У02',
@@ -25,7 +27,7 @@ export const levels: LevelInfo[] = [
     title: 'Директора дирекций и дивизионов',
     who: 'Директора дирекций ЦО (ДО, ДК, ДМ, ДП, ДР, ДЮ, ДФ, ДИТ), директор по развитию маркетплейса, директор управления розничных продаж, директора дивизионов СЗФО, ЦФО, УФО',
     entryPoint: 'Ежемесячные встречи руководителей',
-    color: '#f26b21',
+    color: palette.orange,
   },
   {
     id: 'У03',
@@ -33,7 +35,7 @@ export const levels: LevelInfo[] = [
     title: 'Управляющие и директора служб',
     who: 'Управляющие СТЦ, управляющий сетью РЦ, директор КЦ, директор транспортной логистики, директор логистики склада',
     entryPoint: 'Совещания раз в месяц; протоколы заседаний комитетов и ежемесячных встреч руководителей',
-    color: '#f5a300',
+    color: palette.amber,
   },
   {
     id: 'У04',
@@ -41,7 +43,7 @@ export const levels: LevelInfo[] = [
     title: 'Руководители отделов',
     who: 'НСК, РКО, РОП, РОЛ, руководители отделов и групп',
     entryPoint: 'Ежедневные оперативки, информационные доски',
-    color: '#2fa84f',
+    color: palette.green,
   },
   {
     id: 'У05',
@@ -49,7 +51,7 @@ export const levels: LevelInfo[] = [
     title: 'Ведущие менеджеры, старшие специалисты',
     who: 'Ведущие менеджеры, старшие специалисты',
     entryPoint: 'Еженедельные совещания, «Петлокал», информационные доски, дайджесты подразделений',
-    color: '#12a6a0',
+    color: palette.teal,
   },
   {
     id: 'У06',
@@ -57,10 +59,13 @@ export const levels: LevelInfo[] = [
     title: 'Линейные сотрудники',
     who: 'Специалисты, младшие специалисты, менеджеры по продажам, кладовщики, комплектовщики, партнёры-водители, операторы КЦ, специалисты ТЗ, офис',
     entryPoint: '«Петлокал», информационные доски, дайджесты подразделений',
-    color: '#4f6bed',
+    color: palette.blue,
   },
 ]
 
 export const LEVEL_ORDER: CascadeLevel[] = levels.map((l) => l.id)
-export const levelById = (id: CascadeLevel) => levels.find((l) => l.id === id)!
+export const levelById = indexById(levels)
 export const levelIndex = (id: CascadeLevel) => LEVEL_ORDER.indexOf(id)
+
+/** Доходит ли каскад глубиной depth до уровня level */
+export const isWithinDepth = (level: CascadeLevel, depth: CascadeLevel) => levelIndex(level) <= levelIndex(depth)

@@ -1,20 +1,19 @@
 import clsx from 'clsx'
 import type { CascadeLevel } from '../../types/communication'
-import { levels, levelIndex } from '../../data/levels'
+import { isWithinDepth, levels } from '../../data/levels'
 
-interface Props {
+interface DepthScaleProps {
   depth: CascadeLevel
   extended?: boolean
 }
 
 /** Компактная шкала У.01–У.06: уровни до нижней границы каскада закрашены */
-export default function DepthScale({ depth, extended }: Props) {
-  const reachedIdx = levelIndex(depth)
+export default function DepthScale({ depth, extended }: DepthScaleProps) {
   return (
     <div>
       <div className="flex gap-1">
-        {levels.map((l, i) => {
-          const reached = i <= reachedIdx
+        {levels.map((l) => {
+          const reached = isWithinDepth(l.id, depth)
           return (
             <div
               key={l.id}

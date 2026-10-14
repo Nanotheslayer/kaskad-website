@@ -1,23 +1,11 @@
 import { format } from 'date-fns'
 import { ru } from 'date-fns/locale'
-import type { CommunicationStatus } from '../types/communication'
 
+/** Форматирование даты в русской локали (шаблоны date-fns) */
 export const fmt = (date: Date | string | number, pattern: string) => format(new Date(date), pattern, { locale: ru })
 
-export const statusLabels: Record<CommunicationStatus, string> = {
-  planned: 'Запланирована',
-  active: 'Идёт каскад',
-  completed: 'Доведено',
-}
-
-export const statusColors: Record<CommunicationStatus, string> = {
-  planned: '#3b9ae8',
-  active: '#f28b3c',
-  completed: '#2fa84f',
-}
-
 /** Склонение: 1 коммуникация, 2 коммуникации, 5 коммуникаций */
-export function plural(n: number, forms: [string, string, string]): string {
+function plural(n: number, forms: [one: string, few: string, many: string]): string {
   const m10 = n % 10
   const m100 = n % 100
   if (m10 === 1 && m100 !== 11) return forms[0]
@@ -25,4 +13,10 @@ export function plural(n: number, forms: [string, string, string]): string {
   return forms[2]
 }
 
-export const pluralComm = (n: number) => `${n} ${plural(n, ['коммуникация', 'коммуникации', 'коммуникаций'])}`
+const commForms: [string, string, string] = ['коммуникация', 'коммуникации', 'коммуникаций']
+
+export const pluralCommWord = (n: number) => plural(n, commForms)
+export const pluralComm = (n: number) => `${n} ${pluralCommWord(n)}`
+
+/** Дата из <input type="date"> → ISO-строка на полдень, чтобы часовой пояс не сдвигал день */
+export const dateInputToIso = (value: string) => new Date(`${value}T12:00:00`).toISOString()

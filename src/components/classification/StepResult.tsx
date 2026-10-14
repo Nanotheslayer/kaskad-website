@@ -1,21 +1,24 @@
 import { AlertTriangle, CheckCircle2, Info } from 'lucide-react'
-import type { CascadeLevel, Communication, CommunicationTypeId } from '../../types/communication'
+import type { ClassificationParams, CommunicationTypeId } from '../../types/communication'
 import type { ChannelId } from '../../types/channel'
 import { typeById } from '../../data/communicationTypes'
 import { levelById } from '../../data/levels'
-import { getIcon } from '../../utils/icons'
+import { scaleLabels, urgencyById } from '../../data/classificationOptions'
+import { alpha } from '../../theme/colors'
+import type { DepthResult } from '../../utils/cascadeEngine'
+import { fmt } from '../../utils/format'
 import DepthLadder from '../communication/DepthLadder'
 import ChannelList from '../communication/ChannelList'
-import Badge from '../common/Badge'
-import { urgencyColors, urgencyLabels, scaleLabels } from '../../data/classificationOptions'
-import { fmt } from '../../utils/format'
+import Badge from '../ui/Badge'
+import StepHeading from './StepHeading'
 
-interface Props {
+interface StepResultProps {
   typeId: CommunicationTypeId
-  draft: Pick<Communication, 'title' | 'keyMessage' | 'classification' | 'deadline'>
-  depth: CascadeLevel
-  depthReason: string
-  extended: boolean
+  title: string
+  classification: ClassificationParams
+  /** ISO-дата доведения */
+  deadline: string
+  depth: DepthResult
   required: ChannelId[]
   extra: ChannelId[]
   onToggleExtra: (id: ChannelId) => void
@@ -23,55 +26,58 @@ interface Props {
 
 export default function StepResult({
   typeId,
-  draft,
+  title,
+  classification,
+  deadline,
   depth,
-  depthReason,
-  extended,
   required,
   extra,
   onToggleExtra,
-}: Props) {
-  const type = typeById(typeId)!
-  const Icon = getIcon(type.icon)
-  const lvl = levelById(depth)
-  const isCrisis = typeId === 'crisis'
+}: StepResultProps) {
+  const type = typeById(typeId)
+  const urgency = urgencyById[classification.urgency]
+  const TypeIcon = type.icon
 
   return (
     <div>
-      <h2 className="font-display text-lg font-semibold text-ink">Маршрут каскада</h2>
-      <p className="mb-5 mt-1 text-sm text-ink-soft">
-        Система определила глубину и обязательные каналы. Проверьте и отправьте.
-      </p>
+      <StepHeading
+        className="mb-5"
+        title="Маршрут каскада"
+        description="Система определила глубину и обязательные каналы. Проверьте и отправьте."
+      />
 
-      <div className="mb-5 flex items-center gap-3 rounded-2xl p-4" style={{ backgroundColor: type.color + '14' }}>
+      <div
+        className="mb-5 flex items-center gap-3 rounded-2xl p-4"
+        style={{ backgroundColor: alpha(type.color, 0.08) }}
+      >
         <div
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-white"
           style={{ backgroundColor: type.color }}
         >
-          {Icon && <Icon size={22} />}
+          <TypeIcon size={22} />
         </div>
         <div className="min-w-0">
-          <div className="font-medium leading-snug text-ink">{draft.title}</div>
+          <div className="font-medium leading-snug text-ink">{title}</div>
           <div className="mt-1 flex flex-wrap gap-1.5">
             <Badge color={type.color}>{type.name}</Badge>
-            <Badge color={urgencyColors[draft.classification.urgency]}>
-              {urgencyLabels[draft.classification.urgency]}
-            </Badge>
-            <Badge>{scaleLabels[draft.classification.impactScale]}</Badge>
-            <Badge>довести до {fmt(draft.deadline, 'd MMM yyyy')}</Badge>
+            <Badge color={urgency.color}>{urgency.label}</Badge>
+            <Badge>{scaleLabels[classification.impactScale]}</Badge>
+            <Badge>довести до {fmt(deadline, 'd MMM yyyy')}</Badge>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 gap-5 @4xl:grid-cols-2">
         <div className="rounded-2xl bg-white p-5 shadow-card">
-          <h3 className="mb-1 font-display text-sm font-semibold text-ink">Глубина каскадирования — до {lvl.short}</h3>
+          <h3 className="mb-1 font-display text-sm font-semibold text-ink">
+            Глубина каскадирования — до {levelById(depth.depth).short}
+          </h3>
           <p className="mb-4 flex items-start gap-1.5 text-xs text-ink-soft">
             <Info size={13} className="mt-0.5 shrink-0 text-ink-muted" />
-            {depthReason}
+            {depth.reason}
           </p>
-          <DepthLadder depth={depth} />
-          {extended && (
+          <DepthLadder depth={depth.depth} />
+          {depth.extended && (
             <div className="mt-3 text-xs font-medium text-accent-mint">
               Глубина расширена до У.06 «при необходимости»
             </div>
@@ -88,7 +94,7 @@ export default function StepResult({
             <ChannelList required={required} extra={extra} onToggleExtra={onToggleExtra} />
           </div>
 
-          {isCrisis ? (
+          {typeId === 'crisis' ? (
             <div className="flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4">
               <AlertTriangle size={20} className="mt-0.5 shrink-0 text-brand-red" />
               <div>

@@ -1,19 +1,18 @@
 import clsx from 'clsx'
 import { ArrowDown } from 'lucide-react'
 import type { CascadeLevel } from '../../types/communication'
-import { levels, levelIndex } from '../../data/levels'
+import { isWithinDepth, levels } from '../../data/levels'
 
-interface Props {
+interface DepthLadderProps {
   depth: CascadeLevel
 }
 
 /** Вертикальная «лестница» уровней с точками входа информации (п. 4 Положения) */
-export default function DepthLadder({ depth }: Props) {
-  const reachedIdx = levelIndex(depth)
+export default function DepthLadder({ depth }: DepthLadderProps) {
   return (
     <div className="space-y-2">
-      {levels.map((l, i) => {
-        const reached = i <= reachedIdx
+      {levels.map((l) => {
+        const reached = isWithinDepth(l.id, depth)
         return (
           <div
             key={l.id}
@@ -37,7 +36,7 @@ export default function DepthLadder({ depth }: Props) {
               </div>
               <div className="mt-0.5 text-xs leading-snug text-ink-muted">{l.entryPoint}</div>
             </div>
-            {i === reachedIdx && <ArrowDown size={16} className="mt-2 shrink-0 text-brand-red" />}
+            {l.id === depth && <ArrowDown size={16} className="mt-2 shrink-0 text-brand-red" />}
           </div>
         )
       })}

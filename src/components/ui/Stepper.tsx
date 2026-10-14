@@ -1,12 +1,8 @@
 import clsx from 'clsx'
 import { Check } from 'lucide-react'
 
-interface Step {
-  label: string
-}
-
 interface StepperProps {
-  steps: Step[]
+  steps: readonly string[]
   currentStep: number
   onStepClick?: (index: number) => void
 }
@@ -14,17 +10,17 @@ interface StepperProps {
 export default function Stepper({ steps, currentStep, onStepClick }: StepperProps) {
   return (
     <div className="flex items-center gap-1 overflow-x-auto pb-1 @xl:gap-2">
-      {steps.map((step, i) => {
+      {steps.map((label, i) => {
         const isCompleted = i < currentStep
         const isActive = i === currentStep
         return (
           <div
-            key={i}
+            key={label}
             className={clsx(
               'flex items-center gap-1 @xl:gap-2',
               i < steps.length - 1 ? 'flex-1 @5xl:flex-none' : 'shrink-0',
             )}
-            title={step.label}
+            title={label}
           >
             <button
               type="button"
@@ -50,7 +46,7 @@ export default function Stepper({ steps, currentStep, onStepClick }: StepperProp
                   !isActive && 'hidden @5xl:inline',
                 )}
               >
-                {step.label}
+                {label}
               </span>
             </button>
             {i < steps.length - 1 && (

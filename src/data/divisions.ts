@@ -1,4 +1,5 @@
-import type { Division } from '../types/survey'
+import type { Division, DivisionKind } from '../types/survey'
+import { palette } from '../theme/colors'
 
 /** Подразделения верхнего контура (п. 4 Положения). Численность — демо-данные. */
 export const divisions: Division[] = [
@@ -8,7 +9,7 @@ export const divisions: Division[] = [
     shortName: 'ДО',
     kind: 'directorate',
     employeeCount: 420,
-    color: '#f26b21',
+    color: palette.orange,
   },
   {
     id: 'dk',
@@ -16,7 +17,7 @@ export const divisions: Division[] = [
     shortName: 'ДК',
     kind: 'directorate',
     employeeCount: 310,
-    color: '#4f6bed',
+    color: palette.blue,
   },
   {
     id: 'dm',
@@ -24,7 +25,7 @@ export const divisions: Division[] = [
     shortName: 'ДМ',
     kind: 'directorate',
     employeeCount: 74,
-    color: '#e255a1',
+    color: palette.pink,
   },
   {
     id: 'dp',
@@ -32,21 +33,41 @@ export const divisions: Division[] = [
     shortName: 'ДП',
     kind: 'directorate',
     employeeCount: 196,
-    color: '#2fa84f',
+    color: palette.green,
   },
-  { id: 'dr', name: 'Дирекция по развитию', shortName: 'ДР', kind: 'directorate', employeeCount: 58, color: '#7c5cdb' },
+  {
+    id: 'dr',
+    name: 'Дирекция по развитию',
+    shortName: 'ДР',
+    kind: 'directorate',
+    employeeCount: 58,
+    color: palette.violet,
+  },
   {
     id: 'du',
     name: 'Дирекция по правовым вопросам',
     shortName: 'ДЮ',
     kind: 'directorate',
     employeeCount: 36,
-    color: '#7b8794',
+    color: palette.slate,
   },
-  { id: 'df', name: 'Финансовая дирекция', shortName: 'ДФ', kind: 'directorate', employeeCount: 112, color: '#f5a300' },
-  { id: 'dit', name: 'Дирекция по IT', shortName: 'ДИТ', kind: 'directorate', employeeCount: 167, color: '#0ea5e9' },
-  { id: 'szfo', name: 'Дивизион СЗФО', shortName: 'СЗФО', kind: 'division', employeeCount: 1380, color: '#12a6a0' },
-  { id: 'cfo', name: 'Дивизион ЦФО', shortName: 'ЦФО', kind: 'division', employeeCount: 1120, color: '#d11f3a' },
-  { id: 'ufo', name: 'Дивизион УФО', shortName: 'УФО', kind: 'division', employeeCount: 640, color: '#f26b21' },
-  { id: 'kc', name: 'Контакт-центр', shortName: 'КЦ', kind: 'service', employeeCount: 530, color: '#4f6bed' },
+  {
+    id: 'df',
+    name: 'Финансовая дирекция',
+    shortName: 'ДФ',
+    kind: 'directorate',
+    employeeCount: 112,
+    color: palette.amber,
+  },
+  { id: 'dit', name: 'Дирекция по IT', shortName: 'ДИТ', kind: 'directorate', employeeCount: 167, color: palette.sky },
+  { id: 'szfo', name: 'Дивизион СЗФО', shortName: 'СЗФО', kind: 'division', employeeCount: 1380, color: palette.teal },
+  { id: 'cfo', name: 'Дивизион ЦФО', shortName: 'ЦФО', kind: 'division', employeeCount: 1120, color: palette.crimson },
+  { id: 'ufo', name: 'Дивизион УФО', shortName: 'УФО', kind: 'division', employeeCount: 640, color: palette.orange },
+  { id: 'kc', name: 'Контакт-центр', shortName: 'КЦ', kind: 'service', employeeCount: 530, color: palette.blue },
 ]
+
+export const divisionKindLabels: Record<DivisionKind, string> = {
+  directorate: 'Дирекция',
+  division: 'Дивизион',
+  service: 'Служба',
+}

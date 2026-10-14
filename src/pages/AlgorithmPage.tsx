@@ -1,8 +1,10 @@
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronDown, Compass, Lightbulb, MessageSquareQuote } from 'lucide-react'
 import clsx from 'clsx'
-import Card from '../components/common/Card'
+import { threeQuestions } from '../data/threeQuestions'
+import { palette } from '../theme/colors'
+import Card from '../components/ui/Card'
 
 const phases = [
   {
@@ -10,7 +12,7 @@ const phases = [
     title: 'Актуализация',
     when: 'до доведения информации',
     goal: 'Определить текущий уровень осведомлённости команды и спрогнозировать реакцию',
-    color: '#3b9ae8',
+    color: palette.azure,
     actions: [
       'Оценить, какой информацией по теме команда уже располагает',
       'Определить ожидания и предположения сотрудников, в том числе по неформальным источникам',
@@ -22,7 +24,7 @@ const phases = [
     title: 'Осмысление',
     when: 'подготовка к доведению',
     goal: 'Сформировать собственное понимание и подготовить адаптированное сообщение',
-    color: '#f5a300',
+    color: palette.amber,
     actions: [
       'Изучить исходные материалы: протокол, презентацию',
       'Сформулировать сообщение по правилу трёх вопросов',
@@ -34,36 +36,12 @@ const phases = [
     title: 'Рефлексия',
     when: 'после доведения',
     goal: 'Убедиться, что информация понята, и зафиксировать нерешённые вопросы',
-    color: '#2fa84f',
+    color: palette.green,
     actions: [
       'Проверить понимание прямым вопросом: «Осталось ли что-то непонятным по теме …?»',
       'Зафиксировать вопросы, на которые не удалось ответить, и передать их выше',
       'Решить, нужно ли вернуться к теме повторно',
     ],
-  },
-]
-
-const questions = [
-  {
-    n: 1,
-    badge: 'Фундамент',
-    q: 'Что именно произошло / какое решение принято и какой приоритет компании это затрагивает?',
-    hint: 'Сервис, CJM, IT, люди',
-    color: '#4f6bed',
-  },
-  {
-    n: 2,
-    badge: 'Стратегия',
-    q: 'К какой стратегической цели это ведёт?',
-    hint: 'Основной бизнес, расширение географии, расширение ассортимента, стройка и ремонт «от и до»',
-    color: '#f26b21',
-  },
-  {
-    n: 3,
-    badge: 'Ценности',
-    q: 'Что это значит для нашей команды и через какую ценность мы это проживаем?',
-    hint: '«Человек в приоритете», «Развитие», «Преодоление»',
-    color: '#e255a1',
   },
 ]
 
@@ -95,7 +73,7 @@ const principles = [
 ]
 
 export default function AlgorithmPage() {
-  const [open, setOpen] = useState<number | null>(0)
+  const [openPrinciple, setOpenPrinciple] = useState<number | null>(0)
 
   return (
     <div className="space-y-6">
@@ -142,20 +120,20 @@ export default function AlgorithmPage() {
           <h2 className="font-display text-lg font-semibold text-ink">Правило трёх вопросов</h2>
         </div>
         <div className="grid grid-cols-1 gap-3 @4xl:grid-cols-3">
-          {questions.map((q) => (
-            <div key={q.n} className="rounded-2xl bg-white p-4 shadow-card">
+          {threeQuestions.map((q, i) => (
+            <div key={q.key} className="rounded-2xl bg-white p-4 shadow-card">
               <div className="mb-2 flex items-center gap-2">
                 <span
                   className="flex h-7 w-7 items-center justify-center rounded-full text-sm font-bold text-white"
                   style={{ backgroundColor: q.color }}
                 >
-                  {q.n}
+                  {i + 1}
                 </span>
                 <span className="text-xs font-medium uppercase tracking-wide" style={{ color: q.color }}>
-                  {q.badge}
+                  {q.basis}
                 </span>
               </div>
-              <div className="text-[15px] font-medium leading-snug text-ink">{q.q}</div>
+              <div className="text-[15px] font-medium leading-snug text-ink">{q.question}</div>
               <div className="mt-2 text-xs text-ink-muted">{q.hint}</div>
             </div>
           ))}
@@ -170,11 +148,12 @@ export default function AlgorithmPage() {
         </div>
         <div className="space-y-2">
           {principles.map((p, i) => {
-            const isOpen = open === i
+            const isOpen = openPrinciple === i
             return (
               <div key={p.title} className="overflow-hidden rounded-2xl bg-white shadow-card">
                 <button
-                  onClick={() => setOpen(isOpen ? null : i)}
+                  type="button"
+                  onClick={() => setOpenPrinciple(isOpen ? null : i)}
                   className="flex w-full items-center gap-3 px-4 py-3.5 text-left"
                   aria-expanded={isOpen}
                 >

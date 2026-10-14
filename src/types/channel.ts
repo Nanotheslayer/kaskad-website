@@ -1,3 +1,5 @@
+import type { LucideIcon } from 'lucide-react'
+
 /** Направления каналов (п. 6.2 Положения) */
 export type ChannelCategory = 'digital' | 'print' | 'oral' | 'mass' | 'management'
 
@@ -28,6 +30,6 @@ export interface Channel {
   id: ChannelId
   name: string
   category: ChannelCategory
-  icon: string
+  icon: LucideIcon
   hint?: string
 }

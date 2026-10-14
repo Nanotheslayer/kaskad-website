@@ -1,27 +1,32 @@
 import clsx from 'clsx'
-import { communicationTypes } from '../../data/communicationTypes'
 import type { CommunicationTypeId } from '../../types/communication'
-import { getIcon } from '../../utils/icons'
+import { communicationTypes } from '../../data/communicationTypes'
+import { alpha } from '../../theme/colors'
+import { describeDepthRule } from '../../utils/cascadeEngine'
+import StepHeading from './StepHeading'
 
-interface Props {
+interface StepTypeProps {
   selected: CommunicationTypeId | null
   onSelect: (id: CommunicationTypeId) => void
 }
 
-export default function StepType({ selected, onSelect }: Props) {
+export default function StepType({ selected, onSelect }: StepTypeProps) {
   return (
     <div>
-      <h2 className="font-display text-lg font-semibold text-ink">Тип коммуникации</h2>
-      <p className="mb-4 mt-1 text-sm text-ink-soft">
-        Тип определяет глубину каскадирования, обязательные каналы и базовую тональность (п. 5.8 Положения).
-      </p>
+      <StepHeading
+        className="mb-4"
+        title="Тип коммуникации"
+        description="Тип определяет глубину каскадирования, обязательные каналы и базовую тональность (п. 5.8 Положения)."
+      />
       <div className="grid grid-cols-1 gap-3 @xl:grid-cols-2 @5xl:grid-cols-3 @[100rem]:grid-cols-4">
         {communicationTypes.map((type) => {
-          const Icon = getIcon(type.icon)
+          const Icon = type.icon
           const isSelected = selected === type.id
           return (
             <button
               key={type.id}
+              type="button"
+              aria-pressed={isSelected}
               onClick={() => onSelect(type.id)}
               className={clsx(
                 'flex flex-col gap-2 rounded-2xl border-2 p-4 text-left transition-all',
@@ -29,14 +34,14 @@ export default function StepType({ selected, onSelect }: Props) {
                   ? 'shadow-sm'
                   : 'border-transparent bg-white shadow-card hover:-translate-y-0.5 hover:shadow-lift',
               )}
-              style={isSelected ? { borderColor: type.color, backgroundColor: type.color + '12' } : undefined}
+              style={isSelected ? { borderColor: type.color, backgroundColor: alpha(type.color, 0.07) } : undefined}
             >
               <div className="flex items-center gap-3">
                 <div
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-white"
                   style={{ backgroundColor: type.color }}
                 >
-                  {Icon && <Icon size={20} />}
+                  <Icon size={20} />
                 </div>
                 <div className="text-sm font-medium leading-tight text-ink">{type.name}</div>
               </div>
@@ -44,9 +49,9 @@ export default function StepType({ selected, onSelect }: Props) {
               <div className="mt-auto flex flex-wrap items-center gap-1.5 pt-1">
                 <span
                   className="rounded-md px-1.5 py-0.5 text-[11px] font-bold"
-                  style={{ backgroundColor: type.color + '22', color: type.color }}
+                  style={{ backgroundColor: alpha(type.color, 0.13), color: type.color }}
                 >
-                  {type.depthLabel}
+                  {describeDepthRule(type.id)}
                 </span>
                 <span className="text-[11px] text-ink-muted">{type.tone}</span>
               </div>

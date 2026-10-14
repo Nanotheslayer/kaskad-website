@@ -135,3 +135,5 @@ export const surveyResults: DivisionSurveyResult[] = [
     lastSurveyDate: '2026-09-29',
   },
 ]
+
+export const surveyByDivision = new Map(surveyResults.map((r) => [r.divisionId, r]))
