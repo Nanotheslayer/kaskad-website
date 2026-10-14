@@ -23,10 +23,8 @@ export const useCommunicationsStore = create<CommunicationsState>()(
     (set) => ({
       userCommunications: [],
       statusOverrides: {},
-      addCommunication: (comm) =>
-        set((state) => ({ userCommunications: [comm, ...state.userCommunications] })),
-      updateStatus: (id, status) =>
-        set((state) => ({ statusOverrides: { ...state.statusOverrides, [id]: status } })),
+      addCommunication: (comm) => set((state) => ({ userCommunications: [comm, ...state.userCommunications] })),
+      updateStatus: (id, status) => set((state) => ({ statusOverrides: { ...state.statusOverrides, [id]: status } })),
     }),
     { name: 'kaskad-communications-v2' },
   ),

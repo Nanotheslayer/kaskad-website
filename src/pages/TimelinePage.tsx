@@ -366,7 +366,10 @@ export default function TimelinePage() {
           <div className="flex min-w-0 max-w-full flex-wrap items-center gap-2">
             <span className="text-xs font-medium uppercase tracking-wide text-ink-muted">Срочность</span>
             <Segmented
-              options={[{ value: 'all', label: 'Любая' }, ...urgencyOptions.map((o) => ({ value: o.value, label: o.label }))]}
+              options={[
+                { value: 'all', label: 'Любая' },
+                ...urgencyOptions.map((o) => ({ value: o.value, label: o.label })),
+              ]}
               value={urgency}
               onChange={(v) => {
                 setUrgency(v)
@@ -420,12 +423,21 @@ export default function TimelinePage() {
                   data-selected={isSelected}
                   className={clsx(
                     'relative flex min-w-0 flex-1 flex-col items-center rounded-2xl transition-colors',
-                    isSelected ? 'bg-tint-sky/60' : b.hasToday ? 'bg-brand-red-light/50' : b.weekend ? 'bg-gray-50' : '',
+                    isSelected
+                      ? 'bg-tint-sky/60'
+                      : b.hasToday
+                        ? 'bg-brand-red-light/50'
+                        : b.weekend
+                          ? 'bg-gray-50'
+                          : '',
                   )}
                   style={{ minWidth: colWidth }}
                 >
                   {/* Бусины-коммуникации */}
-                  <div className="flex w-full flex-col-reverse items-center justify-start gap-1 pb-1" style={{ height: zoneHeight }}>
+                  <div
+                    className="flex w-full flex-col-reverse items-center justify-start gap-1 pb-1"
+                    style={{ height: zoneHeight }}
+                  >
                     {shown.map((c) => {
                       const t = typeById(c.typeId)
                       return (
@@ -464,7 +476,10 @@ export default function TimelinePage() {
                   {/* Подписи */}
                   <button
                     onClick={() => setSelectedBucket(isSelected ? null : b.key)}
-                    className={clsx('mt-2 flex flex-col items-center gap-0.5 pb-2 text-center', compact ? 'px-0' : 'px-1')}
+                    className={clsx(
+                      'mt-2 flex flex-col items-center gap-0.5 pb-2 text-center',
+                      compact ? 'px-0' : 'px-1',
+                    )}
                   >
                     <span
                       className={clsx(
@@ -475,7 +490,9 @@ export default function TimelinePage() {
                     >
                       {b.top}
                     </span>
-                    <span className={clsx('leading-4 text-ink-muted', compact ? 'text-[10px]' : 'text-[11px]')}>{b.bottom}</span>
+                    <span className={clsx('leading-4 text-ink-muted', compact ? 'text-[10px]' : 'text-[11px]')}>
+                      {b.bottom}
+                    </span>
                   </button>
                 </div>
               )
@@ -483,7 +500,10 @@ export default function TimelinePage() {
           </div>
         </div>
         <div className="flex flex-wrap items-center justify-between gap-2 border-t border-gray-100 px-5 py-2.5 text-xs text-ink-muted">
-          <span>Цифра на линии — количество коммуникаций. Цветные точки — отдельные коммуникации по типам. Нажмите на цифру, чтобы выбрать интервал.</span>
+          <span>
+            Цифра на линии — количество коммуникаций. Цветные точки — отдельные коммуникации по типам. Нажмите на цифру,
+            чтобы выбрать интервал.
+          </span>
           {!isCurrentPeriod && <span>Сегодня — {fmt(now, 'd MMMM')}</span>}
         </div>
       </Card>
@@ -516,7 +536,11 @@ export default function TimelinePage() {
               <div key={day.toISOString()}>
                 <div className="mb-2 flex items-center gap-2 text-sm font-medium text-ink-soft">
                   {fmt(day, 'EEEE, d MMMM')}
-                  {isSameDay(day, now) && <span className="rounded-full bg-brand-red px-2 py-0.5 text-[11px] font-medium text-white">сегодня</span>}
+                  {isSameDay(day, now) && (
+                    <span className="rounded-full bg-brand-red px-2 py-0.5 text-[11px] font-medium text-white">
+                      сегодня
+                    </span>
+                  )}
                 </div>
                 <div className="grid grid-cols-1 gap-3 @4xl:grid-cols-2 @[110rem]:grid-cols-3">
                   {items.map((c) => (

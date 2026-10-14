@@ -61,17 +61,26 @@ export default function ClassificationFormPage() {
   const paramsComplete = !!(params.impactScale && params.urgency && params.impactType && params.tone)
 
   const depth = useMemo(() => (typeId ? determineCascadeDepth(typeId, params) : null), [typeId, params])
-  const required = useMemo(() => (typeId ? determineRequiredChannels(typeId, confidentiality) : []), [typeId, confidentiality])
+  const required = useMemo(
+    () => (typeId ? determineRequiredChannels(typeId, confidentiality) : []),
+    [typeId, confidentiality],
+  )
   const extraClean = extra.filter((id) => !required.includes(id))
 
   const canNext = (() => {
     switch (step) {
-      case 0: return !!sourceId && initiatorName.trim().length > 0
-      case 1: return !!typeId
-      case 2: return paramsComplete
-      case 3: return title.trim() && essence.trim() && keyMessage.trim()
-      case 4: return !!deadline
-      default: return false
+      case 0:
+        return !!sourceId && initiatorName.trim().length > 0
+      case 1:
+        return !!typeId
+      case 2:
+        return paramsComplete
+      case 3:
+        return title.trim() && essence.trim() && keyMessage.trim()
+      case 4:
+        return !!deadline
+      default:
+        return false
     }
   })()
 
@@ -107,7 +116,8 @@ export default function ClassificationFormPage() {
     navigate('/timeline')
   }
 
-  const toggleExtra = (id: ChannelId) => setExtra((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]))
+  const toggleExtra = (id: ChannelId) =>
+    setExtra((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]))
 
   const showAside = typeId && depth && step >= 1 && step < LAST
   const type = typeId ? typeById(typeId) : null
@@ -118,7 +128,13 @@ export default function ClassificationFormPage() {
         <Stepper steps={steps} currentStep={step} onStepClick={setStep} />
       </div>
 
-      <div className={showAside ? 'grid items-start gap-6 @5xl:grid-cols-[minmax(0,1fr)_260px] @7xl:grid-cols-[minmax(0,1fr)_280px]' : ''}>
+      <div
+        className={
+          showAside
+            ? 'grid items-start gap-6 @5xl:grid-cols-[minmax(0,1fr)_260px] @7xl:grid-cols-[minmax(0,1fr)_280px]'
+            : ''
+        }
+      >
         <AnimatePresence mode="wait">
           <motion.div
             key={step}
@@ -139,7 +155,11 @@ export default function ClassificationFormPage() {
             )}
             {step === 1 && <StepType selected={typeId} onSelect={selectType} />}
             {step === 2 && (
-              <StepClassification typeId={typeId} params={params} onChange={(k, v) => setParams((p) => ({ ...p, [k]: v }))} />
+              <StepClassification
+                typeId={typeId}
+                params={params}
+                onChange={(k, v) => setParams((p) => ({ ...p, [k]: v }))}
+              />
             )}
             {step === 3 && (
               <StepPassport
@@ -170,7 +190,12 @@ export default function ClassificationFormPage() {
             {step === LAST && typeId && depth && paramsComplete && (
               <StepResult
                 typeId={typeId}
-                draft={{ title, keyMessage, classification: params as ClassificationParams, deadline: new Date(`${deadline}T12:00:00`).toISOString() }}
+                draft={{
+                  title,
+                  keyMessage,
+                  classification: params as ClassificationParams,
+                  deadline: new Date(`${deadline}T12:00:00`).toISOString(),
+                }}
                 depth={depth.depth}
                 depthReason={depth.reason}
                 extended={depth.extended}

@@ -1,9 +1,4 @@
-import type {
-  CascadeLevel,
-  ClassificationParams,
-  CommunicationTypeId,
-  Confidentiality,
-} from '../types/communication'
+import type { CascadeLevel, ClassificationParams, CommunicationTypeId, Confidentiality } from '../types/communication'
 import type { ChannelId } from '../types/channel'
 import { baseDepthByType, extendableTypes, publicChannels, requiredChannelsByType } from '../data/cascadeMatrix'
 import { levelIndex } from '../data/levels'
@@ -43,7 +38,8 @@ export function determineCascadeDepth(
     return {
       depth: base,
       extended: false,
-      reason: 'Базовая глубина для типа. Расширится до У.06, если сообщение затрагивает всю компанию и требует действий или срочное',
+      reason:
+        'Базовая глубина для типа. Расширится до У.06, если сообщение затрагивает всю компанию и требует действий или срочное',
     }
   }
 
@@ -76,12 +72,12 @@ export function determineRequiredChannels(
 
 export function getLevelLabel(level: CascadeLevel): string {
   const labels: Record<CascadeLevel, string> = {
-    'У01': 'Генеральный директор',
-    'У02': 'Директора дирекций и дивизионов',
-    'У03': 'Управляющие и директора служб',
-    'У04': 'Руководители отделов',
-    'У05': 'Ведущие менеджеры, старшие специалисты',
-    'У06': 'Линейные сотрудники',
+    У01: 'Генеральный директор',
+    У02: 'Директора дирекций и дивизионов',
+    У03: 'Управляющие и директора служб',
+    У04: 'Руководители отделов',
+    У05: 'Ведущие менеджеры, старшие специалисты',
+    У06: 'Линейные сотрудники',
   }
   return labels[level]
 }

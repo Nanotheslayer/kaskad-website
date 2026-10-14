@@ -27,7 +27,8 @@ export function getPath(nodeId: string): OrgNode[] {
 }
 
 /** Сколько человек в узле: для команды — численность, для руководителя — 1 */
-export const ownHeadcount = (n: OrgNode) => (n.kind === 'team' ? n.headcount ?? 0 : n.kind === 'unit' || n.name ? 1 : 0)
+export const ownHeadcount = (n: OrgNode) =>
+  n.kind === 'team' ? (n.headcount ?? 0) : n.kind === 'unit' || n.name ? 1 : 0
 
 export interface LevelReach {
   level: CascadeLevel
@@ -37,9 +38,7 @@ export interface LevelReach {
 
 /** Охват каскада по уровням в поддереве узла */
 export function reachByLevel(rootId: string): LevelReach[] {
-  const acc = new Map<CascadeLevel, LevelReach>(
-    LEVEL_ORDER.map((l) => [l, { level: l, people: 0, units: 0 }]),
-  )
+  const acc = new Map<CascadeLevel, LevelReach>(LEVEL_ORDER.map((l) => [l, { level: l, people: 0, units: 0 }]))
   for (const id of getDescendantIds(rootId)) {
     const node = orgById.get(id)
     if (!node) continue

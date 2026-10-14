@@ -11,7 +11,9 @@ export default function PageHead() {
   return (
     <div className="mb-6">
       <nav aria-label="Хлебные крошки" className="mb-3 flex flex-wrap items-center gap-1.5 text-[13px] text-ink-muted">
-        <Link to="/" className="text-ink hover:underline">Главная страница</Link>
+        <Link to="/" className="text-ink hover:underline">
+          Главная страница
+        </Link>
         <ChevronRight size={13} />
         <span className={pathname === '/' ? 'text-ink-muted' : 'text-ink'}>Каскадирование</span>
         {pathname !== '/' && (
@@ -22,7 +24,9 @@ export default function PageHead() {
         )}
       </nav>
       <div className="flex items-start gap-3 @xl:gap-4">
-        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl @xl:h-12 @xl:w-12 ${tint.bg} ${tint.fg}`}>
+        <div
+          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl @xl:h-12 @xl:w-12 ${tint.bg} ${tint.fg}`}
+        >
           <Icon size={24} />
         </div>
         <div>

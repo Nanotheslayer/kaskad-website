@@ -102,10 +102,18 @@ export default function AlgorithmPage() {
       {/* Три фазы */}
       <div className="grid grid-cols-1 gap-4 @4xl:grid-cols-3">
         {phases.map((p, i) => (
-          <motion.div key={p.n} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}>
+          <motion.div
+            key={p.n}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.07 }}
+          >
             <Card className="h-full" style={{ borderTop: `4px solid ${p.color}` }}>
               <div className="mb-3 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl font-display text-lg font-bold text-white" style={{ backgroundColor: p.color }}>
+                <div
+                  className="flex h-10 w-10 items-center justify-center rounded-xl font-display text-lg font-bold text-white"
+                  style={{ backgroundColor: p.color }}
+                >
                   {p.n}
                 </div>
                 <div>
@@ -137,10 +145,15 @@ export default function AlgorithmPage() {
           {questions.map((q) => (
             <div key={q.n} className="rounded-2xl bg-white p-4 shadow-card">
               <div className="mb-2 flex items-center gap-2">
-                <span className="flex h-7 w-7 items-center justify-center rounded-full text-sm font-bold text-white" style={{ backgroundColor: q.color }}>
+                <span
+                  className="flex h-7 w-7 items-center justify-center rounded-full text-sm font-bold text-white"
+                  style={{ backgroundColor: q.color }}
+                >
                   {q.n}
                 </span>
-                <span className="text-xs font-medium uppercase tracking-wide" style={{ color: q.color }}>{q.badge}</span>
+                <span className="text-xs font-medium uppercase tracking-wide" style={{ color: q.color }}>
+                  {q.badge}
+                </span>
               </div>
               <div className="text-[15px] font-medium leading-snug text-ink">{q.q}</div>
               <div className="mt-2 text-xs text-ink-muted">{q.hint}</div>
@@ -160,14 +173,28 @@ export default function AlgorithmPage() {
             const isOpen = open === i
             return (
               <div key={p.title} className="overflow-hidden rounded-2xl bg-white shadow-card">
-                <button onClick={() => setOpen(isOpen ? null : i)} className="flex w-full items-center gap-3 px-4 py-3.5 text-left" aria-expanded={isOpen}>
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-tint-sun font-display text-sm font-bold text-accent-sun">{i + 1}</span>
+                <button
+                  onClick={() => setOpen(isOpen ? null : i)}
+                  className="flex w-full items-center gap-3 px-4 py-3.5 text-left"
+                  aria-expanded={isOpen}
+                >
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-tint-sun font-display text-sm font-bold text-accent-sun">
+                    {i + 1}
+                  </span>
                   <span className="flex-1 font-medium text-ink">{p.title}</span>
-                  <ChevronDown size={18} className={clsx('text-gray-400 transition-transform', isOpen && 'rotate-180')} />
+                  <ChevronDown
+                    size={18}
+                    className={clsx('text-gray-400 transition-transform', isOpen && 'rotate-180')}
+                  />
                 </button>
                 <AnimatePresence initial={false}>
                   {isOpen && (
-                    <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} className="overflow-hidden">
+                    <motion.div
+                      initial={{ height: 0 }}
+                      animate={{ height: 'auto' }}
+                      exit={{ height: 0 }}
+                      className="overflow-hidden"
+                    >
                       <p className="px-4 pb-4 pl-16 text-sm leading-relaxed text-ink-soft">{p.text}</p>
                     </motion.div>
                   )}
@@ -181,7 +208,8 @@ export default function AlgorithmPage() {
       <Card className="flex items-start gap-3 bg-tint-mint/60">
         <Compass size={20} className="mt-0.5 shrink-0 text-accent-mint" />
         <p className="text-sm text-ink-soft">
-          Если руководитель не может ответить на вопрос «что это значит для нас» — ему самому нужна дополнительная информация от вышестоящего уровня. Запросить её — ответственность, а не слабость.
+          Если руководитель не может ответить на вопрос «что это значит для нас» — ему самому нужна дополнительная
+          информация от вышестоящего уровня. Запросить её — ответственность, а не слабость.
         </p>
       </Card>
     </div>

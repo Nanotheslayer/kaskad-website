@@ -16,7 +16,9 @@ export default function ChannelList({ required, extra = [], onToggleExtra }: Pro
   const groups = channelCategories
     .map((cat) => ({
       cat,
-      items: channels.filter((c) => c.category === cat.id && (required.includes(c.id) || extra.includes(c.id) || onToggleExtra)),
+      items: channels.filter(
+        (c) => c.category === cat.id && (required.includes(c.id) || extra.includes(c.id) || onToggleExtra),
+      ),
     }))
     .filter((g) => g.items.length > 0)
 
@@ -44,7 +46,12 @@ export default function ChannelList({ required, extra = [], onToggleExtra }: Pro
               const base = 'inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium'
               if (isRequired) {
                 return (
-                  <span key={ch.id} className={clsx(base)} style={{ backgroundColor: cat.color + '22', color: cat.color }} title="Обязательный канал">
+                  <span
+                    key={ch.id}
+                    className={clsx(base)}
+                    style={{ backgroundColor: cat.color + '22', color: cat.color }}
+                    title="Обязательный канал"
+                  >
                     {content}
                   </span>
                 )
@@ -55,7 +62,13 @@ export default function ChannelList({ required, extra = [], onToggleExtra }: Pro
                     key={ch.id}
                     type="button"
                     onClick={() => onToggleExtra(ch.id)}
-                    className={clsx(base, 'border transition-colors', isExtra ? 'border-transparent' : 'border-dashed border-gray-300 text-ink-muted hover:border-gray-400 hover:text-ink')}
+                    className={clsx(
+                      base,
+                      'border transition-colors',
+                      isExtra
+                        ? 'border-transparent'
+                        : 'border-dashed border-gray-300 text-ink-muted hover:border-gray-400 hover:text-ink',
+                    )}
                     style={isExtra ? { backgroundColor: cat.color + '22', color: cat.color } : undefined}
                     title={isExtra ? 'Убрать дополнительный канал' : 'Добавить дополнительный канал'}
                   >
@@ -64,7 +77,12 @@ export default function ChannelList({ required, extra = [], onToggleExtra }: Pro
                 )
               }
               return (
-                <span key={ch.id} className={clsx(base, 'border border-dashed')} style={{ borderColor: cat.color, color: cat.color }} title="Дополнительный канал">
+                <span
+                  key={ch.id}
+                  className={clsx(base, 'border border-dashed')}
+                  style={{ borderColor: cat.color, color: cat.color }}
+                  title="Дополнительный канал"
+                >
                   {content}
                 </span>
               )

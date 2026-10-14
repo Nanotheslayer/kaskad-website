@@ -1,6 +1,17 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, BadgeCheck, CalendarClock, CheckCheck, FileSignature, GalleryHorizontal, Radio, Send, Siren, TrendingUp } from 'lucide-react'
+import {
+  ArrowRight,
+  BadgeCheck,
+  CalendarClock,
+  CheckCheck,
+  FileSignature,
+  GalleryHorizontal,
+  Radio,
+  Send,
+  Siren,
+  TrendingUp,
+} from 'lucide-react'
 import { useAllCommunications, useCommunicationsStore } from '../store/communicationsStore'
 import { communicationTypes, typeById } from '../data/communicationTypes'
 import { surveyResults, surveyTargets } from '../data/surveyResults'
@@ -16,19 +27,27 @@ function HeroBanner() {
   return (
     <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-yellow-light via-[#fff7dd] to-tint-mint shadow-card">
       {/* Холмы — фон по всей ширине, масштабируются вместе с баннером */}
-      <svg className="pointer-events-none absolute inset-x-0 bottom-0 h-16 w-full @3xl:h-24" viewBox="0 0 600 100" preserveAspectRatio="none" aria-hidden="true">
+      <svg
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-16 w-full @3xl:h-24"
+        viewBox="0 0 600 100"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
         <path d="M0 70 Q 150 20 300 55 T 600 35 V100 H0Z" fill="#9ccf6a" opacity="0.55" />
         <path d="M0 88 Q 180 50 340 80 T 600 62 V100 H0Z" fill="#6bb54a" opacity="0.7" />
       </svg>
 
       <div className="relative grid grid-cols-1 items-center gap-4 p-6 pb-20 @xl:p-8 @xl:pb-24 @2xl:grid-cols-[minmax(0,1fr)_minmax(150px,30%)] @2xl:pb-10 @4xl:grid-cols-[minmax(0,1fr)_minmax(220px,38%)] @5xl:px-10">
         <div className="max-w-xl">
-          <div className="mb-3 inline-flex rounded-full bg-white/80 px-3 py-1 text-xs font-medium text-ink-soft">Положение о каскадировании</div>
+          <div className="mb-3 inline-flex rounded-full bg-white/80 px-3 py-1 text-xs font-medium text-ink-soft">
+            Положение о каскадировании
+          </div>
           <h2 className="font-display text-2xl font-bold leading-tight text-ink @xl:text-3xl @6xl:text-4xl">
             Переводи, <span className="text-brand-red">а не пересылай</span>
           </h2>
           <p className="mt-3 text-sm text-ink-soft @6xl:text-base">
-            Информация идёт от генерального директора к каждому сотруднику. На каждом уровне руководитель объясняет, что она значит для его команды.
+            Информация идёт от генерального директора к каждому сотруднику. На каждом уровне руководитель объясняет, что
+            она значит для его команды.
           </p>
           <div className="mt-5 flex flex-wrap gap-3">
             <Link to="/classify">
@@ -43,7 +62,11 @@ function HeroBanner() {
         </div>
 
         {/* Иллюстрация в собственной колонке: не наезжает на текст и не растягивается */}
-        <svg className="hidden w-full max-w-[340px] justify-self-end @2xl:block" viewBox="0 0 300 190" aria-hidden="true">
+        <svg
+          className="hidden w-full max-w-[340px] justify-self-end @2xl:block"
+          viewBox="0 0 300 190"
+          aria-hidden="true"
+        >
           <circle cx="232" cy="58" r="58" fill="#ffcb05" opacity="0.25" />
           <circle cx="232" cy="58" r="42" fill="#ffcb05" />
           <rect x="20" y="22" width="190" height="26" rx="13" fill="#ed1b24" />
@@ -94,17 +117,20 @@ export default function DashboardPage() {
       .sort((a, b) => b.count - a.count)
   }, [communications])
 
-  const lowest = useMemo(
-    () => [...surveyResults].sort((a, b) => a.awareness - b.awareness).slice(0, 4),
-    [],
-  )
+  const lowest = useMemo(() => [...surveyResults].sort((a, b) => a.awareness - b.awareness).slice(0, 4), [])
 
   const tiles = [
     { label: 'За 30 дней', value: stats.recent, icon: GalleryHorizontal, bg: 'bg-tint-sky', fg: 'text-accent-sky' },
     { label: 'Идёт каскад', value: stats.active, icon: Radio, bg: 'bg-tint-peach', fg: 'text-accent-peach' },
     { label: 'Запланировано', value: stats.planned, icon: CalendarClock, bg: 'bg-tint-lilac', fg: 'text-accent-lilac' },
     { label: 'Кризисных сейчас', value: stats.crisis, icon: Siren, bg: 'bg-tint-rose', fg: 'text-accent-rose' },
-    { label: 'Информи\u00adрованность', value: `${stats.avg}%`, icon: TrendingUp, bg: 'bg-tint-mint', fg: 'text-accent-mint' },
+    {
+      label: 'Информи\u00adрованность',
+      value: `${stats.avg}%`,
+      icon: TrendingUp,
+      bg: 'bg-tint-mint',
+      fg: 'text-accent-mint',
+    },
   ]
 
   return (
@@ -115,13 +141,20 @@ export default function DashboardPage() {
           иконка встаёт сбоку от цифры, только если сама плашка достаточно широкая */}
       <div className="grid grid-cols-2 gap-3 @2xl:grid-cols-5 @4xl:gap-4">
         {tiles.map((t, i) => (
-          <Card key={t.label} className={`@container !p-4 ${i === tiles.length - 1 ? 'col-span-2 @2xl:col-span-1' : ''}`}>
+          <Card
+            key={t.label}
+            className={`!p-4 @container ${i === tiles.length - 1 ? 'col-span-2 @2xl:col-span-1' : ''}`}
+          >
             <div className="flex flex-col gap-2.5 @[12rem]:flex-row @[12rem]:items-center @[12rem]:gap-3">
-              <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl @[12rem]:h-11 @[12rem]:w-11 ${t.bg} ${t.fg}`}>
+              <div
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl @[12rem]:h-11 @[12rem]:w-11 ${t.bg} ${t.fg}`}
+              >
                 <t.icon size={20} />
               </div>
               <div className="min-w-0">
-                <div className="font-display text-xl font-semibold leading-none text-ink @[12rem]:text-2xl">{t.value}</div>
+                <div className="font-display text-xl font-semibold leading-none text-ink @[12rem]:text-2xl">
+                  {t.value}
+                </div>
                 <div className="mt-1 text-xs leading-tight text-ink-muted [overflow-wrap:anywhere]">{t.label}</div>
               </div>
             </div>
@@ -135,21 +168,28 @@ export default function DashboardPage() {
           <div className="flex flex-wrap items-center justify-between gap-2 px-5 pb-3 pt-5">
             <div>
               <h2 className="font-display text-lg font-semibold text-ink">Донести команде</h2>
-              <p className="text-xs text-ink-muted">Ближайшие сроки доведения. Подтвердите, когда информация доведена</p>
+              <p className="text-xs text-ink-muted">
+                Ближайшие сроки доведения. Подтвердите, когда информация доведена
+              </p>
             </div>
             <Link to="/timeline" className="flex items-center gap-1 text-sm font-medium text-brand-red hover:underline">
               Таймлайн <ArrowRight size={14} />
             </Link>
           </div>
           <div className="divide-y divide-gray-100">
-            {toDeliver.length === 0 && <div className="px-5 py-10 text-center text-sm text-ink-muted">Всё доведено — отличная работа!</div>}
+            {toDeliver.length === 0 && (
+              <div className="px-5 py-10 text-center text-sm text-ink-muted">Всё доведено — отличная работа!</div>
+            )}
             {toDeliver.map((c) => {
               const t = typeById(c.typeId)
               const Icon = t ? getIcon(t.icon) : null
               const overdue = new Date(c.deadline).getTime() < Date.now()
               return (
-                <div key={c.id} className="@container flex items-center gap-3 px-5 py-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-white" style={{ backgroundColor: t?.color }}>
+                <div key={c.id} className="flex items-center gap-3 px-5 py-3 @container">
+                  <div
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-white"
+                    style={{ backgroundColor: t?.color }}
+                  >
                     {Icon && <Icon size={18} />}
                   </div>
                   <div className="min-w-0 flex-1">
@@ -159,7 +199,9 @@ export default function DashboardPage() {
                       <span>·</span>
                       <span>до {levelById(c.cascadeDepth).short}</span>
                       <span>·</span>
-                      <span className={overdue ? 'font-medium text-brand-red' : ''}>срок {fmt(c.deadline, 'd MMM')}</span>
+                      <span className={overdue ? 'font-medium text-brand-red' : ''}>
+                        срок {fmt(c.deadline, 'd MMM')}
+                      </span>
                     </div>
                   </div>
                   <Button variant="secondary" size="sm" onClick={() => updateStatus(c.id, 'completed')}>
@@ -199,7 +241,10 @@ export default function DashboardPage() {
                     <span className="font-medium tabular-nums text-ink">{t.count}</span>
                   </div>
                   <div className="h-1.5 overflow-hidden rounded-full bg-gray-100">
-                    <div className="h-full rounded-full" style={{ width: `${(t.count / t.max) * 100}%`, backgroundColor: t.color }} />
+                    <div
+                      className="h-full rounded-full"
+                      style={{ width: `${(t.count / t.max) * 100}%`, backgroundColor: t.color }}
+                    />
                   </div>
                 </div>
               ))}

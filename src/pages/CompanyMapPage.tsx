@@ -9,7 +9,10 @@ import { fmt } from '../utils/format'
 import Card from '../components/common/Card'
 import Segmented from '../components/ui/Segmented'
 
-const metricOptions = (Object.keys(surveyTargets) as MetricId[]).map((id) => ({ value: id, label: surveyTargets[id].label }))
+const metricOptions = (Object.keys(surveyTargets) as MetricId[]).map((id) => ({
+  value: id,
+  label: surveyTargets[id].label,
+}))
 
 const MONTHS = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек']
 /** Ритм опросов — п. 8.2 и 8.4 Положения */
@@ -22,10 +25,7 @@ export default function CompanyMapPage() {
   const target = surveyTargets[metric].target
   const currentMonth = new Date().getMonth()
 
-  const sorted = useMemo(
-    () => [...surveyResults].sort((a, b) => a[metric] - b[metric]),
-    [metric],
-  )
+  const sorted = useMemo(() => [...surveyResults].sort((a, b) => a[metric] - b[metric]), [metric])
   const selectedSurvey = surveyResults.find((s) => s.divisionId === selectedId)!
   const selectedDivision = divisions.find((d) => d.id === selectedId)!
   const avg = Math.round(surveyResults.reduce((s, r) => s + r[metric], 0) / surveyResults.length)
@@ -59,7 +59,7 @@ export default function CompanyMapPage() {
                   whileHover={{ y: -2 }}
                   className={clsx(
                     'relative flex h-32 flex-col justify-between overflow-hidden rounded-2xl p-4 text-left shadow-card transition-shadow',
-                    selected ? 'ring-2 ring-brand-red shadow-lift' : 'hover:shadow-lift',
+                    selected ? 'shadow-lift ring-2 ring-brand-red' : 'hover:shadow-lift',
                   )}
                   style={{ backgroundColor: color + '1c' }}
                 >
@@ -108,16 +108,26 @@ export default function CompanyMapPage() {
                   <span className={clsx('font-medium', i === currentMonth ? 'text-ink' : 'text-ink-soft')}>{m}</span>
                   <div className="flex gap-1">
                     <span className="h-2 w-2 rounded-full bg-[#3b9ae8]" title="Пульс-опрос" />
-                    {engagementMonths.includes(i) && <span className="h-2 w-2 rounded-full bg-[#e255a1]" title="Опрос вовлечённости" />}
-                    {interactionMonths.includes(i) && <span className="h-2 w-2 rounded-full bg-[#f5a300]" title="Опрос взаимодействия" />}
+                    {engagementMonths.includes(i) && (
+                      <span className="h-2 w-2 rounded-full bg-[#e255a1]" title="Опрос вовлечённости" />
+                    )}
+                    {interactionMonths.includes(i) && (
+                      <span className="h-2 w-2 rounded-full bg-[#f5a300]" title="Опрос взаимодействия" />
+                    )}
                   </div>
                 </div>
               ))}
             </div>
             <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-ink-soft">
-              <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-[#3b9ae8]" /> Пульс-опрос — ежемесячно, 2–3 вопроса</span>
-              <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-[#e255a1]" /> Вовлечённость — апрель и октябрь, 3 недели</span>
-              <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-[#f5a300]" /> Взаимодействие — июнь и декабрь</span>
+              <span className="flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full bg-[#3b9ae8]" /> Пульс-опрос — ежемесячно, 2–3 вопроса
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full bg-[#e255a1]" /> Вовлечённость — апрель и октябрь, 3 недели
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full bg-[#f5a300]" /> Взаимодействие — июнь и декабрь
+              </span>
             </div>
           </Card>
         </div>
@@ -129,7 +139,11 @@ export default function CompanyMapPage() {
               <h3 className="font-display text-base font-semibold text-ink">{selectedDivision.name}</h3>
             </div>
             <div className="mb-4 text-xs text-ink-muted">
-              {selectedDivision.kind === 'directorate' ? 'Дирекция' : selectedDivision.kind === 'division' ? 'Дивизион' : 'Служба'}
+              {selectedDivision.kind === 'directorate'
+                ? 'Дирекция'
+                : selectedDivision.kind === 'division'
+                  ? 'Дивизион'
+                  : 'Служба'}
             </div>
 
             <div className="space-y-3">
@@ -140,7 +154,9 @@ export default function CompanyMapPage() {
                 return (
                   <div key={id}>
                     <div className="mb-1 flex flex-wrap items-baseline justify-between gap-x-2 text-sm">
-                      <span className={clsx(id === metric ? 'font-medium text-ink' : 'text-ink-soft')}>{surveyTargets[id].label}</span>
+                      <span className={clsx(id === metric ? 'font-medium text-ink' : 'text-ink-soft')}>
+                        {surveyTargets[id].label}
+                      </span>
                       <span className="font-medium tabular-nums" style={{ color }}>
                         {value}% <span className="text-xs font-normal text-ink-muted">/ цель {t}%</span>
                       </span>
@@ -181,15 +197,34 @@ export default function CompanyMapPage() {
           </Card>
 
           <Card>
-            <h3 className="mb-3 font-display text-base font-semibold text-ink">Рейтинг: {surveyTargets[metric].label.toLowerCase()}</h3>
+            <h3 className="mb-3 font-display text-base font-semibold text-ink">
+              Рейтинг: {surveyTargets[metric].label.toLowerCase()}
+            </h3>
             <div className="space-y-2">
               {sorted.map((s) => (
-                <button key={s.divisionId} onClick={() => setSelectedId(s.divisionId)} className="flex w-full items-center justify-between gap-2 rounded-lg px-1 py-0.5 hover:bg-gray-50">
-                  <span className={clsx('w-12 text-left text-xs', s.divisionId === selectedId ? 'font-bold text-ink' : 'text-ink-soft')}>{s.divisionName}</span>
+                <button
+                  key={s.divisionId}
+                  onClick={() => setSelectedId(s.divisionId)}
+                  className="flex w-full items-center justify-between gap-2 rounded-lg px-1 py-0.5 hover:bg-gray-50"
+                >
+                  <span
+                    className={clsx(
+                      'w-12 text-left text-xs',
+                      s.divisionId === selectedId ? 'font-bold text-ink' : 'text-ink-soft',
+                    )}
+                  >
+                    {s.divisionName}
+                  </span>
                   <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-gray-100">
-                    <div className="h-full rounded-full" style={{ width: `${s[metric]}%`, backgroundColor: getScoreColor(s[metric], target) }} />
+                    <div
+                      className="h-full rounded-full"
+                      style={{ width: `${s[metric]}%`, backgroundColor: getScoreColor(s[metric], target) }}
+                    />
                   </div>
-                  <span className="w-9 text-right text-xs font-medium tabular-nums" style={{ color: getScoreColor(s[metric], target) }}>
+                  <span
+                    className="w-9 text-right text-xs font-medium tabular-nums"
+                    style={{ color: getScoreColor(s[metric], target) }}
+                  >
                     {s[metric]}%
                   </span>
                 </button>

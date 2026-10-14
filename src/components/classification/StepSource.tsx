@@ -15,7 +15,14 @@ interface Props {
 
 const directorates = ['Генеральный директор', 'Администрация', ...divisions.map((d) => d.name)]
 
-export default function StepSource({ sourceId, onSource, initiatorName, onInitiatorName, directorate, onDirectorate }: Props) {
+export default function StepSource({
+  sourceId,
+  onSource,
+  initiatorName,
+  onInitiatorName,
+  directorate,
+  onDirectorate,
+}: Props) {
   return (
     <div className="space-y-6">
       <div>
@@ -24,9 +31,11 @@ export default function StepSource({ sourceId, onSource, initiatorName, onInitia
           Информация попадает в систему только через площадки смыслообразования (п. 5.2 Положения). Откуда она пришла?
         </p>
 
-        <div className="mb-5 grid grid-cols-1 max-w-2xl gap-3 @xl:grid-cols-2">
+        <div className="mb-5 grid max-w-2xl grid-cols-1 gap-3 @xl:grid-cols-2">
           <div>
-            <label className="mb-1 block text-sm font-medium text-ink" htmlFor="initiator">ФИО инициатора</label>
+            <label className="mb-1 block text-sm font-medium text-ink" htmlFor="initiator">
+              ФИО инициатора
+            </label>
             <input
               id="initiator"
               value={initiatorName}
@@ -36,7 +45,9 @@ export default function StepSource({ sourceId, onSource, initiatorName, onInitia
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-ink" htmlFor="directorate">Дирекция</label>
+            <label className="mb-1 block text-sm font-medium text-ink" htmlFor="directorate">
+              Дирекция
+            </label>
             <select
               id="directorate"
               value={directorate}
@@ -60,10 +71,17 @@ export default function StepSource({ sourceId, onSource, initiatorName, onInitia
                 onClick={() => onSource(s.id)}
                 className={clsx(
                   'flex items-start gap-3 rounded-2xl border-2 p-4 text-left transition-all',
-                  selected ? 'border-brand-red bg-brand-red-light/50 shadow-sm' : 'border-transparent bg-white shadow-card hover:-translate-y-0.5 hover:shadow-lift',
+                  selected
+                    ? 'border-brand-red bg-brand-red-light/50 shadow-sm'
+                    : 'border-transparent bg-white shadow-card hover:-translate-y-0.5 hover:shadow-lift',
                 )}
               >
-                <div className={clsx('flex h-10 w-10 shrink-0 items-center justify-center rounded-xl', selected ? 'bg-brand-red text-white' : 'bg-tint-sun text-accent-sun')}>
+                <div
+                  className={clsx(
+                    'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl',
+                    selected ? 'bg-brand-red text-white' : 'bg-tint-sun text-accent-sun',
+                  )}
+                >
                   {Icon && <Icon size={20} />}
                 </div>
                 <div className="min-w-0">

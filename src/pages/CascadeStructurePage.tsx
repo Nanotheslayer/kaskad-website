@@ -108,7 +108,13 @@ export default function CascadeStructurePage() {
   const dpTotal = orgById.get('dp')!.headcount ?? 0
   const simPeople = depthInfo ? peopleReached('dp', depthInfo.depth) : null
   const simLeaders = depthInfo
-    ? orgNodes.filter((n) => n.kind === 'unit' && n.level !== 'У01' && levelIndex(n.level) <= levelIndex(depthInfo.depth) && getPath(n.id).some((p) => p.id === 'dp')).length
+    ? orgNodes.filter(
+        (n) =>
+          n.kind === 'unit' &&
+          n.level !== 'У01' &&
+          levelIndex(n.level) <= levelIndex(depthInfo.depth) &&
+          getPath(n.id).some((p) => p.id === 'dp'),
+      ).length
     : null
 
   return (
@@ -122,8 +128,15 @@ export default function CascadeStructurePage() {
             </div>
             <h2 className="font-display text-xl font-semibold text-ink">Дирекция по персоналу</h2>
             <p className="mt-1 text-sm text-ink-soft">
-              {dpTotal} сотрудников, {orgNodes.filter((n) => n.kind === 'unit' && n.id !== 'gd' && getPath(n.id).some((p) => p.id === 'dp') && n.id !== 'dp').length} подразделений
-              и руководителей. Названия подразделений — по структуре в «Петлокале»; ФИО руководителей и численность условные.
+              {dpTotal} сотрудников,{' '}
+              {
+                orgNodes.filter(
+                  (n) =>
+                    n.kind === 'unit' && n.id !== 'gd' && getPath(n.id).some((p) => p.id === 'dp') && n.id !== 'dp',
+                ).length
+              }{' '}
+              подразделений и руководителей. Названия подразделений — по структуре в «Петлокале»; ФИО руководителей и
+              численность условные.
             </p>
           </div>
         </div>
@@ -135,7 +148,9 @@ export default function CascadeStructurePage() {
               <div key={l.id} className="rounded-2xl bg-white/80 p-3 backdrop-blur">
                 <div className="flex items-center justify-between">
                   <LevelPill level={l.id} />
-                  {row.people > 0 && <span className="text-xs font-medium tabular-nums text-ink-soft">{row.people} чел.</span>}
+                  {row.people > 0 && (
+                    <span className="text-xs font-medium tabular-nums text-ink-soft">{row.people} чел.</span>
+                  )}
                 </div>
                 <div className="mt-2 text-[13px] font-medium leading-tight text-ink">{l.title}</div>
                 <div className="mt-1 text-[11px] leading-snug text-ink-muted">{l.entryPoint}</div>
@@ -149,7 +164,10 @@ export default function CascadeStructurePage() {
       <Card>
         <div className="flex flex-wrap items-end gap-4">
           <div className="w-full min-w-0 @2xl:w-auto @2xl:min-w-64 @2xl:flex-1">
-            <label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-ink-muted" htmlFor="sim-type">
+            <label
+              className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-ink-muted"
+              htmlFor="sim-type"
+            >
               Проиграть каскад для типа коммуникации
             </label>
             <select
@@ -198,8 +216,15 @@ export default function CascadeStructurePage() {
         </div>
 
         {depthInfo && (
-          <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="mt-4 grid grid-cols-1 gap-3 @xl:grid-cols-2 @5xl:grid-cols-4">
-            <div className="rounded-2xl p-3" style={{ backgroundColor: typeById(sim.typeId as CommunicationTypeId)!.color + '1c' }}>
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-4 grid grid-cols-1 gap-3 @xl:grid-cols-2 @5xl:grid-cols-4"
+          >
+            <div
+              className="rounded-2xl p-3"
+              style={{ backgroundColor: typeById(sim.typeId as CommunicationTypeId)!.color + '1c' }}
+            >
               <div className="text-xs text-ink-muted">Нижний уровень</div>
               <div className="mt-1 flex items-center gap-2">
                 <LevelPill level={depthInfo.depth} />
@@ -257,7 +282,7 @@ export default function CascadeStructurePage() {
         </Card>
 
         {/* Детали */}
-        <div className="order-first grid grid-cols-1 gap-4 @2xl:grid-cols-2 @4xl:order-none @4xl:sticky @4xl:top-2 @4xl:grid-cols-1">
+        <div className="order-first grid grid-cols-1 gap-4 @2xl:grid-cols-2 @4xl:sticky @4xl:top-2 @4xl:order-none @4xl:grid-cols-1">
           <NodeDetails node={selected} path={path} onSelect={select} />
         </div>
       </div>
@@ -307,15 +332,28 @@ function TreeNode({ node, depth, expanded, selectedId, pathIds, activeIdx, playi
           onClick={() => hasChildren && onToggle(node.id)}
           disabled={!hasChildren}
           aria-label={isOpen ? 'Свернуть' : 'Развернуть'}
-          className={clsx('mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md', hasChildren ? 'text-ink-soft hover:bg-gray-200' : 'text-transparent')}
+          className={clsx(
+            'mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md',
+            hasChildren ? 'text-ink-soft hover:bg-gray-200' : 'text-transparent',
+          )}
         >
           <ChevronRight size={16} className={clsx('transition-transform', isOpen && 'rotate-90')} />
         </button>
 
-        <button type="button" onClick={() => !isPlaceholder && onSelect(node.id)} className="flex min-w-0 flex-1 flex-wrap items-start gap-x-2.5 gap-y-1 text-left">
+        <button
+          type="button"
+          onClick={() => !isPlaceholder && onSelect(node.id)}
+          className="flex min-w-0 flex-1 flex-wrap items-start gap-x-2.5 gap-y-1 text-left"
+        >
           <LevelPill level={node.level} muted={dimmed} className="mt-0.5" />
           <div className="min-w-[9rem] flex-1">
-            <div className={clsx('text-[14px] leading-snug', isTeam ? 'text-ink-soft' : 'font-medium text-ink', isPlaceholder && 'italic text-ink-muted')}>
+            <div
+              className={clsx(
+                'text-[14px] leading-snug',
+                isTeam ? 'text-ink-soft' : 'font-medium text-ink',
+                isPlaceholder && 'italic text-ink-muted',
+              )}
+            >
               {isTeam && <Users size={13} className="mr-1.5 inline -translate-y-px text-ink-muted" />}
               {node.title}
             </div>
@@ -327,7 +365,10 @@ function TreeNode({ node, depth, expanded, selectedId, pathIds, activeIdx, playi
           </div>
           <div className="flex shrink-0 items-center gap-2 pt-0.5">
             {reached && (
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-accent-mint text-white" title="Информация доведена">
+              <span
+                className="flex h-5 w-5 items-center justify-center rounded-full bg-accent-mint text-white"
+                title="Информация доведена"
+              >
                 <Check size={12} />
               </span>
             )}
@@ -388,11 +429,15 @@ function NodeDetails({ node, path, onSelect }: { node: OrgNode; path: OrgNode[];
               {node.position} · <span className="font-medium text-ink">{node.name}</span>
             </div>
           )}
-          {node.note && <p className="mt-2 rounded-xl bg-tint-sky/60 px-3 py-2 text-xs leading-snug text-ink-soft">{node.note}</p>}
+          {node.note && (
+            <p className="mt-2 rounded-xl bg-tint-sky/60 px-3 py-2 text-xs leading-snug text-ink-soft">{node.note}</p>
+          )}
         </div>
 
         <div className="rounded-2xl bg-gray-50 p-3">
-          <div className="text-xs text-ink-muted">{isTeam ? 'Как информация приходит к этой группе' : 'Как информация приходит к руководителю'}</div>
+          <div className="text-xs text-ink-muted">
+            {isTeam ? 'Как информация приходит к этой группе' : 'Как информация приходит к руководителю'}
+          </div>
           <div className="mt-1 text-sm font-medium text-ink">{lvl.entryPoint}</div>
         </div>
       </Card>
@@ -407,7 +452,14 @@ function NodeDetails({ node, path, onSelect }: { node: OrgNode; path: OrgNode[];
                 {!last && <span className="absolute left-[21px] top-7 h-[calc(100%-1.25rem)] w-0.5 bg-gray-200" />}
                 <LevelPill level={p.level} className="relative z-10 mt-0.5" />
                 <button onClick={() => onSelect(p.id)} className="min-w-0 flex-1 text-left">
-                  <div className={clsx('text-[13px] leading-snug', last ? 'font-semibold text-ink' : 'text-ink-soft hover:text-ink')}>{p.title}</div>
+                  <div
+                    className={clsx(
+                      'text-[13px] leading-snug',
+                      last ? 'font-semibold text-ink' : 'text-ink-soft hover:text-ink',
+                    )}
+                  >
+                    {p.title}
+                  </div>
                   {p.name && <div className="text-xs text-ink-muted">{p.name}</div>}
                 </button>
               </li>
@@ -440,11 +492,12 @@ function NodeDetails({ node, path, onSelect }: { node: OrgNode; path: OrgNode[];
             ))}
           </div>
           <p className="mt-3 text-[11px] leading-snug text-ink-muted">
-            Правило: руководители, подчинённые напрямую директору дирекции, — У.03; руководители отделов, направлений и групп внутри центров — У.04; ведущие менеджеры и старшие специалисты — У.05; специалисты — У.06. Если промежуточного руководителя нет, уровень пропускается.
+            Правило: руководители, подчинённые напрямую директору дирекции, — У.03; руководители отделов, направлений и
+            групп внутри центров — У.04; ведущие менеджеры и старшие специалисты — У.05; специалисты — У.06. Если
+            промежуточного руководителя нет, уровень пропускается.
           </p>
         </Card>
       )}
     </>
   )
 }
-

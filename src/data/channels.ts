@@ -17,7 +17,13 @@ export const channels: Channel[] = [
   { id: 'table_tents', name: 'Тейбл-тенты', category: 'print', icon: 'Tent' },
   { id: 'info_boards', name: 'Информационные доски', category: 'print', icon: 'Pin' },
   // Устные и личные
-  { id: 'oral', name: 'Устное доведение', category: 'oral', icon: 'MessagesSquare', hint: 'Оперативки, еженедельные встречи, встречи дирекции' },
+  {
+    id: 'oral',
+    name: 'Устное доведение',
+    category: 'oral',
+    icon: 'MessagesSquare',
+    hint: 'Оперативки, еженедельные встречи, встречи дирекции',
+  },
   { id: 'one_on_one', name: 'Индивидуальные 1:1', category: 'oral', icon: 'UserCheck' },
   // Массовые
   { id: 'conference', name: 'Итоговая конференция', category: 'mass', icon: 'Mic' },

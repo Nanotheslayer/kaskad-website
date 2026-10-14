@@ -20,7 +20,11 @@ export default function Header({ onMenu }: Props) {
   return (
     <header className="shrink-0 px-4 lg:px-8">
       <div className="mx-auto flex h-16 w-full max-w-[1680px] items-center gap-3">
-        <button className="rounded-xl bg-white p-2.5 text-ink-soft shadow-card lg:hidden" onClick={onMenu} aria-label="Открыть меню">
+        <button
+          className="rounded-xl bg-white p-2.5 text-ink-soft shadow-card lg:hidden"
+          onClick={onMenu}
+          aria-label="Открыть меню"
+        >
           <Menu size={20} />
         </button>
 
@@ -40,10 +44,17 @@ export default function Header({ onMenu }: Props) {
         </form>
 
         <div className="ml-auto flex items-center gap-2 sm:gap-3">
-          <Link to="/timeline" className="rounded-xl bg-white p-2.5 text-ink-soft shadow-card sm:hidden" aria-label="Поиск по коммуникациям">
+          <Link
+            to="/timeline"
+            className="rounded-xl bg-white p-2.5 text-ink-soft shadow-card sm:hidden"
+            aria-label="Поиск по коммуникациям"
+          >
             <Search size={18} />
           </Link>
-          <button className="relative rounded-xl bg-white p-2.5 text-ink-soft shadow-card transition-colors hover:text-ink" aria-label="Уведомления">
+          <button
+            className="relative rounded-xl bg-white p-2.5 text-ink-soft shadow-card transition-colors hover:text-ink"
+            aria-label="Уведомления"
+          >
             <Bell size={18} />
             <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-red px-1 text-[10px] font-bold text-white">
               3

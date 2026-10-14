@@ -70,7 +70,13 @@ const stages: Stage[] = [
     color: '#12a6a0',
     clause: 'п. 6',
     details: [
-      ...channelCategories.map((cat) => `${cat.name}: ${channels.filter((c) => c.category === cat.id).map((c) => c.name.toLowerCase()).join(', ')}`),
+      ...channelCategories.map(
+        (cat) =>
+          `${cat.name}: ${channels
+            .filter((c) => c.category === cat.id)
+            .map((c) => c.name.toLowerCase())
+            .join(', ')}`,
+      ),
       'Для кризисных коммуникаций первым источником должен быть руководитель (устное доведение), а не цифровой канал',
     ],
   },
@@ -123,10 +129,16 @@ export default function ModelPage() {
                     <div className="font-medium leading-snug text-ink">{stage.title}</div>
                     <div className="text-sm text-ink-soft">{stage.subtitle}</div>
                   </div>
-                  <span className="hidden rounded-full px-2 py-0.5 text-[11px] font-medium @xl:block" style={{ backgroundColor: stage.color + '1f', color: stage.color }}>
+                  <span
+                    className="hidden rounded-full px-2 py-0.5 text-[11px] font-medium @xl:block"
+                    style={{ backgroundColor: stage.color + '1f', color: stage.color }}
+                  >
                     {stage.clause}
                   </span>
-                  <ChevronRight size={20} className={clsx('shrink-0 text-gray-400 transition-transform', isExpanded && 'rotate-90')} />
+                  <ChevronRight
+                    size={20}
+                    className={clsx('shrink-0 text-gray-400 transition-transform', isExpanded && 'rotate-90')}
+                  />
                 </div>
               </button>
 
@@ -143,7 +155,10 @@ export default function ModelPage() {
                       <ul className="space-y-2">
                         {stage.details.map((d, j) => (
                           <li key={j} className="flex items-start gap-2.5 text-sm text-ink-soft">
-                            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: stage.color }} />
+                            <span
+                              className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full"
+                              style={{ backgroundColor: stage.color }}
+                            />
                             {d}
                           </li>
                         ))}

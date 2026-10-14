@@ -97,12 +97,22 @@ function PassportBody({ comm, onClose }: { comm: Communication; onClose: () => v
 
   return (
     <>
-      <div className="relative shrink-0 px-6 pb-5 pt-6" style={{ background: `linear-gradient(135deg, ${color}26, ${color}08)` }}>
-        <button onClick={onClose} className="absolute right-4 top-4 rounded-lg p-1.5 text-ink-soft hover:bg-white/70" aria-label="Закрыть">
+      <div
+        className="relative shrink-0 px-6 pb-5 pt-6"
+        style={{ background: `linear-gradient(135deg, ${color}26, ${color}08)` }}
+      >
+        <button
+          onClick={onClose}
+          className="absolute right-4 top-4 rounded-lg p-1.5 text-ink-soft hover:bg-white/70"
+          aria-label="Закрыть"
+        >
           <X size={20} />
         </button>
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl text-white" style={{ backgroundColor: color }}>
+          <div
+            className="flex h-11 w-11 items-center justify-center rounded-xl text-white"
+            style={{ backgroundColor: color }}
+          >
             {TypeIcon && <TypeIcon size={22} />}
           </div>
           <div className="text-sm font-medium" style={{ color }}>
@@ -197,15 +207,27 @@ function PassportBody({ comm, onClose }: { comm: Communication; onClose: () => v
             <div className="flex flex-wrap gap-1.5">
               {foundation.map((id) => {
                 const o = foundationOptions.find((x) => x.id === id)!
-                return <Badge key={id} color={o.color}>Фундамент · {o.label}</Badge>
+                return (
+                  <Badge key={id} color={o.color}>
+                    Фундамент · {o.label}
+                  </Badge>
+                )
               })}
               {strategy.map((id) => {
                 const o = strategyOptions.find((x) => x.id === id)!
-                return <Badge key={id} color={o.color}>Стратегия · {o.label}</Badge>
+                return (
+                  <Badge key={id} color={o.color}>
+                    Стратегия · {o.label}
+                  </Badge>
+                )
               })}
               {values.map((id) => {
                 const o = valueOptions.find((x) => x.id === id)!
-                return <Badge key={id} color={o.color}>Ценность · {o.label}</Badge>
+                return (
+                  <Badge key={id} color={o.color}>
+                    Ценность · {o.label}
+                  </Badge>
+                )
               })}
             </div>
           </Section>
@@ -244,4 +266,3 @@ function PassportBody({ comm, onClose }: { comm: Communication; onClose: () => v
     </>
   )
 }
-

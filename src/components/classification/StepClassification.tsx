@@ -41,7 +41,9 @@ function PropertyGroup({ label, description, options, value, onChange }: GroupPr
               style={selected ? { borderColor: color, backgroundColor: color + '14', color } : undefined}
             >
               <div>{opt.label}</div>
-              <div className={clsx('text-[11px] font-normal', selected ? 'opacity-80' : 'text-ink-muted')}>{opt.description}</div>
+              <div className={clsx('text-[11px] font-normal', selected ? 'opacity-80' : 'text-ink-muted')}>
+                {opt.description}
+              </div>
             </button>
           )
         })}
@@ -82,7 +84,9 @@ export default function StepClassification({ typeId, params, onChange }: Props) 
         />
         <PropertyGroup
           label="Тональность"
-          description={type ? `Базовая тональность типа «${type.name}»: ${type.tone.toLowerCase()}` : 'В каком тоне подаём?'}
+          description={
+            type ? `Базовая тональность типа «${type.name}»: ${type.tone.toLowerCase()}` : 'В каком тоне подаём?'
+          }
           options={toneOptions}
           value={params.tone}
           onChange={(v) => onChange('tone', v)}

@@ -30,7 +30,11 @@ export default function Sidebar({ open, onClose }: Props) {
       >
         <div className="flex shrink-0 items-start justify-between gap-2 px-5 pb-4 pt-5">
           <Logo />
-          <button className="rounded-lg p-1.5 text-ink-muted hover:bg-gray-100 lg:hidden" onClick={onClose} aria-label="Закрыть меню">
+          <button
+            className="rounded-lg p-1.5 text-ink-muted hover:bg-gray-100 lg:hidden"
+            onClick={onClose}
+            aria-label="Закрыть меню"
+          >
             <X size={20} />
           </button>
         </div>
@@ -42,7 +46,9 @@ export default function Sidebar({ open, onClose }: Props) {
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gray-100 text-ink-soft">
                 <Bookmark size={18} />
               </div>
-              <span className="flex-1 whitespace-nowrap text-sm font-medium leading-tight text-ink xl:text-[15px]">Быстрый доступ</span>
+              <span className="flex-1 whitespace-nowrap text-sm font-medium leading-tight text-ink xl:text-[15px]">
+                Быстрый доступ
+              </span>
               <Pencil size={15} className="text-ink-muted" />
               <button
                 onClick={() => setQuickOpen((v) => !v)}
