@@ -10,6 +10,8 @@
 
 React 18 · TypeScript (strict) · Vite · Tailwind CSS 4 · Zustand · Framer Motion · date-fns · lucide-react
 
+Портал рассчитан на браузеры, которые поддерживает Tailwind CSS 4: Chrome и Edge 111+, Safari 16.4+, Firefox 128+.
+
 ## Команды
 
 Нужен Node.js 20.19+ или 22.13+ (версия для nvm — в `.nvmrc`).
