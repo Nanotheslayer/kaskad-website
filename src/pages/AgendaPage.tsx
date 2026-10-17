@@ -273,7 +273,7 @@ function PendingCard({ item, now, canConfirm, onConfirm, onOpen }: PendingCardPr
           </Badge>
         </div>
 
-        <h3 className="font-display text-base font-semibold leading-snug text-ink">{comm.title}</h3>
+        <h3 className="font-display text-base leading-snug font-semibold text-ink">{comm.title}</h3>
 
         <div className="rounded-xl p-3" style={{ backgroundColor: alpha(type.color, 0.07) }}>
           <div className="mb-0.5 flex items-center gap-1.5 text-xs font-medium text-ink-muted">

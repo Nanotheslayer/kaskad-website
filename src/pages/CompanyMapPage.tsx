@@ -76,7 +76,7 @@ export default function CompanyMapPage() {
                     <div className="text-[11px] text-ink-muted">{div.employeeCount} чел.</div>
                   </div>
                   <div className="pl-1">
-                    <div className="font-display text-3xl font-semibold leading-none" style={{ color: band.color }}>
+                    <div className="font-display text-3xl leading-none font-semibold" style={{ color: band.color }}>
                       {score}%
                     </div>
                     <div className="mt-1 text-[11px] text-ink-soft">{band.label}</div>
@@ -109,7 +109,7 @@ export default function CompanyMapPage() {
             <div className="grid grid-cols-1 gap-3 @2xl:grid-cols-2">
               {factors.map((f) => (
                 <div key={f.factor} className="rounded-2xl bg-gray-50 p-3">
-                  <div className="text-xs font-medium uppercase tracking-wide text-ink-muted">Фактор «{f.factor}»</div>
+                  <div className="text-xs font-medium tracking-wide text-ink-muted uppercase">Фактор «{f.factor}»</div>
                   <ul className="mt-1.5 space-y-1 text-sm text-ink">
                     {f.questions.map((q) => (
                       <li key={q}>{q}</li>

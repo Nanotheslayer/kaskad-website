@@ -83,14 +83,14 @@ export default function StepPassport({ title, essence, keyMessage, questions, bi
                 >
                   {i + 1}
                 </span>
-                <span className="text-xs font-medium uppercase tracking-wide" style={{ color: q.color }}>
+                <span className="text-xs font-medium tracking-wide uppercase" style={{ color: q.color }}>
                   {q.basis}
                 </span>
               </div>
-              <label className="block text-[13px] font-medium leading-snug text-ink" htmlFor={`q-${q.key}`}>
+              <label className="block text-[13px] leading-snug font-medium text-ink" htmlFor={`q-${q.key}`}>
                 {q.question}
               </label>
-              <div className="mb-2 mt-0.5 text-[11px] leading-snug text-ink-muted">{q.hint}</div>
+              <div className="mt-0.5 mb-2 text-[11px] leading-snug text-ink-muted">{q.hint}</div>
               <textarea
                 id={`q-${q.key}`}
                 rows={3}

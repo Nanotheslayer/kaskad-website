@@ -13,7 +13,7 @@ export default function LevelPill({ level, muted, className }: LevelPillProps) {
   return (
     <span
       className={clsx(
-        'inline-flex h-6 min-w-[2.75rem] shrink-0 items-center justify-center rounded-md px-1.5 text-[11px] font-bold tracking-wide',
+        'inline-flex h-6 min-w-11 shrink-0 items-center justify-center rounded-md px-1.5 text-[11px] font-bold tracking-wide',
         muted ? 'bg-gray-200 text-gray-400' : 'text-white',
         className,
       )}

@@ -40,7 +40,7 @@ export default function Stepper({ steps, currentStep, onStepClick }: StepperProp
               </div>
               <span
                 className={clsx(
-                  'whitespace-nowrap text-sm font-medium',
+                  'text-sm font-medium whitespace-nowrap',
                   isActive ? 'text-ink' : isCompleted ? 'text-ink-soft' : 'text-ink-muted',
                   // на узкой области подписи остаются только у текущего шага
                   !isActive && 'hidden @5xl:inline',
@@ -52,7 +52,7 @@ export default function Stepper({ steps, currentStep, onStepClick }: StepperProp
             {i < steps.length - 1 && (
               <div
                 className={clsx(
-                  'h-0.5 min-w-2 flex-1 rounded @5xl:w-6 @5xl:flex-none',
+                  'h-0.5 min-w-2 flex-1 rounded-sm @5xl:w-6 @5xl:flex-none',
                   i < currentStep ? 'bg-brand-red' : 'bg-gray-200',
                 )}
               />

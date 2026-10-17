@@ -30,7 +30,7 @@ export default function StepType({ selected, onSelect }: StepTypeProps) {
               className={clsx(
                 'flex flex-col gap-2 rounded-2xl border-2 p-4 text-left transition-all',
                 isSelected
-                  ? 'shadow-sm'
+                  ? 'shadow-xs'
                   : 'border-transparent bg-white shadow-card hover:-translate-y-0.5 hover:shadow-lift',
               )}
               style={isSelected ? { borderColor: type.color, backgroundColor: alpha(type.color, 0.07) } : undefined}
@@ -42,7 +42,7 @@ export default function StepType({ selected, onSelect }: StepTypeProps) {
                 >
                   <Icon size={20} />
                 </div>
-                <div className="text-sm font-medium leading-tight text-ink">{type.name}</div>
+                <div className="text-sm leading-tight font-medium text-ink">{type.name}</div>
               </div>
               <div className="text-xs leading-snug text-ink-soft">{type.includes}</div>
               <div className="mt-auto flex flex-wrap items-center gap-1.5 pt-1">

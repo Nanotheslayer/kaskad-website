@@ -58,7 +58,7 @@ export default function StepResult({
           <TypeIcon size={22} />
         </div>
         <div className="min-w-0">
-          <div className="font-medium leading-snug text-ink">{title}</div>
+          <div className="leading-snug font-medium text-ink">{title}</div>
           <div className="mt-1 flex flex-wrap gap-1.5">
             <Badge color={type.color}>{type.name}</Badge>
             <Badge>Тональность: {type.tone.toLowerCase()}</Badge>

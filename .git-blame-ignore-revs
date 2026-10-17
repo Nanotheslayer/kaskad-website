@@ -3,3 +3,6 @@
 
 # chore: Prettier, .gitattributes и строгий tsconfig без изменений логики
 532c5a2f8aa57cc8405308481a29fcb7932652ec
+
+# style: пересортировать классы в порядке Tailwind 4
+97e5333704bb2543177a99952f95c47c6d2bf2f0

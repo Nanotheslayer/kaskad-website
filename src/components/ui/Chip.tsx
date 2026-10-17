@@ -18,7 +18,7 @@ export default function Chip({ active, color, onClick, children, count }: ChipPr
       aria-pressed={active}
       onClick={onClick}
       className={clsx(
-        'inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border px-3 py-1.5 text-sm transition-all',
+        'inline-flex shrink-0 items-center gap-2 rounded-full border px-3 py-1.5 text-sm whitespace-nowrap transition-all',
         active ? 'font-medium text-ink' : 'border-transparent bg-gray-100 text-ink-muted hover:bg-gray-200',
       )}
       style={active ? { backgroundColor: alpha(color, 0.14), borderColor: alpha(color, 0.5) } : undefined}

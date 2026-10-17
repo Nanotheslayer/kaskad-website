@@ -29,7 +29,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
           open ? 'translate-x-0' : '-translate-x-full',
         )}
       >
-        <div className="flex shrink-0 items-start justify-between gap-2 px-5 pb-4 pt-5">
+        <div className="flex shrink-0 items-start justify-between gap-2 px-5 pt-5 pb-4">
           <Logo />
           <button
             type="button"
@@ -48,14 +48,14 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gray-100 text-ink-soft">
                 <Bookmark size={18} />
               </div>
-              <span className="flex-1 whitespace-nowrap text-sm font-medium leading-tight text-ink xl:text-[15px]">
+              <span className="flex-1 text-sm leading-tight font-medium whitespace-nowrap text-ink xl:text-[15px]">
                 Быстрый доступ
               </span>
               <Pencil size={15} className="text-ink-muted" />
               <button
                 type="button"
                 onClick={() => setQuickOpen((v) => !v)}
-                className="rounded p-1 text-ink-soft hover:bg-gray-100"
+                className="rounded-sm p-1 text-ink-soft hover:bg-gray-100"
                 aria-label={quickOpen ? 'Свернуть' : 'Развернуть'}
               >
                 <ChevronUp size={18} className={clsx('transition-transform', !quickOpen && 'rotate-180')} />
@@ -99,7 +99,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
                       className={clsx(
                         'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-all',
                         tintClasses[tint],
-                        isActive && 'shadow-sm ring-2 ring-white',
+                        isActive && 'shadow-xs ring-2 ring-white',
                       )}
                     >
                       <Icon size={18} />

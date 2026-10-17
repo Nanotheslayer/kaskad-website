@@ -69,7 +69,7 @@ export default function StepSource({ sourceId, initiatorName, directorate, onCha
               className={clsx(
                 'flex items-start gap-3 rounded-2xl border-2 p-4 text-left transition-all',
                 selected
-                  ? 'border-brand-red bg-brand-red-light/50 shadow-sm'
+                  ? 'border-brand-red bg-brand-red-light/50 shadow-xs'
                   : 'border-transparent bg-white shadow-card hover:-translate-y-0.5 hover:shadow-lift',
               )}
             >
@@ -82,7 +82,7 @@ export default function StepSource({ sourceId, initiatorName, directorate, onCha
                 <Icon size={20} />
               </div>
               <div className="min-w-0">
-                <div className="text-sm font-medium leading-snug text-ink">{s.name}</div>
+                <div className="text-sm leading-snug font-medium text-ink">{s.name}</div>
                 <div className="mt-0.5 text-xs text-ink-soft">{s.produces}</div>
                 <div className="mt-1 text-[11px] text-ink-muted">{s.frequency}</div>
               </div>

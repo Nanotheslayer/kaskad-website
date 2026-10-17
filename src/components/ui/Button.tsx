@@ -11,7 +11,7 @@ interface StyleProps {
 }
 
 const variantClasses: Record<Variant, string> = {
-  primary: 'bg-brand-red text-white hover:bg-brand-red-dark active:scale-[0.98] shadow-sm',
+  primary: 'bg-brand-red text-white hover:bg-brand-red-dark active:scale-[0.98] shadow-xs',
   yellow: 'bg-brand-yellow text-brand-dark hover:bg-brand-yellow-dark active:scale-[0.98]',
   secondary: 'bg-white text-ink border border-gray-200 hover:bg-gray-50',
   ghost: 'text-ink hover:bg-gray-100',

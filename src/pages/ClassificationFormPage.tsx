@@ -125,7 +125,7 @@ export default function ClassificationFormPage() {
 
         {showAside && (
           <Card className="sticky top-2 hidden @5xl:block">
-            <div className="mb-3 text-xs font-medium uppercase tracking-wide text-ink-muted">Маршрут сейчас</div>
+            <div className="mb-3 text-xs font-medium tracking-wide text-ink-muted uppercase">Маршрут сейчас</div>
             <div className="mb-3 flex items-center gap-2">
               <span className="h-3 w-3 rounded-full" style={{ backgroundColor: type.color }} />
               <span className="text-sm font-medium text-ink">{type.name}</span>

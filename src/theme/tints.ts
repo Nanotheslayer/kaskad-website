@@ -1,4 +1,4 @@
-/** Пастельные пары «фон + акцент» для иконок разделов и плашек (цвета — в tailwind.config.ts) */
+/** Пастельные пары «фон + акцент» для иконок разделов и плашек (цвета — в @theme в src/index.css) */
 export type Tint = 'sun' | 'mint' | 'rose' | 'sky' | 'lilac' | 'peach'
 
 export const tintClasses: Record<Tint, string> = {

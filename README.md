@@ -8,7 +8,9 @@
 
 ## Стек
 
-React 18 · TypeScript (strict) · Vite · Tailwind CSS (+ container queries) · Zustand · Framer Motion · date-fns · lucide-react
+React 18 · TypeScript (strict) · Vite · Tailwind CSS 4 · Zustand · Framer Motion · date-fns · lucide-react
+
+Портал рассчитан на браузеры, которые поддерживает Tailwind CSS 4: Chrome и Edge 111+, Safari 16.4+, Firefox 128+.
 
 ## Команды
 
@@ -84,13 +86,15 @@ routes.ts         разделы портала: путь, пункт меню, 
 ## Соглашения
 
 - Цвета из данных — только через `palette` и `alpha()` из `theme/colors.ts`. Цвета для классов Tailwind
-  описаны в `tailwind.config.ts`.
+  описаны в блоке `@theme` в `src/index.css`.
+- Свои глобальные стили — только внутри `@layer base` в `src/index.css`: в Tailwind 4 правило вне слоя сильнее
+  любой утилиты и перебьёт классы на элементах.
 - Справочники с id-объединениями ищем через `indexById` (`typeById`, `levelById`, `sourceById`): на неизвестный id
   он бросает ошибку. Из кода такой id не пропустит TypeScript, а записи из localStorage проверяются при загрузке
   (`store/persistedState.ts`), поэтому `?.` и `!` в компонентах не нужны. Если страница всё же упадёт,
   `PageErrorBoundary` покажет сообщение вместо белого экрана.
 - Шрифты подключаются только из сборки: пакеты `@fontsource` через `src/fonts.css`, внешних хостов вроде Google Fonts
-  быть не должно. Набор начертаний в `fonts.css` должен совпадать с `fontFamily` в `tailwind.config.ts`: если
+  быть не должно. Набор начертаний в `fonts.css` должен совпадать со шрифтами `--font-*` в `src/index.css`: если
   добавляете новую насыщенность (например, Rubik 400), подключите её файл, иначе браузер подставит системный шрифт.
 - Раскладка страниц строится на container queries (`@xl:`, `@4xl:` …): она зависит от ширины области
   контента, а не окна, так что работает и при открытом сайдбаре.

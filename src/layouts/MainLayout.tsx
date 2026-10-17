@@ -20,9 +20,9 @@ export default function MainLayout() {
       <Sidebar open={menuOpen} onClose={() => setMenuOpen(false)} />
       <div className="flex min-w-0 flex-1 flex-col">
         <Header onMenu={() => setMenuOpen(true)} />
-        <main ref={scrollRef} className="flex-1 overflow-y-auto px-4 pb-10 pt-2 lg:px-8">
+        <main ref={scrollRef} className="flex-1 overflow-y-auto px-4 pt-2 pb-10 lg:px-8">
           {/* @container: страницы подстраиваются под ширину области контента */}
-          <div className="mx-auto w-full max-w-[1680px] @container">
+          <div className="@container mx-auto w-full max-w-[1680px]">
             <PageHead />
             {/* key: при переходе на другую страницу граница ошибки сбрасывается */}
             <PageErrorBoundary key={pathname}>

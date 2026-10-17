@@ -1,45 +1,113 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/*
+ * Тема для классов Tailwind: bg-brand-red, text-ink-muted, bg-tint-mint, shadow-card…
+ * Цвета из данных (типы, уровни, каналы, статусы) — в src/theme/colors.ts.
+ */
+@theme {
+  --color-brand-yellow: #ffcb05;
+  --color-brand-yellow-light: #fff4cc;
+  --color-brand-yellow-dark: #e6b800;
+  --color-brand-red: #ed1b24;
+  --color-brand-red-light: #fde7e8;
+  --color-brand-red-dark: #c41920;
+  --color-brand-dark: #1f2430;
+  --color-brand-black: #161a23;
+
+  --color-ink: #1f2430;
+  --color-ink-soft: #4b5263;
+  --color-ink-muted: #7b8294;
+
+  --color-page: #f1f2f6;
+
+  /* Пастельная палитра — цветовые акценты интерфейса */
+  --color-tint-sun: #fff1b8;
+  --color-tint-mint: #d6f0e0;
+  --color-tint-rose: #fcdcd6;
+  --color-tint-lilac: #e6defc;
+  --color-tint-sky: #d5e9fb;
+  --color-tint-peach: #ffe3c8;
+
+  --color-accent-sun: #b98900;
+  --color-accent-mint: #1d8a4a;
+  --color-accent-rose: #d4452f;
+  --color-accent-lilac: #6a4ccb;
+  --color-accent-sky: #1c6fc2;
+  --color-accent-peach: #d9631a;
+
+  /* Начертания подключены в src/fonts.css */
+  --font-sans: Roboto, system-ui, -apple-system, sans-serif;
+  --font-display: Rubik, Roboto, system-ui, sans-serif;
+
+  /*
+   * Высота строки в rem, как в Tailwind 3. В v4 она задана долей от размера шрифта, и текст text-[15px] поверх
+   * text-sm или вложенный text-[11px] получал бы другую высоту строки, чем в утверждённых макетах.
+   */
+  --text-xs--line-height: 1rem;
+  --text-sm--line-height: 1.25rem;
+  --text-base--line-height: 1.5rem;
+  --text-lg--line-height: 1.75rem;
+  --text-xl--line-height: 1.75rem;
+  --text-2xl--line-height: 2rem;
+  --text-3xl--line-height: 2.25rem;
+  --text-4xl--line-height: 2.5rem;
+
+  --shadow-card: 0 1px 2px rgba(31, 36, 48, 0.04), 0 4px 16px rgba(31, 36, 48, 0.04);
+  --shadow-lift: 0 8px 28px rgba(31, 36, 48, 0.12);
 }
 
-body {
-  font-family:
-    'Roboto',
-    system-ui,
-    -apple-system,
-    sans-serif;
-  color: #1f2430;
-  background-color: #f1f2f6;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+/*
+ * Свои базовые стили — только внутри слоя base. Стили вне слоёв в Tailwind 4 сильнее любых утилит:
+ * правило для :focus-visible снаружи перебило бы focus:outline-hidden у полей ввода.
+ */
+@layer base {
+  /* Как в Tailwind 3: рамка без явного цвета — светло-серая (в v4 она цвета текста) */
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
 
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #c9ccd6;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #a3a8b8;
-}
+  /* Как в Tailwind 3: у кнопок курсор-указатель (в v4 — обычная стрелка) */
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
 
-button {
-  font-family: inherit;
-}
+  body {
+    color: var(--color-ink);
+    background-color: var(--color-page);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-:focus-visible {
-  outline: 2px solid #ed1b24;
-  outline-offset: 2px;
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #c9ccd6;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #a3a8b8;
+  }
+
+  /*
+   * Цвет обводки фокуса задан заранее: в Tailwind 4 transition-colors анимирует и outline-color,
+   * и без этого обводка появлялась бы цвета текста и краснела за 150 мс.
+   */
+  * {
+    outline-color: var(--color-brand-red);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand-red);
+    outline-offset: 2px;
+  }
 }

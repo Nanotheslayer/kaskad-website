@@ -29,7 +29,7 @@ export default function AlgorithmPage() {
   return (
     <div className="space-y-6">
       {/* Правило трёх вопросов */}
-      <Card className="bg-gradient-to-br from-white to-brand-yellow-light/60">
+      <Card className="bg-linear-to-br from-white to-brand-yellow-light/60">
         <div className="mb-1 flex items-center gap-2">
           <MessageSquareQuote size={20} className="text-brand-red" />
           <h2 className="font-display text-lg font-semibold text-ink">Правило трёх вопросов</h2>
@@ -48,12 +48,12 @@ export default function AlgorithmPage() {
                 >
                   {i + 1}
                 </span>
-                <span className="text-xs font-medium uppercase tracking-wide" style={{ color: q.color }}>
+                <span className="text-xs font-medium tracking-wide uppercase" style={{ color: q.color }}>
                   {q.basis}
                 </span>
               </div>
               <div className="text-xs text-ink-muted">{q.purpose}</div>
-              <div className="mt-2 text-[15px] font-medium leading-snug text-ink">«{q.question}»</div>
+              <div className="mt-2 text-[15px] leading-snug font-medium text-ink">«{q.question}»</div>
               <div className="mt-2 text-xs text-ink-muted">{q.hint}</div>
             </div>
           ))}
@@ -83,7 +83,7 @@ export default function AlgorithmPage() {
                   >
                     {i + 1}
                   </div>
-                  <div className="font-display text-base font-semibold leading-tight text-ink">{rule.title}</div>
+                  <div className="font-display text-base leading-tight font-semibold text-ink">{rule.title}</div>
                 </div>
                 <p className="text-sm text-ink-soft">{rule.text}</p>
               </Card>
