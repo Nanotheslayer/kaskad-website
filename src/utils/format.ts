@@ -17,6 +17,7 @@ const commForms: [string, string, string] = ['коммуникация', 'ком
 
 export const pluralCommWord = (n: number) => plural(n, commForms)
 export const pluralComm = (n: number) => `${n} ${pluralCommWord(n)}`
+export const pluralDays = (n: number) => `${n} ${plural(n, ['день', 'дня', 'дней'])}`
 
 /** Дата из <input type="date"> → ISO-строка на полдень, чтобы часовой пояс не сдвигал день */
 export const dateInputToIso = (value: string) => new Date(`${value}T12:00:00`).toISOString()

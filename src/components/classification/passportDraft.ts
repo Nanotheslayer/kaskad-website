@@ -1,6 +1,7 @@
 import type { Binding, CommunicationTypeId, SourceId, ThreeQuestions } from '../../types/communication'
 import type { ChannelId } from '../../types/channel'
 import { currentUser } from '../../data/currentUser'
+import { ORG_ROOT_ID } from '../../data/orgStructure'
 import { emptyQuestions } from '../../data/threeQuestions'
 
 /** Черновик паспорта инфоповода, который заполняется по шагам формы */
@@ -14,6 +15,8 @@ export interface PassportDraft {
   keyMessage: string
   questions: ThreeQuestions
   binding: Binding
+  /** Узлы оргструктуры, руководители которых получат задание о каскадировании */
+  audience: string[]
   materials: string[]
   extraChannels: ChannelId[]
 }
@@ -29,13 +32,14 @@ export function createEmptyDraft(): PassportDraft {
     keyMessage: '',
     questions: emptyQuestions,
     binding: { foundation: [], strategy: [], values: [] },
+    audience: [ORG_ROOT_ID],
     materials: [],
     extraChannels: [],
   }
 }
 
 /** Шаги повторяют этапы п. 3.3 Положения: формирование → выбор каналов → осмысление → доведение */
-export const PASSPORT_STEPS = ['Площадка', 'Тип', 'Суть и осмысление', 'Материалы', 'Маршрут'] as const
+export const PASSPORT_STEPS = ['Площадка', 'Тип', 'Суть и осмысление', 'Адресаты', 'Маршрут'] as const
 
 /** Можно ли перейти с шага step к следующему */
 export function isStepComplete(step: number, draft: PassportDraft): boolean {
@@ -47,7 +51,7 @@ export function isStepComplete(step: number, draft: PassportDraft): boolean {
     case 2:
       return [draft.title, draft.essence, draft.keyMessage].every((v) => v.trim() !== '')
     case 3:
-      return true
+      return draft.audience.length > 0
     default:
       return false
   }

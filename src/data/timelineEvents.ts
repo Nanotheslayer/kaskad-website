@@ -1,17 +1,20 @@
 import type {
   Binding,
   Communication,
-  CommunicationStatus,
   CommunicationTypeId,
+  Confirmations,
   SourceId,
   ThreeQuestions,
 } from '../types/communication'
 import { deliveryDeadline, determineRequiredChannels } from '../utils/cascadeEngine'
+import { assigneesOf } from '../utils/assignments'
 import { emptyQuestions } from './threeQuestions'
+import { ORG_ROOT_ID, PILOT_ID } from './orgStructure'
+import { currentUser } from './currentUser'
 
 /**
- * Демо-коммуникации. Даты заданы смещением от текущего дня, чтобы таймлайн
- * всегда выглядел «живым»: часть коммуникаций уже доведена, часть идёт, часть запланирована.
+ * Демо-коммуникации. Даты заданы смещением от текущего дня, чтобы таймлайн и повестки
+ * всегда выглядели «живыми»: часть коммуникаций уже доведена, часть идёт, часть запланирована.
  */
 const DAY = 24 * 60 * 60 * 1000
 const today = new Date()
@@ -34,6 +37,10 @@ interface Seed {
   binding?: Partial<Binding>
   q?: ThreeQuestions
   materials?: string[]
+  /** Кому доводить; по умолчанию — вся компания */
+  audience?: string[]
+  /** Руководители, которые не довели в срок, — чтобы в демо была просрочка */
+  lagging?: string[]
 }
 
 const seeds: Seed[] = [
@@ -123,6 +130,7 @@ const seeds: Seed[] = [
     key: 'Расширяем ассортимент — клиенту стройки больше не нужно ехать за инструментом в другое место.',
     who: ['Коммерческая дирекция', 'Коммерческая дирекция'],
     binding: { foundation: ['service', 'cjm'], strategy: ['assortment', 'renovation'] },
+    lagging: [currentUser.nodeId, 'recruit_retail'],
   },
   {
     day: -19,
@@ -198,6 +206,7 @@ const seeds: Seed[] = [
     essence: 'Приказом утверждён новый руководитель Корпоративного университета.',
     key: 'Корпоративный университет возглавил новый руководитель.',
     who: ['Макарова Е.В.', 'Дирекция по персоналу'],
+    audience: [PILOT_ID],
   },
   {
     day: -6,
@@ -206,18 +215,20 @@ const seeds: Seed[] = [
     source: 'change_committee',
     title: 'Запуск портала каскадирования (пилот в ДП)',
     essence:
-      'Дирекция по персоналу первой начинает работать в модуле каскадирования: паспорт инфоповода и статус доведения.',
+      'Дирекция по персоналу первой начинает работать в модуле каскадирования: паспорт инфоповода и личная повестка руководителя.',
     key: 'Пилот каскадирования стартовал в ДП — мы тестируем, чтобы потом масштабировать.',
     who: ['Зорина А.Д.', 'Дирекция по персоналу'],
     binding: { foundation: ['it', 'people'], values: ['development'] },
+    audience: [PILOT_ID],
   },
   {
     day: -5,
     hour: 9,
     type: 'reporting',
     source: 'directorate',
-    title: 'Результаты пульс-опроса за сентябрь',
-    essence: 'Информированность растёт, понимание — в зоне внимания. Показываем результаты по дирекциям.',
+    title: 'Итоги весеннего опроса вовлечённости',
+    essence:
+      'Сотрудники лучше понимают цели подразделений, но хотят чаще слышать директоров. Показываем результаты по дирекциям.',
     key: 'Мы слышим вас: вот что показал опрос и что мы с этим делаем.',
     who: ['Зорина А.Д.', 'Дирекция по персоналу'],
     binding: { foundation: ['people'] },
@@ -340,6 +351,7 @@ const seeds: Seed[] = [
     key: 'Развитие — это возможности, которые в компании уже есть.',
     who: ['Макарова Е.В.', 'Дирекция по персоналу'],
     binding: { foundation: ['people'], values: ['development'] },
+    audience: [PILOT_ID],
   },
   {
     day: 6,
@@ -445,29 +457,46 @@ const seeds: Seed[] = [
   },
 ]
 
-function statusFor(type: CommunicationTypeId, createdAt: string): CommunicationStatus {
-  const now = Date.now()
-  if (new Date(createdAt).getTime() > now) return 'planned'
-  if (deliveryDeadline(type, createdAt).getTime() < now) return 'completed'
-  return 'active'
+export const seedCommunications: Communication[] = seeds.map((s, i) => ({
+  id: `seed-${i + 1}`,
+  title: s.title,
+  essence: s.essence,
+  keyMessage: s.key,
+  initiator: { name: s.who[0], directorate: s.who[1] },
+  sourceId: s.source,
+  typeId: s.type,
+  binding: { foundation: [], strategy: [], values: [], ...s.binding },
+  questions: s.q ?? emptyQuestions,
+  requiredChannels: determineRequiredChannels(s.type),
+  extraChannels: [],
+  materials: s.materials ?? [],
+  audience: s.audience ?? [ORG_ROOT_ID],
+  createdAt: at(s.day, s.hour),
+}))
+
+/** Число 0…1, которое зависит только от строки: демо-подтверждения одинаковы при каждой загрузке */
+function stableFraction(key: string): number {
+  let hash = 0
+  for (const ch of key) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0
+  return (hash % 1000) / 1000
 }
 
-export const seedCommunications: Communication[] = seeds.map((s, i) => {
-  const createdAt = at(s.day, s.hour)
-  return {
-    id: `seed-${i + 1}`,
-    title: s.title,
-    essence: s.essence,
-    keyMessage: s.key,
-    initiator: { name: s.who[0], directorate: s.who[1] },
-    sourceId: s.source,
-    typeId: s.type,
-    binding: { foundation: [], strategy: [], values: [], ...s.binding },
-    questions: s.q ?? emptyQuestions,
-    requiredChannels: determineRequiredChannels(s.type),
-    extraChannels: [],
-    materials: s.materials ?? [],
-    createdAt,
-    status: statusFor(s.type, createdAt),
-  }
-})
+/**
+ * Демо-подтверждения доведения. Когда срок прошёл, довели все, кроме «отстающих»; пока каскад идёт,
+ * чем больше времени прошло, тем больше руководителей уже довели.
+ */
+export const seedConfirmations: Confirmations = Object.fromEntries(
+  seedCommunications.map((comm, i) => {
+    const start = new Date(comm.createdAt).getTime()
+    const end = deliveryDeadline(comm.typeId, comm.createdAt).getTime()
+    const elapsed = Math.min(1, Math.max(0, (Date.now() - start) / (end - start)))
+    const lagging = seeds[i].lagging ?? []
+    const confirmed: Record<string, string> = {}
+    for (const manager of assigneesOf(comm.audience)) {
+      const share = stableFraction(`${comm.id}:${manager.id}`)
+      const isDone = elapsed === 1 ? !lagging.includes(manager.id) : share < elapsed * 0.9
+      if (isDone) confirmed[manager.id] = new Date(start + share * (end - start)).toISOString()
+    }
+    return [comm.id, confirmed]
+  }),
+)

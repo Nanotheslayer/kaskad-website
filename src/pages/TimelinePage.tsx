@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import { isSameDay, isWithinInterval, startOfDay } from 'date-fns'
 import { CalendarDays, ChevronLeft, ChevronRight, Search, X } from 'lucide-react'
 import clsx from 'clsx'
-import type { Communication, CommunicationStatus, CommunicationTypeId } from '../types/communication'
+import type { CommunicationStatus, CommunicationTypeId, TrackedCommunication } from '../types/communication'
 import { useAllCommunications } from '../store/communicationsStore'
 import { communicationTypes, typeById } from '../data/communicationTypes'
 import { statusLabels } from '../data/statuses'
@@ -35,7 +35,8 @@ const statusFilterOptions: { value: StatusFilter; label: string }[] = [
 
 const allTypeIds = () => new Set(communicationTypes.map((t) => t.id))
 
-const byCreatedAt = (a: Communication, b: Communication) => +new Date(a.createdAt) - +new Date(b.createdAt)
+const byCreatedAt = (a: TrackedCommunication, b: TrackedCommunication) =>
+  +new Date(a.createdAt) - +new Date(b.createdAt)
 
 interface ScaleSizes {
   /** Комфортная ширина колонки */
@@ -134,7 +135,7 @@ export default function TimelinePage() {
   const visible = useMemo(() => inRange.filter((c) => activeTypes.has(c.typeId)), [inRange, activeTypes])
 
   const byBucket = useMemo(() => {
-    const map = new Map<string, Communication[]>(buckets.map((b) => [b.key, []]))
+    const map = new Map<string, TrackedCommunication[]>(buckets.map((b) => [b.key, []]))
     for (const c of visible) {
       const created = new Date(c.createdAt)
       const bucket = buckets.find((b) => created >= b.start && created <= b.end)
@@ -152,7 +153,7 @@ export default function TimelinePage() {
 
   // Список под линией группируется по дням
   const dayGroups = useMemo(() => {
-    const groups: { day: Date; items: Communication[] }[] = []
+    const groups: { day: Date; items: TrackedCommunication[] }[] = []
     for (const c of listItems) {
       const day = startOfDay(new Date(c.createdAt))
       const last = groups[groups.length - 1]
@@ -404,7 +405,7 @@ function ScrollShade({ side, visible }: { side: 'left' | 'right'; visible: boole
 
 interface BucketColumnProps {
   bucket: Bucket
-  items: Communication[]
+  items: TrackedCommunication[]
   selected: boolean
   layout: TrackLayout
   onToggle: () => void

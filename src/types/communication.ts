@@ -60,8 +60,10 @@ export interface ThreeQuestions {
 /** Уровни каскадирования У1–У6 (п. 4.1) */
 export type CascadeLevel = 'У01' | 'У02' | 'У03' | 'У04' | 'У05' | 'У06'
 
+/** Статус считается по датам и подтверждениям руководителей, а не хранится */
 export type CommunicationStatus = 'planned' | 'active' | 'completed'
 
+/** Коммуникация, как её создаёт паспорт инфоповода и хранит портал */
 export interface Communication {
   id: string
   title: string
@@ -76,7 +78,20 @@ export interface Communication {
   requiredChannels: ChannelId[]
   extraChannels: ChannelId[]
   materials: string[]
-  /** Запуск каскада: с этого момента руководители получают задание о каскадировании */
+  /** Кому доводить: узлы оргструктуры, руководители в ветках которых получают задание о каскадировании */
+  audience: string[]
+  /** Запуск каскада: в этот момент руководители получают задание о каскадировании */
   createdAt: string
+}
+
+/** Подтверждения доведения: id коммуникации → id руководителя (узла оргструктуры) → когда он довёл до команды */
+export type Confirmations = Record<string, Record<string, string>>
+
+/** Коммуникация с ходом доведения — то, что показывают страницы */
+export interface TrackedCommunication extends Communication {
   status: CommunicationStatus
+  /** Крайний срок доведения для руководителей (п. 7.6, 9.7) */
+  deadline: Date
+  /** Сколько руководителей получили задание и сколько подтвердили доведение */
+  progress: { done: number; total: number }
 }

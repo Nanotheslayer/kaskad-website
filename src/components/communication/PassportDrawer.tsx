@@ -2,21 +2,23 @@ import { useEffect, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Paperclip, Quote, X } from 'lucide-react'
-import type { Communication } from '../../types/communication'
+import type { TrackedCommunication } from '../../types/communication'
 import { typeById } from '../../data/communicationTypes'
 import { sourceById } from '../../data/sources'
 import { statusColors, statusLabels } from '../../data/statuses'
 import { threeQuestions } from '../../data/threeQuestions'
 import { foundationById, strategyById, valueById } from '../../data/priorities'
 import { alpha } from '../../theme/colors'
-import { deliveryDeadline, describeDeliveryRule } from '../../utils/cascadeEngine'
+import { useConfirmations } from '../../store/communicationsStore'
+import { describeDeliveryRule } from '../../utils/cascadeEngine'
+import { assigneesOf, describeAudience } from '../../utils/assignments'
 import { fmt } from '../../utils/format'
 import Badge from '../ui/Badge'
 import ChannelList from './ChannelList'
 import { eyebrowClass } from '../ui/styles'
 
 interface PassportDrawerProps {
-  comm: Communication | null
+  comm: TrackedCommunication | null
   /** Желательно стабильная функция (useCallback): иначе подписка на Escape пересоздаётся при каждом рендере */
   onClose: () => void
 }
@@ -82,10 +84,15 @@ function Field({ label, value }: { label: string; value: ReactNode }) {
   )
 }
 
-function PassportBody({ comm, onClose }: { comm: Communication; onClose: () => void }) {
+/** Сколько отстающих руководителей перечислять по именам */
+const PENDING_NAMES_LIMIT = 6
+
+function PassportBody({ comm, onClose }: { comm: TrackedCommunication; onClose: () => void }) {
   const type = typeById(comm.typeId)
   const source = sourceById(comm.sourceId)
-  const deadline = deliveryDeadline(comm.typeId, comm.createdAt)
+  const confirmed = useConfirmations()[comm.id] ?? {}
+  const pending = assigneesOf(comm.audience).filter((a) => !confirmed[a.id])
+  const { done, total } = comm.progress
   const timeFormat = comm.typeId === 'crisis' ? 'd MMM, HH:mm' : 'd MMM yyyy'
   const { foundation, strategy, values } = comm.binding
   const answeredQuestions = threeQuestions.filter((q) => comm.questions[q.key])
@@ -192,12 +199,37 @@ function PassportBody({ comm, onClose }: { comm: Communication; onClose: () => v
           </Section>
         )}
 
-        <Section title="Сроки (п. 7.6)">
+        <Section title="Доведение (п. 7.6)">
           <div className="grid grid-cols-2 gap-2 text-sm">
             <Field label="Запуск каскада" value={fmt(comm.createdAt, 'd MMM, HH:mm')} />
-            <Field label="Довести не позднее" value={fmt(deadline, timeFormat)} />
+            <Field label="Довести не позднее" value={fmt(comm.deadline, timeFormat)} />
           </div>
           <p className="mt-2 text-xs text-ink-muted">Руководители доводят {describeDeliveryRule(comm.typeId)}</p>
+          <div className="mt-3 rounded-xl bg-gray-50 p-3 text-sm">
+            <div className="text-xs text-ink-muted">Кому: {describeAudience(comm.audience)}</div>
+            <div className="mt-1 flex items-baseline justify-between gap-2">
+              <span className="font-medium text-ink">Довели руководителей</span>
+              <span className="tabular-nums text-ink">
+                {done} из {total}
+              </span>
+            </div>
+            <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-white">
+              <div
+                className="h-full rounded-full bg-accent-mint"
+                style={{ width: `${total > 0 ? (done / total) * 100 : 0}%` }}
+              />
+            </div>
+            {comm.status === 'active' && pending.length > 0 && (
+              <p className="mt-2 text-xs text-ink-soft">
+                Ещё не довели:{' '}
+                {pending
+                  .slice(0, PENDING_NAMES_LIMIT)
+                  .map((a) => a.name)
+                  .join(', ')}
+                {pending.length > PENDING_NAMES_LIMIT && ` и ещё ${pending.length - PENDING_NAMES_LIMIT}`}
+              </p>
+            )}
+          </div>
         </Section>
 
         {comm.materials.length > 0 && (

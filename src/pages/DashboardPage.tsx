@@ -14,14 +14,15 @@ import {
   TrendingUp,
   type LucideIcon,
 } from 'lucide-react'
-import type { Communication, CommunicationTypeId } from '../types/communication'
-import { useAllCommunications, useCommunicationsStore } from '../store/communicationsStore'
+import type { CommunicationTypeId, TrackedCommunication } from '../types/communication'
+import { useAllCommunications, useCommunicationsStore, useConfirmations } from '../store/communicationsStore'
 import { communicationTypes, typeById } from '../data/communicationTypes'
+import { currentUser } from '../data/currentUser'
 import { surveyAverage, surveyQuestions, surveyResults } from '../data/surveyResults'
 import { useNow } from '../hooks/useNow'
 import { alpha, palette } from '../theme/colors'
 import { tintClasses, type Tint } from '../theme/tints'
-import { deliveryDeadline } from '../utils/cascadeEngine'
+import { agendaFor, type AgendaItem } from '../utils/assignments'
 import { getScoreBand } from '../utils/score'
 import { fmt, pluralComm } from '../utils/format'
 import Card from '../components/ui/Card'
@@ -37,7 +38,6 @@ const LOWEST_SCORES_SIZE = 4
 /** Вопрос опроса вовлечённости, ближе всего связанный с каскадированием, — п. 8.2 */
 const INFORM_METRIC = 'directorsInform'
 const informAverage = surveyAverage(INFORM_METRIC)
-const deadlineOf = (c: Communication) => deliveryDeadline(c.typeId, c.createdAt)
 
 interface StatTile {
   label: string
@@ -48,11 +48,12 @@ interface StatTile {
 
 export default function DashboardPage() {
   const communications = useAllCommunications()
-  const updateStatus = useCommunicationsStore((s) => s.updateStatus)
+  const confirmations = useConfirmations()
+  const confirmDelivery = useCommunicationsStore((s) => s.confirmDelivery)
   const now = useNow()
 
   const tiles = useMemo<StatTile[]>(() => {
-    const count = (predicate: (c: Communication) => boolean) => communications.filter(predicate).length
+    const count = (predicate: (c: TrackedCommunication) => boolean) => communications.filter(predicate).length
     const recent = count((c) => Math.abs(new Date(c.createdAt).getTime() - now.getTime()) <= RECENT_WINDOW_MS)
     const active = count((c) => c.status === 'active')
     const planned = count((c) => c.status === 'planned')
@@ -67,13 +68,9 @@ export default function DashboardPage() {
     ]
   }, [communications, now])
 
-  const toDeliver = useMemo(
-    () =>
-      communications
-        .filter((c) => c.status === 'active')
-        .sort((a, b) => +deadlineOf(a) - +deadlineOf(b))
-        .slice(0, DELIVERY_LIST_SIZE),
-    [communications],
+  const myPending = useMemo(
+    () => agendaFor(currentUser.nodeId, communications, confirmations, now).pending,
+    [communications, confirmations, now],
   )
 
   const typeStats = useMemo(() => {
@@ -127,25 +124,29 @@ export default function DashboardPage() {
         <Card className="@4xl:col-span-2" padding={false}>
           <div className="flex flex-wrap items-center justify-between gap-2 px-5 pb-3 pt-5">
             <div>
-              <h2 className="font-display text-lg font-semibold text-ink">Донести команде</h2>
+              <h2 className="font-display text-lg font-semibold text-ink">
+                Моя повестка
+                {myPending.length > 0 && (
+                  <span className="ml-2 text-sm font-normal text-ink-muted">{pluralComm(myPending.length)}</span>
+                )}
+              </h2>
               <p className="text-xs text-ink-muted">
-                Ближайшие сроки доведения. Подтвердите, когда информация доведена
+                Довести до команды на ближайшей встрече. Отметьте, когда информация доведена
               </p>
             </div>
-            <Link to="/timeline" className="flex items-center gap-1 text-sm font-medium text-brand-red hover:underline">
-              Таймлайн <ArrowRight size={14} />
+            <Link to="/agenda" className="flex items-center gap-1 text-sm font-medium text-brand-red hover:underline">
+              Вся повестка <ArrowRight size={14} />
             </Link>
           </div>
           <div className="divide-y divide-gray-100">
-            {toDeliver.length === 0 && (
+            {myPending.length === 0 && (
               <div className="px-5 py-10 text-center text-sm text-ink-muted">Всё доведено — отличная работа!</div>
             )}
-            {toDeliver.map((c) => (
+            {myPending.slice(0, DELIVERY_LIST_SIZE).map((item) => (
               <DeliveryRow
-                key={c.id}
-                comm={c}
-                overdue={deadlineOf(c) < now}
-                onConfirm={() => updateStatus(c.id, 'completed')}
+                key={item.comm.id}
+                item={item}
+                onConfirm={() => confirmDelivery(item.comm.id, currentUser.nodeId)}
               />
             ))}
           </div>
@@ -270,12 +271,12 @@ function HeroBanner() {
 }
 
 interface DeliveryRowProps {
-  comm: Communication
-  overdue: boolean
+  item: AgendaItem
   onConfirm: () => void
 }
 
-function DeliveryRow({ comm, overdue, onConfirm }: DeliveryRowProps) {
+function DeliveryRow({ item, onConfirm }: DeliveryRowProps) {
+  const { comm, overdue } = item
   const type = typeById(comm.typeId)
   const TypeIcon = type.icon
   return (
@@ -291,11 +292,13 @@ function DeliveryRow({ comm, overdue, onConfirm }: DeliveryRowProps) {
         <div className="mt-0.5 flex flex-wrap items-center gap-x-2 text-xs text-ink-muted">
           <span style={{ color: type.color }}>{type.name}</span>
           <span>·</span>
-          <span className={clsx(overdue && 'font-medium text-brand-red')}>срок {fmt(deadlineOf(comm), 'd MMM')}</span>
+          <span className={clsx(overdue && 'font-medium text-brand-red')}>
+            {overdue ? 'просрочено, ' : ''}срок {fmt(comm.deadline, 'd MMM')}
+          </span>
         </div>
       </div>
       <Button variant="secondary" size="sm" onClick={onConfirm}>
-        <CheckCheck size={14} /> <span className="hidden @xl:inline">Подтвердить доведение</span>
+        <CheckCheck size={14} /> <span className="hidden @xl:inline">Довёл до команды</span>
         <span className="@xl:hidden">Готово</span>
       </Button>
     </div>

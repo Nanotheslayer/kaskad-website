@@ -1,6 +1,7 @@
 import { HashRouter, Routes, Route } from 'react-router-dom'
 import MainLayout from './layouts/MainLayout'
 import DashboardPage from './pages/DashboardPage'
+import AgendaPage from './pages/AgendaPage'
 import CascadeStructurePage from './pages/CascadeStructurePage'
 import ClassificationFormPage from './pages/ClassificationFormPage'
 import TimelinePage from './pages/TimelinePage'
@@ -14,6 +15,7 @@ export default function App() {
       <Routes>
         <Route element={<MainLayout />}>
           <Route path="/" element={<DashboardPage />} />
+          <Route path="/agenda" element={<AgendaPage />} />
           <Route path="/cascade" element={<CascadeStructurePage />} />
           <Route path="/classify" element={<ClassificationFormPage />} />
           <Route path="/timeline" element={<TimelinePage />} />

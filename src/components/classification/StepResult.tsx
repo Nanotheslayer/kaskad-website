@@ -18,12 +18,22 @@ interface StepResultProps {
   title: string
   /** Момент запуска каскада — от него считается срок доведения */
   launchAt: Date
+  /** Сколько руководителей получат задание о каскадировании */
+  managers: number
   required: ChannelId[]
   extra: ChannelId[]
   onToggleExtra: (id: ChannelId) => void
 }
 
-export default function StepResult({ typeId, title, launchAt, required, extra, onToggleExtra }: StepResultProps) {
+export default function StepResult({
+  typeId,
+  title,
+  launchAt,
+  managers,
+  required,
+  extra,
+  onToggleExtra,
+}: StepResultProps) {
   const type = typeById(typeId)
   const TypeIcon = type.icon
   const deadline = deliveryDeadline(typeId, launchAt)
@@ -74,6 +84,10 @@ export default function StepResult({ typeId, title, launchAt, required, extra, o
               <CalendarCheck2 size={16} className="text-ink-muted" />
               Доведение
             </h3>
+            <p className="mb-2 text-sm text-ink">
+              Задание о каскадировании получат руководителей: <span className="font-semibold">{managers}</span> — оно
+              появится в их личной повестке.
+            </p>
             <p className="text-sm text-ink">
               Руководители доводят сообщение {describeDeliveryRule(typeId)} — для запуска сегодня{' '}
               <span className="font-semibold">не позднее {fmt(deadline, isCrisis ? 'd MMM, HH:mm' : 'd MMMM')}</span>.

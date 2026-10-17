@@ -1,4 +1,5 @@
 import type { OrgNode } from '../types/organization'
+import { currentUser } from './currentUser'
 
 /**
  * ПИЛОТ: реальная структура Дирекции по персоналу (по данным раздела «Структура компании» на «Петлокале»).
@@ -162,7 +163,8 @@ const centers: UnitSpec[] = [
     id: 'edu_center',
     title: 'Центр экспертизы образовательной системы',
     position: 'Руководитель центра экспертизы',
-    name: 'Суворова И.А.',
+    // Демо-пользователь портала: его повестка открывается по умолчанию
+    name: currentUser.name,
     children: [
       {
         id: 'edu_admin',

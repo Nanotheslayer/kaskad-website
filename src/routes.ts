@@ -5,6 +5,7 @@ import {
   GalleryHorizontal,
   Map as MapIcon,
   Layers,
+  ListTodo,
   Route,
   type LucideIcon,
 } from 'lucide-react'
@@ -28,6 +29,14 @@ export const routeMeta: RouteMeta[] = [
     subtitle: 'Что доносим до команд, что уже доведено и где сотрудники знают меньше всего',
     icon: LayoutDashboard,
     tint: 'sun',
+  },
+  {
+    path: '/agenda',
+    label: 'Моя повестка',
+    title: 'Моя повестка',
+    subtitle: 'Все задания о каскадировании одним списком: что довести до команды на ближайшей встрече',
+    icon: ListTodo,
+    tint: 'peach',
   },
   {
     path: '/cascade',

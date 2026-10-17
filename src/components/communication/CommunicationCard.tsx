@@ -1,14 +1,13 @@
-import { CalendarCheck2, Clock3 } from 'lucide-react'
+import { CalendarCheck2, Clock3, UsersRound } from 'lucide-react'
 import clsx from 'clsx'
-import type { Communication } from '../../types/communication'
+import type { TrackedCommunication } from '../../types/communication'
 import { typeById } from '../../data/communicationTypes'
 import { statusColors, statusLabels } from '../../data/statuses'
-import { deliveryDeadline } from '../../utils/cascadeEngine'
 import { fmt } from '../../utils/format'
 import Badge from '../ui/Badge'
 
 interface CommunicationCardProps {
-  comm: Communication
+  comm: TrackedCommunication
   selected?: boolean
   onClick: () => void
 }
@@ -50,8 +49,14 @@ export default function CommunicationCard({ comm, selected, onClick }: Communica
           </span>
           <span className="flex items-center gap-1">
             <CalendarCheck2 size={12} />
-            довести до {fmt(deliveryDeadline(comm.typeId, comm.createdAt), 'd MMM')}
+            довести до {fmt(comm.deadline, 'd MMM')}
           </span>
+          {comm.status !== 'planned' && comm.progress.total > 0 && (
+            <span className="flex items-center gap-1">
+              <UsersRound size={12} />
+              довели {comm.progress.done} из {comm.progress.total}
+            </span>
+          )}
         </div>
       </div>
     </button>

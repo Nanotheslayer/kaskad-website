@@ -7,6 +7,7 @@ import {
   ChevronsDownUp,
   ChevronsUpDown,
   Info,
+  ListTodo,
   Play,
   RotateCcw,
   UserRound,
@@ -17,11 +18,14 @@ import type { OrgNode } from '../types/organization'
 import { ORG_ROOT_ID, PILOT_ID } from '../data/orgStructure'
 import { LEVELS_DRAFT_NOTE, levelById, levelIndex, levels } from '../data/levels'
 import { alpha } from '../theme/colors'
+import { useAllCommunications, useConfirmations } from '../store/communicationsStore'
+import { useNow } from '../hooks/useNow'
 import { DELIVERY_DAYS } from '../utils/cascadeEngine'
+import { agendaFor } from '../utils/assignments'
 import { toggleInSet } from '../utils/collections'
 import { expandableIds, getNode, getPath, reachByLevel, unitsInSubtree } from '../utils/orgTree'
 import Card from '../components/ui/Card'
-import Button from '../components/ui/Button'
+import Button, { LinkButton } from '../components/ui/Button'
 import LevelPill from '../components/ui/LevelPill'
 
 const DEFAULT_SELECTED_ID = 'kais_cfo'
@@ -331,6 +335,8 @@ function NodeDetails({ node, path, onSelect }: NodeDetailsProps) {
           <div className="text-xs text-ink-muted">Уровень {level.short} по п. 4.1</div>
           <div className="mt-1 text-sm text-ink">{level.who}</div>
         </div>
+
+        {node.kind === 'unit' && node.children.length > 0 && <AgendaLink nodeId={node.id} />}
       </Card>
 
       <Card>
@@ -390,5 +396,28 @@ function NodeDetails({ node, path, onSelect }: NodeDetailsProps) {
         </Card>
       )}
     </>
+  )
+}
+
+/** Сколько заданий о каскадировании ждут руководителя, и ссылка на его повестку */
+function AgendaLink({ nodeId }: { nodeId: string }) {
+  const communications = useAllCommunications()
+  const confirmations = useConfirmations()
+  const now = useNow()
+  const pending = useMemo(
+    () => agendaFor(nodeId, communications, confirmations, now).pending.length,
+    [nodeId, communications, confirmations, now],
+  )
+
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-tint-peach/60 p-3">
+      <div>
+        <div className="text-xs text-ink-muted">В повестке руководителя</div>
+        <div className="text-sm font-medium text-ink">к доведению: {pending}</div>
+      </div>
+      <LinkButton to={`/agenda?person=${nodeId}`} variant="secondary" size="sm">
+        <ListTodo size={14} /> Повестка
+      </LinkButton>
+    </div>
   )
 }

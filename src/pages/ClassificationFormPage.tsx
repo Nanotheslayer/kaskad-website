@@ -7,6 +7,7 @@ import { typeById } from '../data/communicationTypes'
 import { useCommunicationsStore } from '../store/communicationsStore'
 import { useNow } from '../hooks/useNow'
 import { deliveryDeadline, determineRequiredChannels } from '../utils/cascadeEngine'
+import { assigneesOf } from '../utils/assignments'
 import { toggleItem } from '../utils/collections'
 import { fmt } from '../utils/format'
 import {
@@ -18,7 +19,7 @@ import {
 import StepSource from '../components/classification/StepSource'
 import StepType from '../components/classification/StepType'
 import StepPassport from '../components/classification/StepPassport'
-import StepMaterials from '../components/classification/StepMaterials'
+import StepAudience from '../components/classification/StepAudience'
 import StepResult from '../components/classification/StepResult'
 import Stepper from '../components/ui/Stepper'
 import Button from '../components/ui/Button'
@@ -36,6 +37,7 @@ export default function ClassificationFormPage() {
   const update = (patch: Partial<PassportDraft>) => setDraft((d) => ({ ...d, ...patch }))
 
   const { typeId } = draft
+  const managers = assigneesOf(draft.audience).length
   const required = useMemo(() => (typeId ? determineRequiredChannels(typeId) : []), [typeId])
   // Канал, ставший обязательным после смены типа, не дублируем в дополнительных
   const extra = draft.extraChannels.filter((id) => !required.includes(id))
@@ -57,8 +59,8 @@ export default function ClassificationFormPage() {
       requiredChannels: required,
       extraChannels: extra,
       materials: draft.materials,
+      audience: draft.audience,
       createdAt: new Date().toISOString(),
-      status: 'active',
     })
     navigate('/timeline')
   }
@@ -106,14 +108,13 @@ export default function ClassificationFormPage() {
                 onChange={update}
               />
             )}
-            {step === 3 && (
-              <StepMaterials materials={draft.materials} onChange={(materials) => update({ materials })} />
-            )}
+            {step === 3 && <StepAudience audience={draft.audience} materials={draft.materials} onChange={update} />}
             {step === LAST_STEP && typeId && (
               <StepResult
                 typeId={typeId}
                 title={draft.title}
                 launchAt={now}
+                managers={managers}
                 required={required}
                 extra={extra}
                 onToggleExtra={toggleExtra}
@@ -134,6 +135,9 @@ export default function ClassificationFormPage() {
             </div>
             <div className="mt-1 text-sm text-ink-soft">
               Обязательных каналов: <span className="font-medium text-ink">{required.length}</span>
+            </div>
+            <div className="mt-1 text-sm text-ink-soft">
+              Получат задание: <span className="font-medium text-ink">{managers}</span>
             </div>
             <div className="mt-1 text-sm text-ink-soft">
               Довести до:{' '}

@@ -1,10 +1,13 @@
-import { useState, type FormEvent } from 'react'
+import { useMemo, useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Bell, Menu, Search } from 'lucide-react'
 import clsx from 'clsx'
 import Logo from './Logo'
 import { fieldClass } from '../ui/styles'
 import { currentUser } from '../../data/currentUser'
+import { useAllCommunications, useConfirmations } from '../../store/communicationsStore'
+import { useNow } from '../../hooks/useNow'
+import { agendaFor } from '../../utils/assignments'
 
 interface HeaderProps {
   onMenu: () => void
@@ -13,6 +16,13 @@ interface HeaderProps {
 export default function Header({ onMenu }: HeaderProps) {
   const navigate = useNavigate()
   const [query, setQuery] = useState('')
+  const communications = useAllCommunications()
+  const confirmations = useConfirmations()
+  const now = useNow()
+  const pending = useMemo(
+    () => agendaFor(currentUser.nodeId, communications, confirmations, now).pending.length,
+    [communications, confirmations, now],
+  )
 
   const submit = (e: FormEvent) => {
     e.preventDefault()
@@ -56,16 +66,19 @@ export default function Header({ onMenu }: HeaderProps) {
           >
             <Search size={18} />
           </Link>
-          <button
-            type="button"
+          <Link
+            to="/agenda"
             className="relative rounded-xl bg-white p-2.5 text-ink-soft shadow-card transition-colors hover:text-ink"
-            aria-label="Уведомления"
+            aria-label={`Моя повестка: к доведению ${pending}`}
+            title="Моя повестка"
           >
             <Bell size={18} />
-            <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-red px-1 text-[10px] font-bold text-white">
-              3
-            </span>
-          </button>
+            {pending > 0 && (
+              <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-red px-1 text-[10px] font-bold text-white">
+                {pending}
+              </span>
+            )}
+          </Link>
           <div className="flex items-center gap-2.5">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-brand-yellow to-brand-red text-sm font-bold text-white shadow-card">
               {currentUser.initials}
