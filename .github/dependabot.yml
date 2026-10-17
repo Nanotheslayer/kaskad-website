@@ -1,0 +1,27 @@
+# Dependabot: обновления зависимостей и действий GitHub Actions
+# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: Europe/Moscow
+    # Минорные и патч-обновления приходят одним PR, мажорные — отдельными
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]
+    commit-message:
+      prefix: deps
+    labels: [dependencies]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: Europe/Moscow
+    commit-message:
+      prefix: ci
+    labels: [dependencies]
