@@ -104,7 +104,7 @@ export default function CascadeStructurePage() {
       {/* Пилотный баннер + уровни */}
       <div className="overflow-hidden rounded-3xl bg-linear-to-br from-brand-yellow-light via-white to-tint-mint/60 p-4 shadow-card @xl:p-5">
         <div className="max-w-3xl">
-          <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-brand-yellow px-3 py-1 text-xs font-bold uppercase tracking-wide text-brand-dark">
+          <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-brand-yellow px-3 py-1 text-xs font-bold tracking-wide text-brand-dark uppercase">
             Пилот
           </div>
           <h2 className="font-display text-xl font-semibold text-ink">{pilot.title}</h2>
@@ -120,10 +120,10 @@ export default function CascadeStructurePage() {
               <div className="flex items-center justify-between">
                 <LevelPill level={l.id} />
                 {pilotReach[i].people > 0 && (
-                  <span className="text-xs font-medium tabular-nums text-ink-soft">{pilotReach[i].people} чел.</span>
+                  <span className="text-xs font-medium text-ink-soft tabular-nums">{pilotReach[i].people} чел.</span>
                 )}
               </div>
-              <div className="mt-2 text-[13px] font-medium leading-tight text-ink">{l.title}</div>
+              <div className="mt-2 text-[13px] leading-tight font-medium text-ink">{l.title}</div>
             </div>
           ))}
         </div>
@@ -254,7 +254,7 @@ function TreeNode({ node, tree }: { node: OrgNode; tree: TreeState }) {
               className={clsx(
                 'text-[14px] leading-snug',
                 isTeam ? 'text-ink-soft' : 'font-medium text-ink',
-                isPlaceholder && 'italic text-ink-muted',
+                isPlaceholder && 'text-ink-muted italic',
               )}
             >
               {isTeam && <Users size={13} className="mr-1.5 inline -translate-y-px text-ink-muted" />}
@@ -276,7 +276,7 @@ function TreeNode({ node, tree }: { node: OrgNode; tree: TreeState }) {
               </span>
             )}
             {node.headcount !== undefined && (
-              <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-medium tabular-nums text-ink-soft">
+              <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-medium text-ink-soft tabular-nums">
                 {node.headcount} чел.
               </span>
             )}
@@ -319,7 +319,7 @@ function NodeDetails({ node, path, onSelect }: NodeDetailsProps) {
             <LevelPill level={node.level} />
             <span className="text-xs text-ink-muted">{level.title}</span>
           </div>
-          <h3 className="mt-2 font-display text-lg font-semibold leading-snug text-ink">{node.title}</h3>
+          <h3 className="mt-2 font-display text-lg leading-snug font-semibold text-ink">{node.title}</h3>
           {node.name && (
             <div className="mt-1.5 flex items-center gap-2 text-sm text-ink-soft">
               <UserRound size={15} className="text-ink-muted" />
@@ -346,7 +346,7 @@ function NodeDetails({ node, path, onSelect }: NodeDetailsProps) {
             const last = i === path.length - 1
             return (
               <li key={p.id} className="relative flex gap-3 pb-3 last:pb-0">
-                {!last && <span className="absolute left-[21px] top-7 h-[calc(100%-1.25rem)] w-0.5 bg-gray-200" />}
+                {!last && <span className="absolute top-7 left-[21px] h-[calc(100%-1.25rem)] w-0.5 bg-gray-200" />}
                 <LevelPill level={p.level} className="relative z-10 mt-0.5" />
                 <button type="button" onClick={() => onSelect(p.id)} className="min-w-0 flex-1 text-left">
                   <div
@@ -384,7 +384,7 @@ function NodeDetails({ node, path, onSelect }: NodeDetailsProps) {
                     transition={{ duration: 0.4 }}
                   />
                 </div>
-                <span className="w-8 text-right text-xs font-medium tabular-nums text-ink-soft">{r.people}</span>
+                <span className="w-8 text-right text-xs font-medium text-ink-soft tabular-nums">{r.people}</span>
               </div>
             ))}
           </div>

@@ -34,7 +34,7 @@ export default function PageHead() {
           <Icon size={24} />
         </div>
         <div>
-          <h1 className="font-display text-xl font-semibold leading-tight text-ink @xl:text-2xl/8">{meta.title}</h1>
+          <h1 className="font-display text-xl leading-tight font-semibold text-ink @xl:text-2xl/8">{meta.title}</h1>
           <p className="mt-0.5 max-w-3xl text-sm text-ink-soft">{meta.subtitle}</p>
         </div>
       </div>

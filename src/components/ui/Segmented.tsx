@@ -16,7 +16,7 @@ interface SegmentedProps<T extends string> {
 export default function Segmented<T extends string>({ options, value, onChange, className }: SegmentedProps<T>) {
   return (
     <div
-      className={clsx('inline-flex min-w-0 max-w-full overflow-x-auto rounded-xl bg-gray-100 p-1', className)}
+      className={clsx('inline-flex max-w-full min-w-0 overflow-x-auto rounded-xl bg-gray-100 p-1', className)}
       role="tablist"
     >
       {options.map((o) => (
@@ -27,7 +27,7 @@ export default function Segmented<T extends string>({ options, value, onChange, 
           aria-selected={value === o.value}
           onClick={() => onChange(o.value)}
           className={clsx(
-            'shrink-0 whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium transition-all @xl:px-4',
+            'shrink-0 rounded-lg px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-all @xl:px-4',
             value === o.value ? 'bg-white text-ink shadow-xs' : 'text-ink-muted hover:text-ink',
           )}
         >

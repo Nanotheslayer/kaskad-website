@@ -102,13 +102,13 @@ function PassportBody({ comm, onClose }: { comm: TrackedCommunication; onClose: 
   return (
     <>
       <div
-        className="relative shrink-0 px-6 pb-5 pt-6"
+        className="relative shrink-0 px-6 pt-6 pb-5"
         style={{ background: `linear-gradient(135deg, ${alpha(type.color, 0.15)}, ${alpha(type.color, 0.03)})` }}
       >
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-4 top-4 rounded-lg p-1.5 text-ink-soft hover:bg-white/70"
+          className="absolute top-4 right-4 rounded-lg p-1.5 text-ink-soft hover:bg-white/70"
           aria-label="Закрыть"
         >
           <X size={20} />
@@ -124,7 +124,7 @@ function PassportBody({ comm, onClose }: { comm: TrackedCommunication; onClose: 
             {type.name}
           </div>
         </div>
-        <h2 className="mt-3 pr-8 font-display text-xl font-semibold leading-snug text-ink">{comm.title}</h2>
+        <h2 className="mt-3 pr-8 font-display text-xl leading-snug font-semibold text-ink">{comm.title}</h2>
         <div className="mt-3 flex flex-wrap gap-1.5">
           <Badge color={statusColors[comm.status]}>{statusLabels[comm.status]}</Badge>
           <Badge>Тональность: {type.tone.toLowerCase()}</Badge>
@@ -133,10 +133,10 @@ function PassportBody({ comm, onClose }: { comm: TrackedCommunication; onClose: 
 
       <div className="flex-1 space-y-6 overflow-y-auto px-6 py-5">
         <div className="rounded-2xl bg-brand-yellow-light p-4">
-          <div className="mb-1 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-accent-sun">
+          <div className="mb-1 flex items-center gap-1.5 text-xs font-medium tracking-wide text-accent-sun uppercase">
             <Quote size={13} /> Ключевое сообщение
           </div>
-          <p className="text-[15px] font-medium leading-snug text-ink">{comm.keyMessage}</p>
+          <p className="text-[15px] leading-snug font-medium text-ink">{comm.keyMessage}</p>
         </div>
 
         <Section title="Суть">
@@ -209,7 +209,7 @@ function PassportBody({ comm, onClose }: { comm: TrackedCommunication; onClose: 
             <div className="text-xs text-ink-muted">Кому: {describeAudience(comm.audience)}</div>
             <div className="mt-1 flex items-baseline justify-between gap-2">
               <span className="font-medium text-ink">Довели руководителей</span>
-              <span className="tabular-nums text-ink">
+              <span className="text-ink tabular-nums">
                 {done} из {total}
               </span>
             </div>

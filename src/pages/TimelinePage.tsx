@@ -237,7 +237,7 @@ export default function TimelinePage() {
             >
               <ChevronLeft size={18} />
             </button>
-            <div className="flex items-center justify-center gap-2 whitespace-nowrap px-1 text-[15px] font-medium text-ink @md:min-w-44 @md:px-2">
+            <div className="flex items-center justify-center gap-2 px-1 text-[15px] font-medium whitespace-nowrap text-ink @md:min-w-44 @md:px-2">
               <CalendarDays size={16} className="hidden text-ink-muted @md:block" />
               {getRangeLabel(scale, anchor)}
             </div>
@@ -262,7 +262,7 @@ export default function TimelinePage() {
 
         <div>
           <div className="mb-2 flex items-center justify-between">
-            <div className="text-xs font-medium uppercase tracking-wide text-ink-muted">Типы коммуникаций</div>
+            <div className="text-xs font-medium tracking-wide text-ink-muted uppercase">Типы коммуникаций</div>
             {!allTypesActive && (
               <button
                 type="button"
@@ -289,8 +289,8 @@ export default function TimelinePage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-          <div className="flex min-w-0 max-w-full flex-wrap items-center gap-2">
-            <span className="text-xs font-medium uppercase tracking-wide text-ink-muted">Статус</span>
+          <div className="flex max-w-full min-w-0 flex-wrap items-center gap-2">
+            <span className="text-xs font-medium tracking-wide text-ink-muted uppercase">Статус</span>
             <Segmented options={statusFilterOptions} value={status} onChange={changeStatus} />
           </div>
           {query && (
@@ -310,11 +310,11 @@ export default function TimelinePage() {
       <Card padding={false} className="relative overflow-hidden">
         <ScrollShade side="left" visible={edges.left} />
         <ScrollShade side="right" visible={edges.right} />
-        <div ref={scrollRef} onScroll={updateEdges} className="overflow-x-auto px-4 pb-4 pt-5">
+        <div ref={scrollRef} onScroll={updateEdges} className="overflow-x-auto px-4 pt-5 pb-4">
           <div className="relative flex" style={{ minWidth: buckets.length * layout.colWidth }}>
             {/* Линия */}
             <div
-              className="pointer-events-none absolute left-0 right-0 z-1 h-[4px] rounded-full bg-linear-to-r from-gray-200 via-gray-300 to-gray-200"
+              className="pointer-events-none absolute right-0 left-0 z-1 h-[4px] rounded-full bg-linear-to-r from-gray-200 via-gray-300 to-gray-200"
               style={{ top: layout.zoneHeight + 16 - 2 }}
             />
             {buckets.map((b) => (
@@ -395,7 +395,7 @@ function ScrollShade({ side, visible }: { side: 'left' | 'right'; visible: boole
   return (
     <div
       className={clsx(
-        'pointer-events-none absolute bottom-10 top-0 z-20 w-10 from-white to-transparent transition-opacity',
+        'pointer-events-none absolute top-0 bottom-10 z-20 w-10 from-white to-transparent transition-opacity',
         side === 'left' ? 'left-0 bg-linear-to-r' : 'right-0 bg-linear-to-l',
         visible ? 'opacity-100' : 'opacity-0',
       )}
@@ -479,7 +479,7 @@ function BucketColumn({ bucket, items, selected, layout, onToggle, onOpen }: Buc
       >
         <span
           className={clsx(
-            'rounded-md font-medium leading-5',
+            'rounded-md leading-5 font-medium',
             compact ? 'px-1 text-xs' : 'px-1.5 text-sm',
             bucket.hasToday ? 'bg-brand-red text-white' : bucket.weekend ? 'text-accent-rose' : 'text-ink',
           )}

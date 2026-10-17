@@ -33,7 +33,7 @@ export default function CommunicationCard({ comm, selected, onClick }: Communica
       </div>
       <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="text-[15px] font-medium leading-snug text-ink">{comm.title}</h3>
+          <h3 className="text-[15px] leading-snug font-medium text-ink">{comm.title}</h3>
           <Badge color={statusColors[comm.status]} className="shrink-0">
             {statusLabels[comm.status]}
           </Badge>

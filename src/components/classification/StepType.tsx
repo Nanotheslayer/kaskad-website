@@ -42,7 +42,7 @@ export default function StepType({ selected, onSelect }: StepTypeProps) {
                 >
                   <Icon size={20} />
                 </div>
-                <div className="text-sm font-medium leading-tight text-ink">{type.name}</div>
+                <div className="text-sm leading-tight font-medium text-ink">{type.name}</div>
               </div>
               <div className="text-xs leading-snug text-ink-soft">{type.includes}</div>
               <div className="mt-auto flex flex-wrap items-center gap-1.5 pt-1">

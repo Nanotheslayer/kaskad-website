@@ -48,7 +48,7 @@ export default function Header({ onMenu }: HeaderProps) {
         </Link>
 
         <form onSubmit={submit} className="relative hidden w-full max-w-sm sm:block">
-          <Search size={17} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-muted" />
+          <Search size={17} className="absolute top-1/2 left-3.5 -translate-y-1/2 text-ink-muted" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -74,7 +74,7 @@ export default function Header({ onMenu }: HeaderProps) {
           >
             <Bell size={18} />
             {pending > 0 && (
-              <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-red px-1 text-[10px] font-bold text-white">
+              <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-red px-1 text-[10px] font-bold text-white">
                 {pending}
               </span>
             )}

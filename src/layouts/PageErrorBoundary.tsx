@@ -48,7 +48,7 @@ export default class PageErrorBoundary extends Component<PageErrorBoundaryProps,
               Попробуйте открыть её заново. Если ошибка повторяется, сбросьте сохранённые данные: созданные вами
               коммуникации и ручные статусы удалятся, демо-данные останутся.
             </p>
-            <p className="mt-2 wrap-break-word text-xs text-ink-muted">{error.message}</p>
+            <p className="mt-2 text-xs wrap-break-word text-ink-muted">{error.message}</p>
             <div className="mt-4 flex flex-wrap gap-2">
               <Button onClick={this.retry}>Открыть заново</Button>
               <Button variant="secondary" onClick={this.resetData}>
