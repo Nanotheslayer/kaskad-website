@@ -13,19 +13,16 @@ import {
   Users,
 } from 'lucide-react'
 import clsx from 'clsx'
-import type { CommunicationTypeId } from '../types/communication'
 import type { OrgNode } from '../types/organization'
 import { ORG_ROOT_ID, PILOT_ID } from '../data/orgStructure'
-import { isWithinDepth, levelById, levelIndex, levels } from '../data/levels'
-import { communicationTypes, typeById } from '../data/communicationTypes'
+import { LEVELS_DRAFT_NOTE, levelById, levelIndex, levels } from '../data/levels'
 import { alpha } from '../theme/colors'
-import { describeDepthRule, determineCascadeDepth, isExtendable } from '../utils/cascadeEngine'
+import { DELIVERY_DAYS } from '../utils/cascadeEngine'
 import { toggleInSet } from '../utils/collections'
-import { expandableIds, getNode, getPath, peopleReached, reachByLevel, unitsInSubtree } from '../utils/orgTree'
+import { expandableIds, getNode, getPath, reachByLevel, unitsInSubtree } from '../utils/orgTree'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import LevelPill from '../components/ui/LevelPill'
-import { fieldClass } from '../components/ui/styles'
 
 const DEFAULT_SELECTED_ID = 'kais_cfo'
 /** Интервал между шагами «волны» каскада по уровням */
@@ -40,12 +37,8 @@ const pilotSubunitCount = pilotUnits.length - 1
 const pilotReach = reachByLevel(PILOT_ID)
 /** Узлы, раскрытые в свёрнутом виде дерева */
 const defaultExpandedIds = [ORG_ROOT_ID, PILOT_ID]
-
-interface Simulation {
-  typeId: CommunicationTypeId | null
-  /** Сообщение касается всей компании и требует действий — для типов с расширяемой глубиной */
-  wide: boolean
-}
+/** Каскад доходит до конечного адресата — сотрудников уровня У6 (п. 4.1) */
+const LAST_LEVEL_IDX = levels.length - 1
 
 /** Состояние дерева, общее для всех узлов */
 interface TreeState {
@@ -64,27 +57,14 @@ export default function CascadeStructurePage() {
   const [expanded, setExpanded] = useState<Set<string>>(
     () => new Set([...defaultExpandedIds, ...getPath(DEFAULT_SELECTED_ID).map((n) => n.id)]),
   )
-  const [sim, setSim] = useState<Simulation>({ typeId: null, wide: false })
   /**
-   * Уровень, до которого дошла «волна» каскада: null — волну не запускали (показываем итоговую глубину),
-   * -1 — старт, затем по одному уровню вниз до глубины каскада
+   * Уровень, до которого дошла «волна» каскада: null — волну не запускали,
+   * -1 — старт, затем по одному уровню вниз до У6
    */
   const [wave, setWave] = useState<number | null>(null)
+  const playing = wave !== null && wave < LAST_LEVEL_IDX
 
-  const depthInfo = useMemo(() => {
-    if (!sim.typeId) return null
-    return determineCascadeDepth(sim.typeId, {
-      impactScale: sim.wide ? 'company' : 'department',
-      impactType: sim.wide ? 'action' : 'informing',
-      urgency: 'planned',
-    })
-  }, [sim])
-
-  const depthIdx = depthInfo ? levelIndex(depthInfo.depth) : null
-  const activeLevelIdx = depthIdx === null ? null : (wave ?? depthIdx)
-  const playing = wave !== null && depthIdx !== null && wave < depthIdx
-
-  // Пока волна не дошла до глубины каскада, раз в WAVE_STEP_MS спускаемся на уровень ниже
+  // Пока волна не дошла до У6, раз в WAVE_STEP_MS спускаемся на уровень ниже
   useEffect(() => {
     if (!playing) return
     const timer = window.setTimeout(() => setWave((w) => (w ?? -1) + 1), WAVE_STEP_MS)
@@ -99,11 +79,6 @@ export default function CascadeStructurePage() {
 
   const resetWave = () => setWave(null)
 
-  const changeSim = (next: Simulation) => {
-    setSim(next)
-    resetWave()
-  }
-
   const select = (id: string) => {
     setSelectedId(id)
     setExpanded((prev) => new Set([...prev, ...getPath(id).map((n) => n.id)]))
@@ -114,13 +89,11 @@ export default function CascadeStructurePage() {
     expanded,
     selectedId,
     pathIds: new Set(path.map((n) => n.id)),
-    activeLevelIdx,
+    activeLevelIdx: wave,
     playing,
     onToggle: (id) => setExpanded((prev) => toggleInSet(prev, id)),
     onSelect: select,
   }
-
-  const simType = sim.typeId ? typeById(sim.typeId) : null
 
   return (
     <div className="space-y-5">
@@ -147,54 +120,26 @@ export default function CascadeStructurePage() {
                 )}
               </div>
               <div className="mt-2 text-[13px] font-medium leading-tight text-ink">{l.title}</div>
-              <div className="mt-1 text-[11px] leading-snug text-ink-muted">{l.entryPoint}</div>
             </div>
           ))}
         </div>
+        <p className="mt-2 text-xs text-ink-muted">{LEVELS_DRAFT_NOTE}.</p>
       </div>
 
-      {/* Сценарий каскада */}
+      {/* Как идёт каскад */}
       <Card>
-        <div className="flex flex-wrap items-end gap-4">
-          <div className="w-full min-w-0 @2xl:w-auto @2xl:min-w-64 @2xl:flex-1">
-            <label
-              className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-ink-muted"
-              htmlFor="sim-type"
-            >
-              Проиграть каскад для типа коммуникации
-            </label>
-            <select
-              id="sim-type"
-              value={sim.typeId ?? ''}
-              onChange={(e) =>
-                changeSim({ typeId: (e.target.value || null) as CommunicationTypeId | null, wide: false })
-              }
-              className={fieldClass}
-            >
-              <option value="">— выберите тип, чтобы увидеть глубину —</option>
-              {communicationTypes.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.name} · {describeDepthRule(t.id)}
-                </option>
-              ))}
-            </select>
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="min-w-0 flex-1 basis-80">
+            <h2 className="font-display text-base font-semibold text-ink">Как идёт каскад</h2>
+            <p className="mt-1 text-sm text-ink-soft">
+              Руководитель каждого уровня получает информацию раньше своей команды и доводит её на ближайшей встрече, но
+              не позднее {DELIVERY_DAYS} дней после получения задания. Конечный адресат — сотрудники уровня У6 (п. 3.2,
+              4.1, 7.6).
+            </p>
           </div>
-
-          {sim.typeId && isExtendable(sim.typeId) && (
-            <label className="flex cursor-pointer items-center gap-2 rounded-xl bg-gray-50 px-3 py-2.5 text-sm text-ink">
-              <input
-                type="checkbox"
-                checked={sim.wide}
-                onChange={(e) => changeSim({ ...sim, wide: e.target.checked })}
-                className="h-4 w-4 accent-brand-red"
-              />
-              Касается всей компании и требует действий
-            </label>
-          )}
-
           <div className="flex gap-2">
-            <Button onClick={startWave} disabled={!depthInfo || playing}>
-              <Play size={16} /> Запустить каскад
+            <Button onClick={startWave} disabled={playing}>
+              <Play size={16} /> Проиграть каскад
             </Button>
             {wave !== null && (
               <Button variant="secondary" onClick={resetWave}>
@@ -204,38 +149,22 @@ export default function CascadeStructurePage() {
           </div>
         </div>
 
-        {depthInfo && simType && (
-          <motion.div
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mt-4 grid grid-cols-1 gap-3 @xl:grid-cols-2 @5xl:grid-cols-4"
-          >
-            <div className="rounded-2xl p-3" style={{ backgroundColor: alpha(simType.color, 0.11) }}>
-              <div className="text-xs text-ink-muted">Нижний уровень</div>
-              <div className="mt-1 flex items-center gap-2">
-                <LevelPill level={depthInfo.depth} />
-                <span className="text-sm font-medium text-ink">{levelById(depthInfo.depth).title}</span>
-              </div>
+        <div className="mt-4 grid grid-cols-1 gap-3 @xl:grid-cols-3">
+          <div className="rounded-2xl bg-gray-50 p-3">
+            <div className="text-xs text-ink-muted">Охват в Дирекции по персоналу</div>
+            <div className="mt-1 text-lg font-bold text-ink">
+              {pilotHeadcount} <span className="text-sm font-normal text-ink-soft">чел.</span>
             </div>
-            <div className="rounded-2xl bg-gray-50 p-3">
-              <div className="text-xs text-ink-muted">Охват в Дирекции по персоналу</div>
-              <div className="mt-1 text-lg font-bold text-ink">
-                {peopleReached(PILOT_ID, depthInfo.depth)}{' '}
-                <span className="text-sm font-normal text-ink-soft">из {pilotHeadcount} чел.</span>
-              </div>
-            </div>
-            <div className="rounded-2xl bg-gray-50 p-3">
-              <div className="text-xs text-ink-muted">Руководителей, которые должны донести</div>
-              <div className="mt-1 text-lg font-bold text-ink">
-                {pilotUnits.filter((n) => isWithinDepth(n.level, depthInfo.depth)).length}
-              </div>
-            </div>
-            <div className="rounded-2xl bg-gray-50 p-3 text-xs leading-snug text-ink-soft">
-              <Info size={14} className="mb-1 text-ink-muted" />
-              {depthInfo.reason}
-            </div>
-          </motion.div>
-        )}
+          </div>
+          <div className="rounded-2xl bg-gray-50 p-3">
+            <div className="text-xs text-ink-muted">Руководителей, которые доводят</div>
+            <div className="mt-1 text-lg font-bold text-ink">{pilotUnits.length}</div>
+          </div>
+          <div className="rounded-2xl bg-gray-50 p-3 text-xs leading-snug text-ink-soft">
+            <Info size={14} className="mb-1 text-ink-muted" />
+            Цифровые и печатные каналы дополняют доведение информации руководителем, но не заменяют его (п. 4.2)
+          </div>
+        </div>
       </Card>
 
       <div className="grid grid-cols-1 items-start gap-5 @4xl:grid-cols-[minmax(0,1fr)_320px] @6xl:grid-cols-[minmax(0,1fr)_360px] @7xl:grid-cols-[minmax(0,1fr)_380px]">
@@ -399,10 +328,8 @@ function NodeDetails({ node, path, onSelect }: NodeDetailsProps) {
         </div>
 
         <div className="rounded-2xl bg-gray-50 p-3">
-          <div className="text-xs text-ink-muted">
-            {isTeam ? 'Как информация приходит к этой группе' : 'Как информация приходит к руководителю'}
-          </div>
-          <div className="mt-1 text-sm font-medium text-ink">{level.entryPoint}</div>
+          <div className="text-xs text-ink-muted">Уровень {level.short} по п. 4.1</div>
+          <div className="mt-1 text-sm text-ink">{level.who}</div>
         </div>
       </Card>
 
@@ -456,9 +383,9 @@ function NodeDetails({ node, path, onSelect }: NodeDetailsProps) {
             ))}
           </div>
           <p className="mt-3 text-[11px] leading-snug text-ink-muted">
-            Правило: руководители, подчинённые напрямую директору дирекции, — У.03; руководители отделов, направлений и
-            групп внутри центров — У.04; ведущие менеджеры и старшие специалисты — У.05; специалисты — У.06. Если
-            промежуточного руководителя нет, уровень пропускается.
+            Предварительное правило пилота: руководители, подчинённые напрямую директору дирекции, — У3; руководители
+            отделов, направлений и групп внутри центров — У4; ведущие менеджеры и старшие специалисты — У5; специалисты
+            — У6. Если промежуточного руководителя нет, уровень пропускается.
           </p>
         </Card>
       )}

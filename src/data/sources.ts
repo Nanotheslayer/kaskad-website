@@ -1,23 +1,33 @@
-import { Banknote, Building2, Landmark, Layers, Mic, Radio, RefreshCw, Sparkles, Users, Wrench } from 'lucide-react'
+import {
+  Banknote,
+  Building2,
+  Landmark,
+  Layers,
+  Mic,
+  Radio,
+  RefreshCw,
+  ShieldCheck,
+  Sparkles,
+  Users,
+  Wrench,
+} from 'lucide-react'
 import type { Source } from '../types/communication'
 import { indexById } from '../utils/collections'
 
-/** Площадки смыслообразования — п. 5.2 Положения (единственные легитимные точки входа информации) */
+/** Площадки смыслообразования — таблица п. 5.1 Положения */
 export const sources: Source[] = [
   {
     id: 'administration',
     name: 'Администрация',
     frequency: 'В течение года',
     produces: 'Приказы и распоряжения',
-    owner: 'уточняется',
     icon: Landmark,
   },
   {
     id: 'monthly_meeting',
     name: 'Ежемесячная встреча руководителей',
     frequency: '1 раз / месяц',
-    produces: 'Стратегические решения, итоги, планы, ключевые кадровые решения',
-    owner: 'Бизнес-ассистент генерального директора',
+    produces: 'Итоги отчётного периода, изменения, планы',
     icon: Users,
   },
   {
@@ -25,7 +35,6 @@ export const sources: Source[] = [
     name: 'Комитет по ценностям',
     frequency: '1 раз / квартал',
     produces: 'Лучшие примеры ценностного поведения, признание',
-    owner: 'уточняется',
     icon: Sparkles,
   },
   {
@@ -33,7 +42,6 @@ export const sources: Source[] = [
     name: 'Комитет по проектному инвестированию',
     frequency: 'уточняется',
     produces: 'Решения о проектах, открытиях, инвестициях',
-    owner: 'уточняется',
     icon: Banknote,
   },
   {
@@ -41,48 +49,49 @@ export const sources: Source[] = [
     name: 'Комитет по управлению изменениями',
     frequency: 'уточняется',
     produces: 'Изменения процессов, политик, оргструктуры',
-    owner: 'уточняется',
     icon: RefreshCw,
   },
   {
     id: 'workshops',
     name: 'Мастерские (продажи и склад)',
     frequency: 'уточняется',
-    produces: 'Решения по улучшению процессов продаж и склада',
-    owner: 'уточняется',
+    produces: 'уточняется',
     icon: Wrench,
   },
   {
     id: 'foundation_meetings',
-    name: 'Встречи по фундаменту',
-    frequency: 'По календарю',
-    produces: 'Фундамент: люди, CJM, IT, сервис',
-    owner: 'уточняется',
+    name: 'Встречи по фундаменту и развитию',
+    frequency: 'Ежемесячно',
+    produces: 'Решения по стратегическим проектам и процессам компании',
     icon: Layers,
   },
   {
     id: 'live_broadcast',
     name: 'Прямой эфир с директорами',
-    frequency: 'По календарю',
-    produces: 'Стратегия, цели, достижения от первых лиц',
-    owner: 'Ведущий менеджер по корп. коммуникациям',
+    frequency: 'По потребности',
+    produces: 'Достижения, подробности о направлениях работы, ответы на вопросы сотрудников',
     icon: Radio,
   },
   {
     id: 'annual_conference',
     name: 'Итоговая конференция',
     frequency: '1 раз / год',
-    produces: 'Итоги года, планы',
-    owner: 'Ведущий менеджер по корп. коммуникациям',
+    produces: 'Итоги года, стратегия и планы на следующий год',
     icon: Mic,
   },
   {
     id: 'directorate',
-    name: 'Дирекции',
+    name: 'Отдельные подразделения внутри компании',
     frequency: 'В течение года',
-    produces: 'Решения для оптимизации работы и совершенствования процессов',
-    owner: 'Директор дирекции',
+    produces: 'Решения для оптимизации работы и совершенствования процессов, ключевые кадровые решения',
     icon: Building2,
+  },
+  {
+    id: 'qms_commission',
+    name: 'Комиссии изменений СМК',
+    frequency: 'уточняется',
+    produces: 'Изменения системы менеджмента качества',
+    icon: ShieldCheck,
   },
 ]
 

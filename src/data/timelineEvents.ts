@@ -1,18 +1,12 @@
 import type {
   Binding,
-  ClassificationParams,
   Communication,
   CommunicationStatus,
   CommunicationTypeId,
-  Confidentiality,
-  ImpactScale,
-  ImpactType,
   SourceId,
   ThreeQuestions,
-  Tone,
-  Urgency,
 } from '../types/communication'
-import { determineCascadeDepth, determineRequiredChannels } from '../utils/cascadeEngine'
+import { deliveryDeadline, determineRequiredChannels } from '../utils/cascadeEngine'
 import { emptyQuestions } from './threeQuestions'
 
 /**
@@ -28,7 +22,7 @@ const at = (offsetDays: number, hour: number, minute = 0) =>
 
 /** Компактная запись демо-коммуникации; ниже разворачивается в полноценную Communication */
 interface Seed {
-  /** Смещение даты создания от сегодняшнего дня */
+  /** Смещение даты запуска от сегодняшнего дня */
   day: number
   hour: number
   type: CommunicationTypeId
@@ -37,10 +31,6 @@ interface Seed {
   essence: string
   key: string
   who: [name: string, directorate: string]
-  cls: [scale: ImpactScale, urgency: Urgency, impact: ImpactType, tone: Tone]
-  /** Срок доведения — через сколько дней после создания */
-  due: number
-  conf?: Confidentiality
   binding?: Partial<Binding>
   q?: ThreeQuestions
   materials?: string[]
@@ -57,8 +47,6 @@ const seeds: Seed[] = [
       'Представлены стратегические ориентиры на ближайшие три года: рост в основном бизнесе и выход в новые города-миллионники.',
     key: 'Мы растём в основном бизнесе и идём в новые города — каждый сотрудник влияет на этот результат.',
     who: ['Воронцов А.Н.', 'Генеральный директор'],
-    cls: ['company', 'planned', 'values', 'emotional'],
-    due: 14,
     binding: { foundation: ['people', 'service'], strategy: ['core', 'geography'], values: ['development'] },
     q: {
       q1: 'Утверждён трёхлетний план развития; затронут приоритет «Люди» и «Сервис».',
@@ -76,22 +64,19 @@ const seeds: Seed[] = [
     essence: 'Комитет выбрал лучшие истории ценностного поведения. Рассказываем о героях и о том, что они сделали.',
     key: 'Ценности — это поступки конкретных людей рядом с нами.',
     who: ['Зорина А.Д.', 'Дирекция по персоналу'],
-    cls: ['company', 'planned', 'values', 'emotional'],
-    due: 10,
     binding: { foundation: ['people'], values: ['people_first', 'overcoming'] },
   },
   {
     day: -41,
     hour: 9,
-    type: 'documentation',
+    type: 'reporting',
     source: 'monthly_meeting',
-    title: 'Протокол ежемесячной встречи руководителей (август)',
-    essence: 'Сводка решений встречи руководителей: ключевые кадровые решения, итоги месяца, планы.',
-    key: 'Решения встречи зафиксированы — готовим сообщения для команд.',
+    title: 'Итоги месяца: ежемесячная встреча руководителей',
+    essence:
+      'Итоги отчётного периода, изменения и планы на следующий месяц. Протокол встречи — исходный материал для руководителей.',
+    key: 'Что изменилось за месяц и что мы делаем дальше.',
     who: ['Исполнительный ассистент ГД', 'Администрация'],
-    cls: ['company', 'planned', 'informing', 'official'],
-    due: 3,
-    conf: 'restricted',
+    materials: ['Протокол встречи руководителей.pdf'],
   },
   {
     day: -35,
@@ -103,22 +88,18 @@ const seeds: Seed[] = [
       'С нового календарного года изменяется порядок согласования графика отпусков: заявки подаются через «Петлокал».',
     key: 'График отпусков теперь согласуется в «Петлокале» — без бумаги и подписей.',
     who: ['Сергеева Т.Н.', 'Дирекция по персоналу'],
-    cls: ['company', 'planned', 'action', 'official'],
-    due: 7,
     binding: { foundation: ['it', 'people'] },
     materials: ['Приказ.pdf', 'Инструкция для руководителя.pdf'],
   },
   {
     day: -30,
     hour: 12,
-    type: 'project',
+    type: 'strategic',
     source: 'investment_committee',
     title: 'Открытие нового СТЦ в городе-миллионнике',
     essence: 'Принято решение об открытии нового СТЦ. Рассказываем о сроках, команде и вакансиях.',
     key: 'Мы открываем новый СТЦ — «Петрович» становится ближе к новым клиентам.',
     who: ['Директор по развитию', 'Дирекция по развитию'],
-    cls: ['company', 'planned', 'values', 'emotional'],
-    due: 7,
     binding: { foundation: ['service', 'cjm'], strategy: ['geography'], values: ['development'] },
   },
   {
@@ -130,8 +111,6 @@ const seeds: Seed[] = [
     essence: 'Выручка и ключевые операционные показатели за месяц, сравнение с планом.',
     key: 'Месяц закрыт выше плана — спасибо командам складов и СТЦ.',
     who: ['Финансовая дирекция', 'Финансовая дирекция'],
-    cls: ['company', 'planned', 'informing', 'expert'],
-    due: 5,
   },
   {
     day: -22,
@@ -143,8 +122,6 @@ const seeds: Seed[] = [
       'В ассортименте появляется новая категория электро- и ручного инструмента. Рассказываем, кому и как её предлагать.',
     key: 'Расширяем ассортимент — клиенту стройки больше не нужно ехать за инструментом в другое место.',
     who: ['Коммерческая дирекция', 'Коммерческая дирекция'],
-    cls: ['directorate', 'planned', 'informing', 'expert'],
-    due: 7,
     binding: { foundation: ['service', 'cjm'], strategy: ['assortment', 'renovation'] },
   },
   {
@@ -156,8 +133,6 @@ const seeds: Seed[] = [
     essence: 'Приглашаем сотрудников на день здоровья: вакцинация, спорт, консультации врачей.',
     key: 'Забота о здоровье — часть заботы о людях в «Петрович».',
     who: ['Белова Н.П.', 'Дирекция по персоналу'],
-    cls: ['company', 'planned', 'values', 'informal'],
-    due: 6,
     binding: { foundation: ['people'], values: ['people_first'] },
   },
   {
@@ -169,8 +144,6 @@ const seeds: Seed[] = [
     essence: 'Пересматриваем коэффициенты премии. Объясняем, как изменится расчёт и что это значит для менеджеров.',
     key: 'Премия станет прозрачнее — вы сами сможете посчитать свой результат.',
     who: ['Виноградов П.Е.', 'Дирекция по персоналу'],
-    cls: ['directorate', 'planned', 'action', 'expert'],
-    due: 7,
     binding: { foundation: ['people'], strategy: ['core'] },
     q: {
       q1: 'Меняются коэффициенты премии менеджеров продаж; затрагивает приоритет «Люди».',
@@ -188,8 +161,6 @@ const seeds: Seed[] = [
     essence: 'Генеральный директор отвечает на вопросы сотрудников о стратегии и планах на год.',
     key: 'Первые лица слышат вас — задавайте вопросы напрямую.',
     who: ['Зорина А.Д.', 'Дирекция по персоналу'],
-    cls: ['company', 'planned', 'values', 'emotional'],
-    due: 3,
   },
   {
     day: -12,
@@ -200,8 +171,6 @@ const seeds: Seed[] = [
     essence: 'Складская система недоступна. Приёмка и отгрузка временно ведутся по бумажным накладным.',
     key: 'Работаем по бумажным накладным, клиентов предупреждаем о возможной задержке.',
     who: ['Директор по IT', 'Дирекция по IT'],
-    cls: ['company', 'crisis', 'action', 'restrained'],
-    due: 0,
     binding: { foundation: ['it', 'service'], values: ['overcoming'] },
     q: {
       q1: 'Недоступна складская система; затронуты IT и сервис.',
@@ -212,15 +181,13 @@ const seeds: Seed[] = [
   {
     day: -9,
     hour: 10,
-    type: 'documentation',
+    type: 'reporting',
     source: 'monthly_meeting',
-    title: 'Протокол ежемесячной встречи руководителей (сентябрь)',
-    essence: 'Сводка решений встречи руководителей: итоги месяца, планы, кадровые решения.',
-    key: 'Решения встречи зафиксированы — готовим сообщения для команд.',
+    title: 'Итоги месяца и планы: встреча руководителей',
+    essence: 'Итоги месяца, планы и кадровые решения. Протокол встречи — исходный материал для руководителей.',
+    key: 'Месяц закрыт по плану — вот что важно для каждой команды.',
     who: ['Исполнительный ассистент ГД', 'Администрация'],
-    cls: ['company', 'planned', 'informing', 'official'],
-    due: 3,
-    conf: 'restricted',
+    materials: ['Протокол встречи руководителей.pdf'],
   },
   {
     day: -8,
@@ -231,21 +198,17 @@ const seeds: Seed[] = [
     essence: 'Приказом утверждён новый руководитель Корпоративного университета.',
     key: 'Корпоративный университет возглавил новый руководитель.',
     who: ['Макарова Е.В.', 'Дирекция по персоналу'],
-    cls: ['directorate', 'planned', 'informing', 'official'],
-    due: 2,
   },
   {
     day: -6,
     hour: 11,
-    type: 'project',
+    type: 'strategic',
     source: 'change_committee',
     title: 'Запуск портала каскадирования (пилот в ДП)',
     essence:
       'Дирекция по персоналу первой начинает работать в модуле каскадирования: паспорт инфоповода и статус доведения.',
     key: 'Пилот каскадирования стартовал в ДП — мы тестируем, чтобы потом масштабировать.',
     who: ['Зорина А.Д.', 'Дирекция по персоналу'],
-    cls: ['directorate', 'planned', 'action', 'expert'],
-    due: 7,
     binding: { foundation: ['it', 'people'], values: ['development'] },
   },
   {
@@ -257,8 +220,6 @@ const seeds: Seed[] = [
     essence: 'Информированность растёт, понимание — в зоне внимания. Показываем результаты по дирекциям.',
     key: 'Мы слышим вас: вот что показал опрос и что мы с этим делаем.',
     who: ['Зорина А.Д.', 'Дирекция по персоналу'],
-    cls: ['company', 'planned', 'informing', 'expert'],
-    due: 4,
     binding: { foundation: ['people'] },
   },
   {
@@ -270,8 +231,6 @@ const seeds: Seed[] = [
     essence: 'Опрос вовлечённости проходит три недели. Анонимно, 15 минут. Результаты расскажем всем.',
     key: 'Ваше мнение определяет, что мы улучшим в компании.',
     who: ['Зорина А.Д.', 'Дирекция по персоналу'],
-    cls: ['company', 'planned', 'action', 'informal'],
-    due: 3,
     binding: { foundation: ['people'], values: ['people_first'] },
   },
   {
@@ -283,8 +242,6 @@ const seeds: Seed[] = [
     essence: 'Партнёр-водитель не бросил груз при поломке и довёз товар клиенту вовремя.',
     key: 'Преодоление — когда доводишь дело до конца, даже если всё пошло не так.',
     who: ['Дирекция по логистике', 'Операционная дирекция'],
-    cls: ['company', 'planned', 'values', 'emotional'],
-    due: 5,
     binding: { foundation: ['service'], values: ['overcoming'] },
   },
   {
@@ -296,8 +253,6 @@ const seeds: Seed[] = [
     essence: 'Переходим на электронные пропуска. Рассказываем, как получить, что делать при утере.',
     key: 'Пропуск оформляется один раз в «Петлокале» — дальше всё автоматически.',
     who: ['Дирекция по IT', 'Дирекция по IT'],
-    cls: ['department', 'planned', 'action', 'official'],
-    due: 6,
   },
   {
     day: -1,
@@ -308,8 +263,6 @@ const seeds: Seed[] = [
     essence: 'Запуск расширенной программы лояльности: накопительные скидки и бонусы за объём.',
     key: 'Профессионалам стройки теперь выгоднее покупать в «Петрович».',
     who: ['Дирекция по маркетингу', 'Дирекция по маркетингу'],
-    cls: ['company', 'planned', 'informing', 'informal'],
-    due: 5,
     binding: { foundation: ['cjm', 'service'], strategy: ['core'] },
   },
   {
@@ -321,8 +274,6 @@ const seeds: Seed[] = [
     essence: 'Утверждён график выходных и праздничных дней на ноябрь.',
     key: 'График на ноябрь утверждён — проверьте свои смены.',
     who: ['Сергеева Т.Н.', 'Дирекция по персоналу'],
-    cls: ['company', 'urgent', 'action', 'official'],
-    due: 2,
     materials: ['Приказ.pdf'],
   },
   {
@@ -334,8 +285,6 @@ const seeds: Seed[] = [
     essence: 'Командировки согласуются в «Петлокале» за 5 рабочих дней. Объясняем, что меняется для руководителей.',
     key: 'Согласование командировки — три клика в «Петлокале».',
     who: ['Тарасова О.В.', 'Дирекция по персоналу'],
-    cls: ['directorate', 'planned', 'action', 'expert'],
-    due: 5,
     binding: { foundation: ['it'] },
   },
   {
@@ -347,8 +296,6 @@ const seeds: Seed[] = [
     essence: 'Расскажем о программах обучения и ответим на вопросы. Регистрация в «Петлокале».',
     key: 'Приходите узнать, как расти внутри компании.',
     who: ['Лаптев О.К.', 'Дирекция по персоналу'],
-    cls: ['company', 'planned', 'values', 'informal'],
-    due: 7,
     binding: { foundation: ['people'], values: ['development'] },
   },
   {
@@ -360,22 +307,18 @@ const seeds: Seed[] = [
     essence: 'Из-за погодных условий возможны задержки доставки. Рекомендации для менеджеров и водителей.',
     key: 'Безопасность превыше сроков — клиентов предупреждаем заранее.',
     who: ['Операционная дирекция', 'Операционная дирекция'],
-    cls: ['company', 'crisis', 'action', 'restrained'],
-    due: 1,
     binding: { foundation: ['service'], values: ['people_first'] },
   },
   {
     day: 2,
     hour: 10,
-    type: 'documentation',
+    type: 'explanatory',
     source: 'monthly_meeting',
-    title: 'Сводка для каскадирования по итогам встречи руководителей',
-    essence: 'Краткая сводка решений для подготовки сообщений командам.',
-    key: 'Три решения встречи, которые нужно донести до команд на этой неделе.',
+    title: 'Пояснения к решениям встречи руководителей',
+    essence: 'Три решения встречи руководителей, которые меняют работу подразделений, — с пояснениями для команд.',
+    key: 'Три решения встречи, которые нужно донести до команд.',
     who: ['Исполнительный ассистент ГД', 'Администрация'],
-    cls: ['company', 'planned', 'informing', 'official'],
-    due: 2,
-    conf: 'restricted',
+    materials: ['Сводка решений встречи руководителей.pdf'],
   },
   {
     day: 3,
@@ -386,8 +329,6 @@ const seeds: Seed[] = [
     essence: 'Первая неделя опроса: процент участия по дирекциям.',
     key: 'Участие выросло — осталось две недели, чтобы высказаться.',
     who: ['Зорина А.Д.', 'Дирекция по персоналу'],
-    cls: ['company', 'planned', 'informing', 'expert'],
-    due: 3,
   },
   {
     day: 4,
@@ -398,21 +339,17 @@ const seeds: Seed[] = [
     essence: 'Разговор о развитии, обучении и карьерных треках. Вопросы можно задать заранее.',
     key: 'Развитие — это возможности, которые в компании уже есть.',
     who: ['Макарова Е.В.', 'Дирекция по персоналу'],
-    cls: ['company', 'planned', 'values', 'emotional'],
-    due: 3,
     binding: { foundation: ['people'], values: ['development'] },
   },
   {
     day: 6,
     hour: 10,
-    type: 'project',
+    type: 'strategic',
     source: 'investment_committee',
     title: 'Выход в новый регион: набор команды',
     essence: 'Открываем набор в команду нового региона. Внутренний конкурс на переезд и наставничество.',
     key: 'Новый регион — карьерный шанс для сотрудников «Петрович».',
     who: ['Афанасьев К.Л.', 'Дирекция по персоналу'],
-    cls: ['company', 'planned', 'values', 'emotional'],
-    due: 10,
     binding: { foundation: ['people'], strategy: ['geography'], values: ['development'] },
   },
   {
@@ -424,8 +361,6 @@ const seeds: Seed[] = [
     essence: 'Обновляем перечень льгот и порядок их получения. Рассказываем, кого это касается.',
     key: 'Льготы остаются — меняется только порядок оформления.',
     who: ['Виноградов П.Е.', 'Дирекция по персоналу'],
-    cls: ['company', 'planned', 'informing', 'expert'],
-    due: 10,
     binding: { foundation: ['people'], values: ['people_first'] },
   },
   {
@@ -437,8 +372,6 @@ const seeds: Seed[] = [
     essence: 'Сроки инвентаризации для складов и СТЦ, ответственные и порядок.',
     key: 'Инвентаризация проходит по графику — у каждого склада свои даты.',
     who: ['Операционная дирекция', 'Операционная дирекция'],
-    cls: ['directorate', 'planned', 'action', 'official'],
-    due: 5,
   },
   {
     day: 12,
@@ -449,22 +382,18 @@ const seeds: Seed[] = [
     essence: 'Сбор вещей и средств для подшефных детских домов. Как принять участие и куда нести.',
     key: 'Помогать просто — и каждая малость важна.',
     who: ['Белова Н.П.', 'Дирекция по персоналу'],
-    cls: ['company', 'planned', 'values', 'emotional'],
-    due: 14,
     binding: { foundation: ['people'], values: ['people_first'] },
   },
   {
     day: 15,
     hour: 10,
-    type: 'documentation',
+    type: 'reporting',
     source: 'monthly_meeting',
-    title: 'Протокол ежемесячной встречи руководителей (октябрь)',
-    essence: 'Сводка решений встречи руководителей за месяц.',
-    key: 'Решения встречи зафиксированы — готовим сообщения для команд.',
+    title: 'Итоги отчётного периода: встреча руководителей',
+    essence: 'Итоги отчётного периода и планы. Протокол встречи — исходный материал для руководителей.',
+    key: 'Итоги периода и планы — коротко и по делу.',
     who: ['Исполнительный ассистент ГД', 'Администрация'],
-    cls: ['company', 'planned', 'informing', 'official'],
-    due: 3,
-    conf: 'restricted',
+    materials: ['Протокол встречи руководителей.pdf'],
   },
   {
     day: 19,
@@ -475,8 +404,6 @@ const seeds: Seed[] = [
     essence: 'Расширяем зимний ассортимент: утеплители, отопление, снегоуборочная техника.',
     key: 'К зиме готовы — подскажите клиентам, что взять заранее.',
     who: ['Коммерческая дирекция', 'Коммерческая дирекция'],
-    cls: ['company', 'planned', 'informing', 'informal'],
-    due: 7,
     binding: { foundation: ['service'], strategy: ['assortment'] },
   },
   {
@@ -488,8 +415,6 @@ const seeds: Seed[] = [
     essence: 'Результаты опроса вовлечённости по дирекциям и план действий по зонам роста.',
     key: 'Вот что вы сказали — и вот что мы делаем.',
     who: ['Зорина А.Д.', 'Дирекция по персоналу'],
-    cls: ['company', 'planned', 'informing', 'expert'],
-    due: 10,
     binding: { foundation: ['people'], values: ['people_first'] },
   },
   {
@@ -501,8 +426,6 @@ const seeds: Seed[] = [
     essence: 'Лучшие истории ценностного поведения четвёртого квартала.',
     key: 'Ценности живут в поступках — расскажем о тех, кто их проживает.',
     who: ['Зорина А.Д.', 'Дирекция по персоналу'],
-    cls: ['company', 'planned', 'values', 'emotional'],
-    due: 10,
     binding: { foundation: ['people'], values: ['people_first', 'development', 'overcoming'] },
   },
   {
@@ -514,8 +437,6 @@ const seeds: Seed[] = [
     essence: 'Подведение итогов года и планы на следующий год — для всех сотрудников.',
     key: 'Год — позади, и мы знаем, куда идём дальше.',
     who: ['Воронцов А.Н.', 'Генеральный директор'],
-    cls: ['company', 'planned', 'values', 'emotional'],
-    due: 14,
     binding: {
       foundation: ['people', 'service', 'it', 'cjm'],
       strategy: ['core', 'geography', 'assortment', 'renovation'],
@@ -524,20 +445,15 @@ const seeds: Seed[] = [
   },
 ]
 
-function statusFor(createdAt: string, deadline: string): CommunicationStatus {
+function statusFor(type: CommunicationTypeId, createdAt: string): CommunicationStatus {
   const now = Date.now()
   if (new Date(createdAt).getTime() > now) return 'planned'
-  if (new Date(deadline).getTime() < now) return 'completed'
+  if (deliveryDeadline(type, createdAt).getTime() < now) return 'completed'
   return 'active'
 }
 
 export const seedCommunications: Communication[] = seeds.map((s, i) => {
-  const [impactScale, urgency, impactType, tone] = s.cls
-  const classification: ClassificationParams = { impactScale, urgency, impactType, tone }
   const createdAt = at(s.day, s.hour)
-  const deadline = at(s.day + s.due, s.hour)
-  const confidentiality = s.conf ?? 'internal'
-  const depth = determineCascadeDepth(s.type, classification)
   return {
     id: `seed-${i + 1}`,
     title: s.title,
@@ -546,17 +462,12 @@ export const seedCommunications: Communication[] = seeds.map((s, i) => {
     initiator: { name: s.who[0], directorate: s.who[1] },
     sourceId: s.source,
     typeId: s.type,
-    classification,
-    confidentiality,
     binding: { foundation: [], strategy: [], values: [], ...s.binding },
     questions: s.q ?? emptyQuestions,
-    cascadeDepth: depth.depth,
-    depthExtended: depth.extended,
-    requiredChannels: determineRequiredChannels(s.type, confidentiality),
+    requiredChannels: determineRequiredChannels(s.type),
     extraChannels: [],
     materials: s.materials ?? [],
     createdAt,
-    deadline,
-    status: statusFor(createdAt, deadline),
+    status: statusFor(s.type, createdAt),
   }
 })

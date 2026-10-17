@@ -3,10 +3,10 @@ import { useSearchParams } from 'react-router-dom'
 import { isSameDay, isWithinInterval, startOfDay } from 'date-fns'
 import { CalendarDays, ChevronLeft, ChevronRight, Search, X } from 'lucide-react'
 import clsx from 'clsx'
-import type { Communication, CommunicationTypeId, Urgency } from '../types/communication'
+import type { Communication, CommunicationStatus, CommunicationTypeId } from '../types/communication'
 import { useAllCommunications } from '../store/communicationsStore'
 import { communicationTypes, typeById } from '../data/communicationTypes'
-import { urgencyOptions } from '../data/classificationOptions'
+import { statusLabels } from '../data/statuses'
 import { useNow } from '../hooks/useNow'
 import { toggleInSet } from '../utils/collections'
 import { fmt, pluralComm, pluralCommWord } from '../utils/format'
@@ -26,11 +26,11 @@ import Chip from '../components/ui/Chip'
 import CommunicationCard from '../components/communication/CommunicationCard'
 import PassportDrawer from '../components/communication/PassportDrawer'
 
-type UrgencyFilter = Urgency | 'all'
+type StatusFilter = CommunicationStatus | 'all'
 
-const urgencyFilterOptions: { value: UrgencyFilter; label: string }[] = [
-  { value: 'all', label: 'Любая' },
-  ...urgencyOptions.map((o) => ({ value: o.value, label: o.label })),
+const statusFilterOptions: { value: StatusFilter; label: string }[] = [
+  { value: 'all', label: 'Любой' },
+  ...(Object.entries(statusLabels) as [CommunicationStatus, string][]).map(([value, label]) => ({ value, label })),
 ]
 
 const allTypeIds = () => new Set(communicationTypes.map((t) => t.id))
@@ -98,7 +98,7 @@ export default function TimelinePage() {
   const [scale, setScale] = useState<Scale>('month')
   const [anchor, setAnchor] = useState(now)
   const [activeTypes, setActiveTypes] = useState<Set<CommunicationTypeId>>(allTypeIds)
-  const [urgency, setUrgency] = useState<UrgencyFilter>('all')
+  const [status, setStatus] = useState<StatusFilter>('all')
   const [selectedBucketKey, setSelectedBucketKey] = useState<string | null>(null)
   const [openId, setOpenId] = useState<string | null>(null)
   const closePassport = useCallback(() => setOpenId(null), [])
@@ -118,11 +118,11 @@ export default function TimelinePage() {
       communications.filter((c) => {
         const created = new Date(c.createdAt)
         if (created < range.start || created > range.end) return false
-        if (urgency !== 'all' && c.classification.urgency !== urgency) return false
+        if (status !== 'all' && c.status !== status) return false
         if (query && !`${c.title} ${c.essence} ${c.keyMessage}`.toLowerCase().includes(query)) return false
         return true
       }),
-    [communications, range, urgency, query],
+    [communications, range, status, query],
   )
 
   const typeCounts = useMemo(() => {
@@ -200,8 +200,8 @@ export default function TimelinePage() {
     setSelectedBucketKey(null)
   }
 
-  const changeUrgency = (next: UrgencyFilter) => {
-    setUrgency(next)
+  const changeStatus = (next: StatusFilter) => {
+    setStatus(next)
     setSelectedBucketKey(null)
   }
 
@@ -289,8 +289,8 @@ export default function TimelinePage() {
 
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
           <div className="flex min-w-0 max-w-full flex-wrap items-center gap-2">
-            <span className="text-xs font-medium uppercase tracking-wide text-ink-muted">Срочность</span>
-            <Segmented options={urgencyFilterOptions} value={urgency} onChange={changeUrgency} />
+            <span className="text-xs font-medium uppercase tracking-wide text-ink-muted">Статус</span>
+            <Segmented options={statusFilterOptions} value={status} onChange={changeStatus} />
           </div>
           {query && (
             <button

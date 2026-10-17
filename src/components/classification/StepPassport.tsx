@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import type { Binding, ThreeQuestions } from '../../types/communication'
-import { foundationOptions, strategyOptions, valueOptions, type ColoredOption } from '../../data/classificationOptions'
+import { foundationOptions, strategyOptions, valueOptions, type Priority } from '../../data/priorities'
 import { threeQuestions } from '../../data/threeQuestions'
 import { alpha } from '../../theme/colors'
 import { toggleItem } from '../../utils/collections'
@@ -26,7 +26,7 @@ export default function StepPassport({ title, essence, keyMessage, questions, bi
     <div className="space-y-6">
       <StepHeading
         title="Суть и осмысление"
-        description="Коротко и своими словами — так, чтобы руководитель мог «перевести», а не переслать."
+        description="Коротко и своими словами — так руководителям будет проще адаптировать сообщение для своих команд."
       />
 
       <div className="max-w-2xl space-y-4">
@@ -71,7 +71,7 @@ export default function StepPassport({ title, essence, keyMessage, questions, bi
       <div>
         <h3 className="mb-1 font-display text-base font-semibold text-ink">Правило трёх вопросов</h3>
         <p className="mb-3 text-xs text-ink-muted">
-          п. 5.7 Положения: вопросы построены на фундаменте, стратегии и ценностях компании
+          п. 7.5 Положения: вопросы построены на фундаменте, стратегии и ценностях Компании
         </p>
         <div className="grid grid-cols-1 gap-3 @4xl:grid-cols-3">
           {threeQuestions.map((q, i) => (
@@ -106,7 +106,7 @@ export default function StepPassport({ title, essence, keyMessage, questions, bi
       <div>
         <h3 className="mb-1 font-display text-base font-semibold text-ink">Привязка к приоритетам компании</h3>
         <p className="mb-3 text-xs text-ink-muted">
-          Приложение 2: можно выбрать несколько блоков фундамента, стратегии и ценностей
+          п. 7.2–7.3 и приложение Положения: можно выбрать несколько блоков фундамента, стратегии и ценностей
         </p>
         <div className="space-y-4">
           <BindingGroup
@@ -135,7 +135,7 @@ export default function StepPassport({ title, essence, keyMessage, questions, bi
 
 interface BindingGroupProps<T extends string> {
   label: string
-  options: ColoredOption<T>[]
+  options: Priority<T>[]
   value: T[]
   onToggle: (id: T) => void
 }

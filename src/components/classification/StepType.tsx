@@ -2,7 +2,6 @@ import clsx from 'clsx'
 import type { CommunicationTypeId } from '../../types/communication'
 import { communicationTypes } from '../../data/communicationTypes'
 import { alpha } from '../../theme/colors'
-import { describeDepthRule } from '../../utils/cascadeEngine'
 import StepHeading from './StepHeading'
 
 interface StepTypeProps {
@@ -16,7 +15,7 @@ export default function StepType({ selected, onSelect }: StepTypeProps) {
       <StepHeading
         className="mb-4"
         title="Тип коммуникации"
-        description="Тип определяет глубину каскадирования, обязательные каналы и базовую тональность (п. 5.8 Положения)."
+        description="Тип нужен, если сообщение доводится шире, чем принято для площадки, или появилось вне регулярных собраний. Он задаёт тональность и обязательные каналы (п. 5.3–5.4 Положения)."
       />
       <div className="grid grid-cols-1 gap-3 @xl:grid-cols-2 @5xl:grid-cols-3 @[100rem]:grid-cols-4">
         {communicationTypes.map((type) => {
@@ -51,9 +50,9 @@ export default function StepType({ selected, onSelect }: StepTypeProps) {
                   className="rounded-md px-1.5 py-0.5 text-[11px] font-bold"
                   style={{ backgroundColor: alpha(type.color, 0.13), color: type.color }}
                 >
-                  {describeDepthRule(type.id)}
+                  {type.tone}
                 </span>
-                <span className="text-[11px] text-ink-muted">{type.tone}</span>
+                <span className="text-[11px] text-ink-muted">обязательных каналов: {type.channels.length}</span>
               </div>
             </button>
           )

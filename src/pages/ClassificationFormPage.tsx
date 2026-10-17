@@ -2,28 +2,24 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowLeft, ArrowRight, Send } from 'lucide-react'
-import type { CommunicationTypeId } from '../types/communication'
 import type { ChannelId } from '../types/channel'
 import { typeById } from '../data/communicationTypes'
-import { levelById } from '../data/levels'
 import { useCommunicationsStore } from '../store/communicationsStore'
-import { determineCascadeDepth, determineRequiredChannels } from '../utils/cascadeEngine'
+import { useNow } from '../hooks/useNow'
+import { deliveryDeadline, determineRequiredChannels } from '../utils/cascadeEngine'
 import { toggleItem } from '../utils/collections'
-import { dateInputToIso } from '../utils/format'
+import { fmt } from '../utils/format'
 import {
   PASSPORT_STEPS,
   createEmptyDraft,
-  isClassificationComplete,
   isStepComplete,
   type PassportDraft,
 } from '../components/classification/passportDraft'
 import StepSource from '../components/classification/StepSource'
 import StepType from '../components/classification/StepType'
-import StepClassification from '../components/classification/StepClassification'
 import StepPassport from '../components/classification/StepPassport'
-import StepDeadline from '../components/classification/StepDeadline'
+import StepMaterials from '../components/classification/StepMaterials'
 import StepResult from '../components/classification/StepResult'
-import DepthScale from '../components/communication/DepthScale'
 import Stepper from '../components/ui/Stepper'
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
@@ -33,30 +29,21 @@ const LAST_STEP = PASSPORT_STEPS.length - 1
 export default function ClassificationFormPage() {
   const navigate = useNavigate()
   const addCommunication = useCommunicationsStore((s) => s.addCommunication)
+  const now = useNow()
 
   const [step, setStep] = useState(0)
   const [draft, setDraft] = useState(createEmptyDraft)
   const update = (patch: Partial<PassportDraft>) => setDraft((d) => ({ ...d, ...patch }))
 
-  const { typeId, classification, confidentiality } = draft
-  const depth = useMemo(() => (typeId ? determineCascadeDepth(typeId, classification) : null), [typeId, classification])
-  const required = useMemo(
-    () => (typeId ? determineRequiredChannels(typeId, confidentiality) : []),
-    [typeId, confidentiality],
-  )
-  // Канал, ставший обязательным (например, после смены метки), не дублируем в дополнительных
+  const { typeId } = draft
+  const required = useMemo(() => (typeId ? determineRequiredChannels(typeId) : []), [typeId])
+  // Канал, ставший обязательным после смены типа, не дублируем в дополнительных
   const extra = draft.extraChannels.filter((id) => !required.includes(id))
-
-  const selectType = (id: CommunicationTypeId) => {
-    // Для кризисных коммуникаций срочность очевидна — предзаполняем
-    const prefillUrgency = id === 'crisis' && !classification.urgency
-    update({ typeId: id, classification: prefillUrgency ? { ...classification, urgency: 'crisis' } : classification })
-  }
 
   const toggleExtra = (id: ChannelId) => update({ extraChannels: toggleItem(draft.extraChannels, id) })
 
   const submit = () => {
-    if (!draft.sourceId || !typeId || !depth || !isClassificationComplete(classification)) return
+    if (!draft.sourceId || !typeId) return
     addCommunication({
       id: `comm-${Date.now()}`,
       title: draft.title.trim(),
@@ -65,24 +52,19 @@ export default function ClassificationFormPage() {
       initiator: { name: draft.initiatorName.trim(), directorate: draft.directorate },
       sourceId: draft.sourceId,
       typeId,
-      classification,
-      confidentiality,
       binding: draft.binding,
       questions: draft.questions,
-      cascadeDepth: depth.depth,
-      depthExtended: depth.extended,
       requiredChannels: required,
       extraChannels: extra,
       materials: draft.materials,
       createdAt: new Date().toISOString(),
-      deadline: dateInputToIso(draft.deadline),
       status: 'active',
     })
     navigate('/timeline')
   }
 
   const type = typeId ? typeById(typeId) : null
-  const showAside = type !== null && depth !== null && step >= 1 && step < LAST_STEP
+  const showAside = type !== null && step >= 1 && step < LAST_STEP
 
   return (
     <div className="max-w-6xl">
@@ -113,15 +95,8 @@ export default function ClassificationFormPage() {
                 onChange={update}
               />
             )}
-            {step === 1 && <StepType selected={typeId} onSelect={selectType} />}
+            {step === 1 && <StepType selected={typeId} onSelect={(id) => update({ typeId: id })} />}
             {step === 2 && (
-              <StepClassification
-                typeId={typeId}
-                params={classification}
-                onChange={(key, value) => update({ classification: { ...classification, [key]: value } })}
-              />
-            )}
-            {step === 3 && (
               <StepPassport
                 title={draft.title}
                 essence={draft.essence}
@@ -131,21 +106,14 @@ export default function ClassificationFormPage() {
                 onChange={update}
               />
             )}
-            {step === 4 && (
-              <StepDeadline
-                deadline={draft.deadline}
-                confidentiality={confidentiality}
-                materials={draft.materials}
-                onChange={update}
-              />
+            {step === 3 && (
+              <StepMaterials materials={draft.materials} onChange={(materials) => update({ materials })} />
             )}
-            {step === LAST_STEP && typeId && depth && isClassificationComplete(classification) && (
+            {step === LAST_STEP && typeId && (
               <StepResult
                 typeId={typeId}
                 title={draft.title}
-                classification={classification}
-                deadline={dateInputToIso(draft.deadline)}
-                depth={depth}
+                launchAt={now}
                 required={required}
                 extra={extra}
                 onToggleExtra={toggleExtra}
@@ -161,12 +129,17 @@ export default function ClassificationFormPage() {
               <span className="h-3 w-3 rounded-full" style={{ backgroundColor: type.color }} />
               <span className="text-sm font-medium text-ink">{type.name}</span>
             </div>
-            <DepthScale depth={depth.depth} extended={depth.extended} />
-            <div className="mt-3 text-sm text-ink-soft">
-              До уровня <span className="font-medium text-ink">{levelById(depth.depth).short}</span>
+            <div className="text-sm text-ink-soft">
+              Тональность: <span className="font-medium text-ink">{type.tone.toLowerCase()}</span>
             </div>
             <div className="mt-1 text-sm text-ink-soft">
               Обязательных каналов: <span className="font-medium text-ink">{required.length}</span>
+            </div>
+            <div className="mt-1 text-sm text-ink-soft">
+              Довести до:{' '}
+              <span className="font-medium text-ink">
+                {fmt(deliveryDeadline(type.id, now), type.id === 'crisis' ? 'd MMM, HH:mm' : 'd MMMM')}
+              </span>
             </div>
           </Card>
         )}

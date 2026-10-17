@@ -1,46 +1,25 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import { motion } from 'framer-motion'
-import { CalendarCheck2, TrendingUp, Users, type LucideIcon } from 'lucide-react'
+import { CalendarCheck2, HeartHandshake, TrendingUp, Users, type LucideIcon } from 'lucide-react'
 import clsx from 'clsx'
 import { divisionKindLabels, divisions } from '../data/divisions'
-import { surveyByDivision, surveyResults, surveyTargets, type MetricId } from '../data/surveyResults'
-import { useNow } from '../hooks/useNow'
-import { alpha, palette } from '../theme/colors'
+import { surveyAverage, surveyByDivision, surveyQuestions, surveyResults, type MetricId } from '../data/surveyResults'
+import { alpha } from '../theme/colors'
 import { getScoreBand, scoreBands } from '../utils/score'
 import { fmt } from '../utils/format'
 import Card from '../components/ui/Card'
 import Segmented from '../components/ui/Segmented'
 
-const metricIds = Object.keys(surveyTargets) as MetricId[]
-const metricOptions = metricIds.map((id) => ({ value: id, label: surveyTargets[id].label }))
+const metricIds = Object.keys(surveyQuestions) as MetricId[]
+const metricOptions = metricIds.map((id) => ({ value: id, label: surveyQuestions[id].label }))
+const averages = Object.fromEntries(metricIds.map((id) => [id, surveyAverage(id)])) as Record<MetricId, number>
+/** Факторы опроса с их вопросами — в порядке п. 8.2 */
+const factors = [...new Set(metricIds.map((id) => surveyQuestions[id].factor))].map((factor) => ({
+  factor,
+  questions: metricIds.filter((id) => surveyQuestions[id].factor === factor).map((id) => surveyQuestions[id].question),
+}))
 
 const DEFAULT_DIVISION_ID = 'ufo'
-const MONTHS = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек']
-
-/** Ритм опросов — п. 8.2 и 8.4 Положения. Месяцы — индексы 0…11 */
-const surveyKinds = [
-  {
-    id: 'pulse',
-    title: 'Пульс-опрос',
-    legend: 'Пульс-опрос — ежемесячно, 2–3 вопроса',
-    color: palette.azure,
-    months: null,
-  },
-  {
-    id: 'engagement',
-    title: 'Опрос вовлечённости',
-    legend: 'Вовлечённость — апрель и октябрь, 3 недели',
-    color: palette.pink,
-    months: [3, 9],
-  },
-  {
-    id: 'interaction',
-    title: 'Опрос взаимодействия',
-    legend: 'Взаимодействие — июнь и декабрь',
-    color: palette.amber,
-    months: [5, 11],
-  },
-]
 
 const getSurvey = (divisionId: string) => {
   const survey = surveyByDivision.get(divisionId)
@@ -49,13 +28,12 @@ const getSurvey = (divisionId: string) => {
 }
 
 export default function CompanyMapPage() {
-  const [metric, setMetric] = useState<MetricId>('awareness')
+  const [metric, setMetric] = useState<MetricId>('directorsInform')
   const [selectedId, setSelectedId] = useState(DEFAULT_DIVISION_ID)
-  const currentMonth = useNow().getMonth()
-  const { target, label, question, hint } = surveyTargets[metric]
+  const { factor, label, question } = surveyQuestions[metric]
+  const average = averages[metric]
 
   const ranking = useMemo(() => [...surveyResults].sort((a, b) => a[metric] - b[metric]), [metric])
-  const average = Math.round(surveyResults.reduce((sum, r) => sum + r[metric], 0) / surveyResults.length)
   const selectedDivision = divisions.find((d) => d.id === selectedId) ?? divisions[0]
   const selectedSurvey = getSurvey(selectedDivision.id)
 
@@ -66,10 +44,10 @@ export default function CompanyMapPage() {
           <Segmented options={metricOptions} value={metric} onChange={setMetric} />
         </div>
         <div className="min-w-0 flex-1 basis-64 text-sm text-ink-soft">
-          <span className="font-medium text-ink">{question}</span> — {hint}
+          <span className="text-ink-muted">Фактор «{factor}»:</span> <span className="text-ink">{question}</span>
         </div>
         <div className="rounded-xl bg-tint-lilac px-3 py-2 text-sm font-medium text-accent-lilac">
-          Цель: не менее {target}% · в среднем {average}%
+          В среднем по компании {average}%
         </div>
       </Card>
 
@@ -78,7 +56,7 @@ export default function CompanyMapPage() {
           <div className="grid grid-cols-2 gap-3 @lg:grid-cols-3 @3xl:grid-cols-4 @4xl:grid-cols-3 @6xl:grid-cols-4">
             {divisions.map((div) => {
               const score = getSurvey(div.id)[metric]
-              const band = getScoreBand(score, target)
+              const band = getScoreBand(score, average)
               return (
                 <motion.button
                   key={div.id}
@@ -109,7 +87,7 @@ export default function CompanyMapPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-5 text-xs text-ink-soft">
-            <span>Относительно цели {target}%:</span>
+            <span>Относительно среднего {average}%:</span>
             {Object.values(scoreBands).map((band) => (
               <span key={band.legend} className="flex items-center gap-1.5">
                 <span className="h-3 w-3 rounded-full" style={{ backgroundColor: band.color }} />
@@ -118,35 +96,26 @@ export default function CompanyMapPage() {
             ))}
           </div>
 
-          <Card>
-            <h3 className="mb-3 font-display text-base font-semibold text-ink">Ритм опросов в году</h3>
-            <div className="grid grid-cols-6 gap-2 @3xl:grid-cols-12">
-              {MONTHS.map((month, i) => (
-                <div
-                  key={month}
-                  className={clsx(
-                    'flex flex-col items-center gap-1 rounded-xl px-1 py-2 text-xs',
-                    i === currentMonth ? 'bg-brand-yellow-light ring-1 ring-brand-yellow' : 'bg-gray-50',
-                  )}
-                >
-                  <span className={clsx('font-medium', i === currentMonth ? 'text-ink' : 'text-ink-soft')}>
-                    {month}
-                  </span>
-                  <div className="flex gap-1">
-                    {surveyKinds
-                      .filter((kind) => kind.months === null || kind.months.includes(i))
-                      .map((kind) => (
-                        <Dot key={kind.id} color={kind.color} title={kind.title} />
-                      ))}
-                  </div>
-                </div>
-              ))}
+          <Card className="space-y-3">
+            <div className="flex items-center gap-2">
+              <HeartHandshake size={18} className="text-accent-lilac" />
+              <h3 className="font-display text-base font-semibold text-ink">Как оценивается каскадирование (п. 8)</h3>
             </div>
-            <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-ink-soft">
-              {surveyKinds.map((kind) => (
-                <span key={kind.id} className="flex items-center gap-1.5">
-                  <Dot color={kind.color} /> {kind.legend}
-                </span>
+            <p className="text-sm text-ink-soft">
+              Качество каскадирования отражается в результатах опроса вовлечённости, который проводится два раза в год.
+              Сотрудники, которые вовремя узнают о решениях Компании и понимают их смысл, больше доверяют руководителю и
+              Компании и сильнее вовлечены в работу.
+            </p>
+            <div className="grid grid-cols-1 gap-3 @2xl:grid-cols-2">
+              {factors.map((f) => (
+                <div key={f.factor} className="rounded-2xl bg-gray-50 p-3">
+                  <div className="text-xs font-medium uppercase tracking-wide text-ink-muted">Фактор «{f.factor}»</div>
+                  <ul className="mt-1.5 space-y-1 text-sm text-ink">
+                    {f.questions.map((q) => (
+                      <li key={q}>{q}</li>
+                    ))}
+                  </ul>
+                </div>
               ))}
             </div>
           </Card>
@@ -163,16 +132,17 @@ export default function CompanyMapPage() {
             <div className="space-y-3">
               {metricIds.map((id) => {
                 const value = selectedSurvey[id]
-                const metricTarget = surveyTargets[id].target
-                const { color } = getScoreBand(value, metricTarget)
+                const metricAverage = averages[id]
+                const { color } = getScoreBand(value, metricAverage)
                 return (
                   <div key={id}>
                     <div className="mb-1 flex flex-wrap items-baseline justify-between gap-x-2 text-sm">
                       <span className={clsx(id === metric ? 'font-medium text-ink' : 'text-ink-soft')}>
-                        {surveyTargets[id].label}
+                        {surveyQuestions[id].label}
                       </span>
                       <span className="font-medium tabular-nums" style={{ color }}>
-                        {value}% <span className="text-xs font-normal text-ink-muted">/ цель {metricTarget}%</span>
+                        {value}%{' '}
+                        <span className="text-xs font-normal text-ink-muted">/ в среднем {metricAverage}%</span>
                       </span>
                     </div>
                     <div className="relative h-2.5 overflow-hidden rounded-full bg-gray-100">
@@ -184,7 +154,7 @@ export default function CompanyMapPage() {
                         className="h-full rounded-full"
                         style={{ backgroundColor: color }}
                       />
-                      <span className="absolute inset-y-0 w-0.5 bg-ink/60" style={{ left: `${metricTarget}%` }} />
+                      <span className="absolute inset-y-0 w-0.5 bg-ink/60" style={{ left: `${metricAverage}%` }} />
                     </div>
                   </div>
                 )
@@ -194,7 +164,7 @@ export default function CompanyMapPage() {
             <div className="mt-4 grid grid-cols-3 gap-2">
               <MiniStat icon={Users} value={selectedDivision.employeeCount} label="сотрудников" />
               <MiniStat icon={TrendingUp} value={`${selectedSurvey.responseRate}%`} label="отклик" />
-              <MiniStat icon={CalendarCheck2} value={fmt(selectedSurvey.lastSurveyDate, 'd MMM')} label="опрос" />
+              <MiniStat icon={CalendarCheck2} value={fmt(selectedSurvey.lastSurveyDate, 'MMM yyyy')} label="опрос" />
             </div>
           </Card>
 
@@ -202,7 +172,7 @@ export default function CompanyMapPage() {
             <h3 className="mb-3 font-display text-base font-semibold text-ink">Рейтинг: {label.toLowerCase()}</h3>
             <div className="space-y-2">
               {ranking.map((s) => {
-                const { color } = getScoreBand(s[metric], target)
+                const { color } = getScoreBand(s[metric], average)
                 return (
                   <button
                     key={s.divisionId}
@@ -233,10 +203,6 @@ export default function CompanyMapPage() {
       </div>
     </div>
   )
-}
-
-function Dot({ color, title }: { color: string; title?: string }) {
-  return <span className="h-2 w-2 rounded-full" style={{ backgroundColor: color }} title={title} />
 }
 
 function MiniStat({ icon: Icon, value, label }: { icon: LucideIcon; value: ReactNode; label: string }) {

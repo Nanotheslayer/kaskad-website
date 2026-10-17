@@ -1,124 +1,43 @@
 import { useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
-import { ChevronDown, Compass, Lightbulb, MessageSquareQuote } from 'lucide-react'
-import clsx from 'clsx'
+import { motion } from 'framer-motion'
+import { BookOpenText, Compass, ListChecks, MessageSquareQuote } from 'lucide-react'
 import { threeQuestions } from '../data/threeQuestions'
-import { palette } from '../theme/colors'
+import { managerRules } from '../data/managerRules'
+import { foundationOptions, strategyOptions, valueOptions, type Priority } from '../data/priorities'
+import { alpha, palette } from '../theme/colors'
 import Card from '../components/ui/Card'
+import Segmented from '../components/ui/Segmented'
 
-const phases = [
-  {
-    n: 1,
-    title: 'Актуализация',
-    when: 'до доведения информации',
-    goal: 'Определить текущий уровень осведомлённости команды и спрогнозировать реакцию',
-    color: palette.azure,
-    actions: [
-      'Оценить, какой информацией по теме команда уже располагает',
-      'Определить ожидания и предположения сотрудников, в том числе по неформальным источникам',
-      'Выявить категории сотрудников, которых информация затронет сильнее всего',
-    ],
-  },
-  {
-    n: 2,
-    title: 'Осмысление',
-    when: 'подготовка к доведению',
-    goal: 'Сформировать собственное понимание и подготовить адаптированное сообщение',
-    color: palette.amber,
-    actions: [
-      'Изучить исходные материалы: протокол, презентацию',
-      'Сформулировать сообщение по правилу трёх вопросов',
-      'Если что-то неясно — отправить запрос вышестоящему уровню до момента доведения',
-    ],
-  },
-  {
-    n: 3,
-    title: 'Рефлексия',
-    when: 'после доведения',
-    goal: 'Убедиться, что информация понята, и зафиксировать нерешённые вопросы',
-    color: palette.green,
-    actions: [
-      'Проверить понимание прямым вопросом: «Осталось ли что-то непонятным по теме …?»',
-      'Зафиксировать вопросы, на которые не удалось ответить, и передать их выше',
-      'Решить, нужно ли вернуться к теме повторно',
-    ],
-  },
-]
+const ruleColors = [palette.azure, palette.amber, palette.green]
 
-const principles = [
-  {
-    title: 'Переводите, а не пересылайте',
-    text: 'Задача руководителя — не повторять информацию, а синтезировать, адаптировать и усиливать её. Каждый уровень отсекает абстракцию и добавляет конкретику для своей команды.',
-  },
-  {
-    title: 'Отвечайте на вопрос «что это значит лично для нас»',
-    text: 'Как изменится повседневная работа, что сделает команду успешной, что придётся делать по-другому. Если ответа нет — запросите больше информации у вышестоящего уровня: это ответственность, а не слабость.',
-  },
-  {
-    title: 'Убирайте «корпоративный шум»',
-    text: 'Уберите аббревиатуры, которые команда не использует, абстрактные формулировки и лишние подробности. Протоколы и приказы написаны формальным языком — переведите его.',
-  },
-  {
-    title: 'Будьте первым источником, а не эхом',
-    text: 'Не откладывайте: получили информацию — адаптируйте и передайте в кратчайший срок. Говорите лично, а не через мессенджер, особенно если новость сложная. Цель — не просто проинформировать, а подготовить.',
-  },
-  {
-    title: 'Окрашивайте ценностями — через смысл, а не лозунг',
-    text: 'Не «это соответствует нашей ценности», а реальный смысл: «Человек в приоритете», «Развитие» или «Преодоление».',
-  },
-  {
-    title: 'Учитывайте, кто перед вами',
-    text: 'Специфические сложности команды, баланс нагрузки и доступные ресурсы — без потери сути исходного сообщения.',
-  },
-]
+type PriorityGroupId = 'foundation' | 'strategy' | 'values'
+
+const priorityGroups: Record<PriorityGroupId, { label: string; blocks: Priority<string>[] }> = {
+  foundation: { label: 'Фундамент', blocks: foundationOptions },
+  strategy: { label: 'Стратегия', blocks: strategyOptions },
+  values: { label: 'Ценности', blocks: valueOptions },
+}
+
+const priorityGroupOptions = (Object.keys(priorityGroups) as PriorityGroupId[]).map((id) => ({
+  value: id,
+  label: priorityGroups[id].label,
+}))
 
 export default function AlgorithmPage() {
-  const [openPrinciple, setOpenPrinciple] = useState<number | null>(0)
+  const [group, setGroup] = useState<PriorityGroupId>('foundation')
 
   return (
     <div className="space-y-6">
-      {/* Три фазы */}
-      <div className="grid grid-cols-1 gap-4 @4xl:grid-cols-3">
-        {phases.map((p, i) => (
-          <motion.div
-            key={p.n}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.07 }}
-          >
-            <Card className="h-full" style={{ borderTop: `4px solid ${p.color}` }}>
-              <div className="mb-3 flex items-center gap-3">
-                <div
-                  className="flex h-10 w-10 items-center justify-center rounded-xl font-display text-lg font-bold text-white"
-                  style={{ backgroundColor: p.color }}
-                >
-                  {p.n}
-                </div>
-                <div>
-                  <div className="font-display text-lg font-semibold leading-tight text-ink">{p.title}</div>
-                  <div className="text-xs text-ink-muted">{p.when}</div>
-                </div>
-              </div>
-              <p className="mb-3 text-sm font-medium text-ink">{p.goal}</p>
-              <ul className="space-y-2">
-                {p.actions.map((a) => (
-                  <li key={a} className="flex items-start gap-2 text-sm text-ink-soft">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: p.color }} />
-                    {a}
-                  </li>
-                ))}
-              </ul>
-            </Card>
-          </motion.div>
-        ))}
-      </div>
-
       {/* Правило трёх вопросов */}
       <Card className="bg-gradient-to-br from-white to-brand-yellow-light/60">
-        <div className="mb-4 flex items-center gap-2">
+        <div className="mb-1 flex items-center gap-2">
           <MessageSquareQuote size={20} className="text-brand-red" />
           <h2 className="font-display text-lg font-semibold text-ink">Правило трёх вопросов</h2>
         </div>
+        <p className="mb-4 text-sm text-ink-soft">
+          Участники каскадирования доносят информацию до конечных получателей, отвечая на три вопроса. Вопросы построены
+          на фундаменте, стратегии и ценностях Компании (п. 7.5).
+        </p>
         <div className="grid grid-cols-1 gap-3 @4xl:grid-cols-3">
           {threeQuestions.map((q, i) => (
             <div key={q.key} className="rounded-2xl bg-white p-4 shadow-card">
@@ -133,62 +52,84 @@ export default function AlgorithmPage() {
                   {q.basis}
                 </span>
               </div>
-              <div className="text-[15px] font-medium leading-snug text-ink">{q.question}</div>
+              <div className="text-xs text-ink-muted">{q.purpose}</div>
+              <div className="mt-2 text-[15px] font-medium leading-snug text-ink">«{q.question}»</div>
               <div className="mt-2 text-xs text-ink-muted">{q.hint}</div>
             </div>
           ))}
         </div>
       </Card>
 
-      {/* Принципы */}
+      {/* Правила доведения */}
       <div>
         <div className="mb-3 flex items-center gap-2">
-          <Lightbulb size={20} className="text-accent-sun" />
-          <h2 className="font-display text-lg font-semibold text-ink">Принципы подготовки сообщения</h2>
+          <ListChecks size={20} className="text-accent-sun" />
+          <h2 className="font-display text-lg font-semibold text-ink">Правила доведения</h2>
+          <span className="text-xs text-ink-muted">п. 7.6</span>
         </div>
-        <div className="space-y-2">
-          {principles.map((p, i) => {
-            const isOpen = openPrinciple === i
-            return (
-              <div key={p.title} className="overflow-hidden rounded-2xl bg-white shadow-card">
-                <button
-                  type="button"
-                  onClick={() => setOpenPrinciple(isOpen ? null : i)}
-                  className="flex w-full items-center gap-3 px-4 py-3.5 text-left"
-                  aria-expanded={isOpen}
-                >
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-tint-sun font-display text-sm font-bold text-accent-sun">
+        <div className="grid grid-cols-1 gap-4 @4xl:grid-cols-3">
+          {managerRules.map((rule, i) => (
+            <motion.div
+              key={rule.title}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.07 }}
+            >
+              <Card className="h-full" style={{ borderTop: `4px solid ${ruleColors[i]}` }}>
+                <div className="mb-3 flex items-center gap-3">
+                  <div
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-display text-lg font-bold text-white"
+                    style={{ backgroundColor: ruleColors[i] }}
+                  >
                     {i + 1}
-                  </span>
-                  <span className="flex-1 font-medium text-ink">{p.title}</span>
-                  <ChevronDown
-                    size={18}
-                    className={clsx('text-gray-400 transition-transform', isOpen && 'rotate-180')}
-                  />
-                </button>
-                <AnimatePresence initial={false}>
-                  {isOpen && (
-                    <motion.div
-                      initial={{ height: 0 }}
-                      animate={{ height: 'auto' }}
-                      exit={{ height: 0 }}
-                      className="overflow-hidden"
-                    >
-                      <p className="px-4 pb-4 pl-16 text-sm leading-relaxed text-ink-soft">{p.text}</p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            )
-          })}
+                  </div>
+                  <div className="font-display text-base font-semibold leading-tight text-ink">{rule.title}</div>
+                </div>
+                <p className="text-sm text-ink-soft">{rule.text}</p>
+              </Card>
+            </motion.div>
+          ))}
         </div>
       </div>
+
+      {/* Фундамент, стратегия и ценности */}
+      <Card>
+        <div className="mb-1 flex items-center gap-2">
+          <BookOpenText size={20} className="text-accent-lilac" />
+          <h2 className="font-display text-lg font-semibold text-ink">Язык приоритетов Компании</h2>
+          <span className="text-xs text-ink-muted">п. 7.2–7.4, приложение</span>
+        </div>
+        <p className="mb-4 text-sm text-ink-soft">
+          Каждое сообщение привязывается к фундаменту и стратегии и подаётся в свете ценностей. Это не лозунги, а
+          «каркас», который задаёт направления, цели и акценты сообщения.
+        </p>
+        <div className="mb-4 max-w-full overflow-x-auto">
+          <Segmented options={priorityGroupOptions} value={group} onChange={setGroup} />
+        </div>
+        <div className="grid grid-cols-1 gap-3 @2xl:grid-cols-2 @6xl:grid-cols-4">
+          {priorityGroups[group].blocks.map((block) => (
+            <div key={block.value} className="rounded-2xl p-4" style={{ backgroundColor: alpha(block.color, 0.08) }}>
+              <div className="mb-2 font-display text-sm font-semibold uppercase" style={{ color: block.color }}>
+                {block.label}
+              </div>
+              <ul className="space-y-1.5">
+                {block.items.map((item) => (
+                  <li key={item} className="flex items-start gap-2 text-sm text-ink-soft">
+                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: block.color }} />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </Card>
 
       <Card className="flex items-start gap-3 bg-tint-mint/60">
         <Compass size={20} className="mt-0.5 shrink-0 text-accent-mint" />
         <p className="text-sm text-ink-soft">
-          Если руководитель не может ответить на вопрос «что это значит для нас» — ему самому нужна дополнительная
-          информация от вышестоящего уровня. Запросить её — ответственность, а не слабость.
+          Если руководителю самому не хватает информации, чтобы объяснить команде, что изменится в её работе, он
+          запрашивает её у вышестоящего руководителя (п. 7.6).
         </p>
       </Card>
     </div>
