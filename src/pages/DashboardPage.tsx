@@ -253,10 +253,10 @@ function HeroBanner() {
           {[palette.brandRed, levelShades[0], levelShades[2], levelShades[4]].map((color, i) => (
             <span
               key={color}
-              className="relative flex h-7 items-center justify-end rounded-full pr-3"
+              className="relative flex h-9 items-center justify-end rounded-full pr-3.5"
               style={{ width: `${100 - i * 21}%`, backgroundColor: color }}
             >
-              <span className="size-3 rounded-full bg-white" />
+              <span className="size-3.5 rounded-full bg-white" />
             </span>
           ))}
         </div>
