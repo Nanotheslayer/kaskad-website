@@ -25,6 +25,19 @@ npm run format        # Prettier (+ сортировка классов Tailwind
 npm run format:check  # проверка форматирования без изменений
 ```
 
+## Публикация и автоматизация
+
+- Сайт публикуется на GitHub Pages: <https://nanotheslayer.github.io/kaskad-website/>. Деплой запускает
+  каждое слияние в `main` (`.github/workflows/deploy.yml`).
+- Изменения попадают в `main` только через pull request с зелёным статусом «Проверки»
+  (`.github/workflows/ci.yml`: typecheck, lint, format:check, build и `npm audit` продакшн-зависимостей).
+  Прямой push, force-push и удаление `main` запрещены ruleset'ом репозитория.
+- Dependabot раз в неделю открывает PR с обновлениями npm-пакетов и действий GitHub
+  (`.github/dependabot.yml`); минорные и патч-версии приходят одним PR, мажорные — по отдельности.
+  Алерты безопасности и сканирование секретов включены в настройках репозитория.
+- Действия в workflow закреплены по SHA коммита с комментарием о версии, и настройки Actions требуют
+  такого закрепления. Dependabot обновляет SHA и комментарий вместе.
+
 ## Структура `src/`
 
 ```
