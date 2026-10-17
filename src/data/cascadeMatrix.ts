@@ -1,9 +1,9 @@
-import type { CommunicationTypeId, CascadeLevel } from '../types/communication'
+import type { CascadeLevel, CommunicationTypeId } from '../types/communication'
 import type { ChannelId } from '../types/channel'
 
 /**
- * Глубина каскадирования по типу коммуникации (п. 5.8–5.9 Положения).
- * Значение — индекс нижнего уровня по шкале У.01–У.06 (0…5).
+ * Базовая глубина каскадирования по типу коммуникации (п. 5.8–5.9 Положения):
+ * нижний уровень шкалы У.01–У.06, до которого доводится информация.
  */
 export const baseDepthByType: Record<CommunicationTypeId, CascadeLevel> = {
   strategic: 'У06',
@@ -18,8 +18,12 @@ export const baseDepthByType: Record<CommunicationTypeId, CascadeLevel> = {
   documentation: 'У03',
 }
 
-/** Типы, для которых допускается углубление до У.06 «при необходимости» (п. 5.8–5.9) */
-export const extendableTypes: CommunicationTypeId[] = ['explanatory', 'directive', 'reporting']
+/**
+ * Типы, для которых допускается углубление до У.06 «при необходимости» — по таблице п. 5.8.
+ * Сводка п. 5.9 называет вместо распорядительных отчётные; таблица и матрицы каскадирования
+ * дают для отчётных фиксированное «→ У.04», поэтому следуем таблице.
+ */
+export const extendableTypes: CommunicationTypeId[] = ['explanatory', 'directive']
 
 /** Минимально обязательный набор каналов по типам — таблица п. 6.3 Положения */
 export const requiredChannelsByType: Record<CommunicationTypeId, ChannelId[]> = {

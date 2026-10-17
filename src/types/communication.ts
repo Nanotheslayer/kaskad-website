@@ -1,3 +1,6 @@
+import type { LucideIcon } from 'lucide-react'
+import type { ChannelId } from './channel'
+
 /** Площадки смыслообразования (п. 5.2 Положения) */
 export type SourceId =
   | 'administration'
@@ -17,7 +20,7 @@ export interface Source {
   frequency: string
   produces: string
   owner: string
-  icon: string
+  icon: LucideIcon
 }
 
 /** Типы коммуникаций (п. 5.8 Положения) */
@@ -37,10 +40,9 @@ export interface CommunicationType {
   id: CommunicationTypeId
   name: string
   includes: string
+  /** Базовая тональность по таблице 5.8 */
   tone: string
-  /** Глубина по таблице 5.8: уровень, до которого доводится информация */
-  depthLabel: string
-  icon: string
+  icon: LucideIcon
   color: string
 }
 
@@ -98,8 +100,8 @@ export interface Communication {
   cascadeDepth: CascadeLevel
   /** true, если глубина расширена до У.06 «при необходимости» */
   depthExtended: boolean
-  requiredChannels: string[]
-  extraChannels: string[]
+  requiredChannels: ChannelId[]
+  extraChannels: ChannelId[]
   materials: string[]
   createdAt: string
   /** Дата доведения до конечных получателей */

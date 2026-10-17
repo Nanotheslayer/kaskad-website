@@ -5,7 +5,7 @@ interface Option<T extends string> {
   label: string
 }
 
-interface Props<T extends string> {
+interface SegmentedProps<T extends string> {
   options: Option<T>[]
   value: T
   onChange: (value: T) => void
@@ -13,12 +13,16 @@ interface Props<T extends string> {
 }
 
 /** Сегментированный переключатель в стиле табов «Петлокала»: серая подложка и белая активная вкладка */
-export default function Segmented<T extends string>({ options, value, onChange, className }: Props<T>) {
+export default function Segmented<T extends string>({ options, value, onChange, className }: SegmentedProps<T>) {
   return (
-    <div className={clsx('inline-flex min-w-0 max-w-full overflow-x-auto rounded-xl bg-gray-100 p-1', className)} role="tablist">
+    <div
+      className={clsx('inline-flex min-w-0 max-w-full overflow-x-auto rounded-xl bg-gray-100 p-1', className)}
+      role="tablist"
+    >
       {options.map((o) => (
         <button
           key={o.value}
+          type="button"
           role="tab"
           aria-selected={value === o.value}
           onClick={() => onChange(o.value)}

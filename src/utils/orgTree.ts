@@ -1,33 +1,36 @@
 import type { CascadeLevel } from '../types/communication'
 import type { OrgNode } from '../types/organization'
-import { orgNodes, orgById } from '../data/orgStructure'
-import { LEVEL_ORDER, levelIndex } from '../data/levels'
+import { orgById, orgNodes } from '../data/orgStructure'
+import { LEVEL_ORDER, isWithinDepth } from '../data/levels'
 
-export function getDescendantIds(nodeId: string): string[] {
+const parentById = new Map<string, OrgNode>(orgNodes.flatMap((n) => n.children.map((childId) => [childId, n] as const)))
+
+export function getNode(nodeId: string): OrgNode {
   const node = orgById.get(nodeId)
-  if (!node) return []
-  const ids: string[] = [nodeId]
-  for (const childId of node.children) ids.push(...getDescendantIds(childId))
-  return ids
+  if (!node) throw new Error(`Неизвестный узел оргструктуры: ${nodeId}`)
+  return node
 }
 
-export function getParent(nodeId: string): OrgNode | undefined {
-  return orgNodes.find((n) => n.children.includes(nodeId))
+/** Узел и все его потомки */
+function getSubtree(nodeId: string): OrgNode[] {
+  const node = getNode(nodeId)
+  return [node, ...node.children.flatMap((id) => getSubtree(id))]
 }
 
 /** Путь от генерального директора до узла */
 export function getPath(nodeId: string): OrgNode[] {
   const path: OrgNode[] = []
-  let current = orgById.get(nodeId)
-  while (current) {
+  for (let current: OrgNode | undefined = getNode(nodeId); current; current = parentById.get(current.id)) {
     path.unshift(current)
-    current = getParent(current.id)
   }
   return path
 }
 
+/** id всех узлов, у которых есть дочерние, — для «Раскрыть всё» */
+export const expandableIds: string[] = orgNodes.filter((n) => n.children.length > 0).map((n) => n.id)
+
 /** Сколько человек в узле: для команды — численность, для руководителя — 1 */
-export const ownHeadcount = (n: OrgNode) => (n.kind === 'team' ? n.headcount ?? 0 : n.kind === 'unit' || n.name ? 1 : 0)
+const ownHeadcount = (n: OrgNode) => (n.kind === 'team' ? (n.headcount ?? 0) : n.kind === 'unit' || n.name ? 1 : 0)
 
 export interface LevelReach {
   level: CascadeLevel
@@ -37,25 +40,23 @@ export interface LevelReach {
 
 /** Охват каскада по уровням в поддереве узла */
 export function reachByLevel(rootId: string): LevelReach[] {
-  const acc = new Map<CascadeLevel, LevelReach>(
-    LEVEL_ORDER.map((l) => [l, { level: l, people: 0, units: 0 }]),
-  )
-  for (const id of getDescendantIds(rootId)) {
-    const node = orgById.get(id)
-    if (!node) continue
-    const row = acc.get(node.level)!
+  const reach = new Map(LEVEL_ORDER.map((level) => [level, { level, people: 0, units: 0 }]))
+  for (const node of getSubtree(rootId)) {
+    const row = reach.get(node.level)!
     row.people += ownHeadcount(node)
     if (node.kind !== 'team') row.units += 1
   }
-  return LEVEL_ORDER.map((l) => acc.get(l)!)
+  return [...reach.values()]
 }
 
+/** Сколько человек в поддереве узла получат информацию при глубине каскада depth */
 export function peopleReached(rootId: string, depth: CascadeLevel): number {
   return reachByLevel(rootId)
-    .filter((r) => levelIndex(r.level) <= levelIndex(depth))
-    .reduce((s, r) => s + r.people, 0)
+    .filter((r) => isWithinDepth(r.level, depth))
+    .reduce((sum, r) => sum + r.people, 0)
 }
 
-export function isReached(node: OrgNode, depth: CascadeLevel): boolean {
-  return levelIndex(node.level) <= levelIndex(depth)
+/** Руководители подразделений в поддереве узла, включая сам узел */
+export function unitsInSubtree(rootId: string): OrgNode[] {
+  return getSubtree(rootId).filter((n) => n.kind === 'unit')
 }

@@ -1,4 +1,6 @@
+import { Banknote, Building2, Landmark, Layers, Mic, Radio, RefreshCw, Sparkles, Users, Wrench } from 'lucide-react'
 import type { Source } from '../types/communication'
+import { indexById } from '../utils/collections'
 
 /** Площадки смыслообразования — п. 5.2 Положения (единственные легитимные точки входа информации) */
 export const sources: Source[] = [
@@ -8,7 +10,7 @@ export const sources: Source[] = [
     frequency: 'В течение года',
     produces: 'Приказы и распоряжения',
     owner: 'уточняется',
-    icon: 'Landmark',
+    icon: Landmark,
   },
   {
     id: 'monthly_meeting',
@@ -16,7 +18,7 @@ export const sources: Source[] = [
     frequency: '1 раз / месяц',
     produces: 'Стратегические решения, итоги, планы, ключевые кадровые решения',
     owner: 'Бизнес-ассистент генерального директора',
-    icon: 'Users',
+    icon: Users,
   },
   {
     id: 'values_committee',
@@ -24,7 +26,7 @@ export const sources: Source[] = [
     frequency: '1 раз / квартал',
     produces: 'Лучшие примеры ценностного поведения, признание',
     owner: 'уточняется',
-    icon: 'Sparkles',
+    icon: Sparkles,
   },
   {
     id: 'investment_committee',
@@ -32,7 +34,7 @@ export const sources: Source[] = [
     frequency: 'уточняется',
     produces: 'Решения о проектах, открытиях, инвестициях',
     owner: 'уточняется',
-    icon: 'Banknote',
+    icon: Banknote,
   },
   {
     id: 'change_committee',
@@ -40,7 +42,7 @@ export const sources: Source[] = [
     frequency: 'уточняется',
     produces: 'Изменения процессов, политик, оргструктуры',
     owner: 'уточняется',
-    icon: 'RefreshCw',
+    icon: RefreshCw,
   },
   {
     id: 'workshops',
@@ -48,7 +50,7 @@ export const sources: Source[] = [
     frequency: 'уточняется',
     produces: 'Решения по улучшению процессов продаж и склада',
     owner: 'уточняется',
-    icon: 'Wrench',
+    icon: Wrench,
   },
   {
     id: 'foundation_meetings',
@@ -56,7 +58,7 @@ export const sources: Source[] = [
     frequency: 'По календарю',
     produces: 'Фундамент: люди, CJM, IT, сервис',
     owner: 'уточняется',
-    icon: 'Layers',
+    icon: Layers,
   },
   {
     id: 'live_broadcast',
@@ -64,7 +66,7 @@ export const sources: Source[] = [
     frequency: 'По календарю',
     produces: 'Стратегия, цели, достижения от первых лиц',
     owner: 'Ведущий менеджер по корп. коммуникациям',
-    icon: 'Radio',
+    icon: Radio,
   },
   {
     id: 'annual_conference',
@@ -72,7 +74,7 @@ export const sources: Source[] = [
     frequency: '1 раз / год',
     produces: 'Итоги года, планы',
     owner: 'Ведущий менеджер по корп. коммуникациям',
-    icon: 'Mic',
+    icon: Mic,
   },
   {
     id: 'directorate',
@@ -80,8 +82,8 @@ export const sources: Source[] = [
     frequency: 'В течение года',
     produces: 'Решения для оптимизации работы и совершенствования процессов',
     owner: 'Директор дирекции',
-    icon: 'Building2',
+    icon: Building2,
   },
 ]
 
-export const sourceById = (id: string) => sources.find((s) => s.id === id)
+export const sourceById = indexById(sources)

@@ -1,0 +1,5 @@
+# Чисто форматирующие коммиты: git blame их пропускает
+# (git config blame.ignoreRevsFile .git-blame-ignore-revs; GitHub учитывает файл сам)
+
+# chore: Prettier, .gitattributes и строгий tsconfig без изменений логики
+532c5a2f8aa57cc8405308481a29fcb7932652ec

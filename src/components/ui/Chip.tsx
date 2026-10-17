@@ -1,7 +1,8 @@
 import clsx from 'clsx'
 import type { ReactNode } from 'react'
+import { alpha } from '../../theme/colors'
 
-interface Props {
+interface ChipProps {
   active: boolean
   color: string
   onClick: () => void
@@ -10,7 +11,7 @@ interface Props {
 }
 
 /** Переключаемая «пастельная» плашка — как в легенде календаря «Петлокала» */
-export default function Chip({ active, color, onClick, children, count }: Props) {
+export default function Chip({ active, color, onClick, children, count }: ChipProps) {
   return (
     <button
       type="button"
@@ -20,7 +21,7 @@ export default function Chip({ active, color, onClick, children, count }: Props)
         'inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border px-3 py-1.5 text-sm transition-all',
         active ? 'font-medium text-ink' : 'border-transparent bg-gray-100 text-ink-muted hover:bg-gray-200',
       )}
-      style={active ? { backgroundColor: color + '24', borderColor: color + '80' } : undefined}
+      style={active ? { backgroundColor: alpha(color, 0.14), borderColor: alpha(color, 0.5) } : undefined}
     >
       <span
         className="h-2.5 w-2.5 rounded-full transition-opacity"

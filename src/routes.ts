@@ -3,14 +3,14 @@ import {
   GitBranch,
   FileSignature,
   GalleryHorizontal,
-  Map,
+  Map as MapIcon,
   Layers,
   Route,
   type LucideIcon,
 } from 'lucide-react'
+import type { Tint } from './theme/tints'
 
-export type Tint = 'sun' | 'mint' | 'rose' | 'sky' | 'lilac' | 'peach'
-
+/** Разделы портала: пункты меню, заголовки и подзаголовки страниц */
 export interface RouteMeta {
   path: string
   label: string
@@ -58,7 +58,7 @@ export const routeMeta: RouteMeta[] = [
     label: 'Карта осведомлённости',
     title: 'Карта осведомлённости',
     subtitle: 'Результаты пульс-опросов по подразделениям относительно целевых значений',
-    icon: Map,
+    icon: MapIcon,
     tint: 'lilac',
   },
   {
@@ -78,12 +78,3 @@ export const routeMeta: RouteMeta[] = [
     tint: 'mint',
   },
 ]
-
-export const tintClasses: Record<Tint, { bg: string; fg: string; solid: string }> = {
-  sun: { bg: 'bg-tint-sun', fg: 'text-accent-sun', solid: '#ffcb05' },
-  mint: { bg: 'bg-tint-mint', fg: 'text-accent-mint', solid: '#2fa84f' },
-  rose: { bg: 'bg-tint-rose', fg: 'text-accent-rose', solid: '#f26b6b' },
-  sky: { bg: 'bg-tint-sky', fg: 'text-accent-sky', solid: '#3b9ae8' },
-  lilac: { bg: 'bg-tint-lilac', fg: 'text-accent-lilac', solid: '#7c5cdb' },
-  peach: { bg: 'bg-tint-peach', fg: 'text-accent-peach', solid: '#f28b3c' },
-}

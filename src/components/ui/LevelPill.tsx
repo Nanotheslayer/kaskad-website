@@ -2,13 +2,13 @@ import clsx from 'clsx'
 import type { CascadeLevel } from '../../types/communication'
 import { levelById } from '../../data/levels'
 
-interface Props {
+interface LevelPillProps {
   level: CascadeLevel
   muted?: boolean
   className?: string
 }
 
-export default function LevelPill({ level, muted, className }: Props) {
+export default function LevelPill({ level, muted, className }: LevelPillProps) {
   const info = levelById(level)
   return (
     <span

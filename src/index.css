@@ -9,7 +9,11 @@
 }
 
 body {
-  font-family: 'Roboto', system-ui, -apple-system, sans-serif;
+  font-family:
+    'Roboto',
+    system-ui,
+    -apple-system,
+    sans-serif;
   color: #1f2430;
   background-color: #f1f2f6;
   -webkit-font-smoothing: antialiased;

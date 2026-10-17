@@ -3,7 +3,8 @@ import { NavLink } from 'react-router-dom'
 import { Bookmark, ChevronUp, Pencil, X } from 'lucide-react'
 import clsx from 'clsx'
 import Logo from './Logo'
-import { routeMeta, tintClasses } from '../../routes'
+import { routeMeta } from '../../routes'
+import { tintClasses } from '../../theme/tints'
 
 const quickLinks = [
   { to: '/classify', label: 'Новый инфоповод' },
@@ -11,12 +12,12 @@ const quickLinks = [
   { to: '/cascade', label: 'Каскад Дирекции по персоналу' },
 ]
 
-interface Props {
+interface SidebarProps {
   open: boolean
   onClose: () => void
 }
 
-export default function Sidebar({ open, onClose }: Props) {
+export default function Sidebar({ open, onClose }: SidebarProps) {
   const [quickOpen, setQuickOpen] = useState(true)
 
   return (
@@ -30,7 +31,12 @@ export default function Sidebar({ open, onClose }: Props) {
       >
         <div className="flex shrink-0 items-start justify-between gap-2 px-5 pb-4 pt-5">
           <Logo />
-          <button className="rounded-lg p-1.5 text-ink-muted hover:bg-gray-100 lg:hidden" onClick={onClose} aria-label="Закрыть меню">
+          <button
+            type="button"
+            className="rounded-lg p-1.5 text-ink-muted hover:bg-gray-100 lg:hidden"
+            onClick={onClose}
+            aria-label="Закрыть меню"
+          >
             <X size={20} />
           </button>
         </div>
@@ -42,9 +48,12 @@ export default function Sidebar({ open, onClose }: Props) {
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gray-100 text-ink-soft">
                 <Bookmark size={18} />
               </div>
-              <span className="flex-1 whitespace-nowrap text-sm font-medium leading-tight text-ink xl:text-[15px]">Быстрый доступ</span>
+              <span className="flex-1 whitespace-nowrap text-sm font-medium leading-tight text-ink xl:text-[15px]">
+                Быстрый доступ
+              </span>
               <Pencil size={15} className="text-ink-muted" />
               <button
+                type="button"
                 onClick={() => setQuickOpen((v) => !v)}
                 className="rounded p-1 text-ink-soft hover:bg-gray-100"
                 aria-label={quickOpen ? 'Свернуть' : 'Развернуть'}
@@ -89,8 +98,7 @@ export default function Sidebar({ open, onClose }: Props) {
                     <div
                       className={clsx(
                         'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-all',
-                        tintClasses[tint].bg,
-                        tintClasses[tint].fg,
+                        tintClasses[tint],
                         isActive && 'shadow-sm ring-2 ring-white',
                       )}
                     >
