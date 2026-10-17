@@ -240,22 +240,26 @@ function HeroBanner() {
           </div>
         </div>
 
-        {/* Иллюстрация в собственной колонке: не наезжает на текст и не растягивается */}
-        <svg
-          className="hidden w-full max-w-[340px] justify-self-end @2xl:block"
-          viewBox="0 0 300 190"
+        {/* Ступени каскада в собственной колонке: прижаты к правому краю баннера и по высоте занимают
+            ровно блок текста — верхняя на уровне плашки, нижняя на уровне кнопок.
+            Красный — источник, ниже — цвета уровней У1–У6 */}
+        <div
+          className="relative hidden w-full max-w-[260px] flex-col items-end justify-between self-stretch justify-self-end @2xl:flex"
           aria-hidden="true"
         >
-          <circle cx="232" cy="58" r="58" fill="#fff" opacity="0.3" />
-          <circle cx="232" cy="58" r="42" fill="#fff" opacity="0.45" />
-          {/* Ступени каскада: красный источник, ниже — уровни в цветах уровней У1–У6 */}
-          {[palette.brandRed, levelShades[0], levelShades[2], levelShades[4]].map((fill, i) => (
-            <g key={fill}>
-              <rect x={20 + i * 40} y={22 + i * 36} width={190 - i * 40} height="26" rx="13" fill={fill} />
-              <circle cx="190" cy={35 + i * 36} r="6" fill="#fff" />
-            </g>
+          <span className="absolute top-0 right-0 flex size-34 items-center justify-center rounded-full bg-white/30">
+            <span className="size-24 rounded-full bg-white/45" />
+          </span>
+          {[palette.brandRed, levelShades[0], levelShades[2], levelShades[4]].map((color, i) => (
+            <span
+              key={color}
+              className="relative flex h-7 items-center justify-end rounded-full pr-3"
+              style={{ width: `${100 - i * 21}%`, backgroundColor: color }}
+            >
+              <span className="size-3 rounded-full bg-white" />
+            </span>
           ))}
-        </svg>
+        </div>
       </div>
     </div>
   )

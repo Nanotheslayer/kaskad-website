@@ -28,11 +28,12 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
           open ? 'translate-x-0' : '-translate-x-full',
         )}
       >
-        <div className="flex shrink-0 items-start justify-between gap-2 px-5 pt-5 pb-4">
+        {/* Кнопка закрытия — поверх шапки, чтобы не сдвигать логотип с центра */}
+        <div className="relative flex shrink-0 justify-center px-5 pt-5 pb-4">
           <Logo />
           <button
             type="button"
-            className="rounded-lg p-1.5 text-ink-muted hover:bg-gray-100 lg:hidden"
+            className="absolute top-3 right-3 rounded-lg p-1.5 text-ink-muted hover:bg-gray-100 lg:hidden"
             onClick={onClose}
             aria-label="Закрыть меню"
           >
