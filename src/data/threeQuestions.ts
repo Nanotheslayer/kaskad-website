@@ -1,5 +1,4 @@
 import type { ThreeQuestions } from '../types/communication'
-import { palette } from '../theme/colors'
 
 export interface QuestionInfo {
   key: keyof ThreeQuestions
@@ -9,7 +8,6 @@ export interface QuestionInfo {
   purpose: string
   question: string
   hint: string
-  color: string
 }
 
 /** Правило трёх вопросов — п. 7.5 Положения */
@@ -20,7 +18,6 @@ export const threeQuestions: QuestionInfo[] = [
     purpose: 'Фиксируем событие и заземляем его в операционную реальность',
     question: 'Что именно произошло или какое решение принято и какой приоритет Компании это затрагивает?',
     hint: 'Люди, CJM, IT, сервис',
-    color: palette.blue,
   },
   {
     key: 'q2',
@@ -28,7 +25,6 @@ export const threeQuestions: QuestionInfo[] = [
     purpose: 'Определяем цель коммуникации — вектор движения, ради чего событие двигает Компанию вперёд',
     question: 'К какой стратегической цели это ведёт?',
     hint: 'Основной бизнес, расширение географии, расширение ассортимента, стройка и ремонт «от и до»',
-    color: palette.orange,
   },
   {
     key: 'q3',
@@ -36,7 +32,6 @@ export const threeQuestions: QuestionInfo[] = [
     purpose: 'Определяем акценты коммуникации и её значение для команды и каждого человека',
     question: 'Что это значит для нашей команды и через какую ценность мы это проживаем?',
     hint: '«Человек в приоритете», «Развитие», «Преодоление»',
-    color: palette.pink,
   },
 ]
 

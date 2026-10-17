@@ -102,9 +102,9 @@ export default function CascadeStructurePage() {
   return (
     <div className="space-y-5">
       {/* Пилотный баннер + уровни */}
-      <div className="overflow-hidden rounded-3xl bg-linear-to-br from-brand-yellow-light via-white to-tint-mint/60 p-4 shadow-card @xl:p-5">
+      <div className="overflow-hidden rounded-3xl bg-white p-4 shadow-card @xl:p-5">
         <div className="max-w-3xl">
-          <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-brand-yellow px-3 py-1 text-xs font-bold tracking-wide text-brand-dark uppercase">
+          <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-brand-yellow px-3 py-1 text-xs font-bold tracking-wide text-brand-black uppercase">
             Пилот
           </div>
           <h2 className="font-display text-xl font-semibold text-ink">{pilot.title}</h2>
@@ -116,7 +116,7 @@ export default function CascadeStructurePage() {
 
         <div className="mt-4 grid grid-cols-2 gap-2 @2xl:grid-cols-3 @6xl:grid-cols-6">
           {levels.map((l, i) => (
-            <div key={l.id} className="rounded-2xl bg-white/80 p-3 backdrop-blur-sm">
+            <div key={l.id} className="rounded-2xl bg-gray-50 p-3">
               <div className="flex items-center justify-between">
                 <LevelPill level={l.id} />
                 {pilotReach[i].people > 0 && (
@@ -221,12 +221,12 @@ function TreeNode({ node, tree }: { node: OrgNode; tree: TreeState }) {
         className={clsx(
           'group flex items-start gap-1 rounded-xl px-1 py-1.5 transition-all @xl:gap-2 @xl:px-2',
           isSelected
-            ? 'bg-tint-sun/70 ring-1 ring-brand-yellow'
+            ? 'bg-brand-yellow-light ring-1 ring-brand-yellow'
             : pathIds.has(node.id)
               ? 'bg-gray-50'
               : 'hover:bg-gray-50',
           dimmed && 'opacity-35',
-          reached && 'bg-tint-mint/40',
+          reached && 'bg-success-light/60',
         )}
       >
         <button
@@ -269,7 +269,7 @@ function TreeNode({ node, tree }: { node: OrgNode; tree: TreeState }) {
           <div className="flex shrink-0 items-center gap-2 pt-0.5">
             {reached && (
               <span
-                className="flex h-5 w-5 items-center justify-center rounded-full bg-accent-mint text-white"
+                className="flex h-5 w-5 items-center justify-center rounded-full bg-success text-white"
                 title="Информация доведена"
               >
                 <Check size={12} />
@@ -327,7 +327,9 @@ function NodeDetails({ node, path, onSelect }: NodeDetailsProps) {
             </div>
           )}
           {node.note && (
-            <p className="mt-2 rounded-xl bg-tint-sky/60 px-3 py-2 text-xs leading-snug text-ink-soft">{node.note}</p>
+            <p className="mt-2 rounded-xl bg-brand-yellow-light px-3 py-2 text-xs leading-snug text-ink-soft">
+              {node.note}
+            </p>
           )}
         </div>
 
@@ -410,7 +412,7 @@ function AgendaLink({ nodeId }: { nodeId: string }) {
   )
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-tint-peach/60 p-3">
+    <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-brand-yellow-light p-3">
       <div>
         <div className="text-xs text-ink-muted">В повестке руководителя</div>
         <div className="text-sm font-medium text-ink">к доведению: {pending}</div>

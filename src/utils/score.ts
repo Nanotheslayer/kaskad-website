@@ -16,8 +16,8 @@ export interface ScoreBand {
 /** Оценка показателя подразделения относительно среднего по компании */
 export const scoreBands = {
   above: { color: palette.green, label: 'Не ниже среднего', legend: 'не ниже среднего' },
-  near: { color: palette.amber, label: 'Чуть ниже среднего', legend: `до ${NEAR_AVERAGE_GAP} п.п. ниже` },
-  below: { color: palette.coral, label: 'Ниже среднего', legend: `более ${NEAR_AVERAGE_GAP} п.п. ниже` },
+  near: { color: palette.ochre, label: 'Чуть ниже среднего', legend: `до ${NEAR_AVERAGE_GAP} п.п. ниже` },
+  below: { color: palette.brandRed, label: 'Ниже среднего', legend: `более ${NEAR_AVERAGE_GAP} п.п. ниже` },
 } satisfies Record<string, ScoreBand>
 
 export function getScoreBand(score: number, average: number): ScoreBand {

@@ -68,8 +68,8 @@ export default function StepAudience({ audience, materials, onChange }: StepAudi
             )
           })}
         </div>
-        <div className="mt-4 flex items-center gap-2 rounded-xl bg-tint-sky/70 px-3 py-2 text-sm text-ink">
-          <UsersRound size={16} className="shrink-0 text-accent-sky" />
+        <div className="mt-4 flex items-center gap-2 rounded-xl bg-gray-100 px-3 py-2 text-sm text-ink">
+          <UsersRound size={16} className="shrink-0 text-ink-soft" />
           Задание получат руководителей: <span className="font-semibold">{managers}</span>
         </div>
       </div>

@@ -45,9 +45,9 @@ export const channels: Channel[] = [
 ]
 
 export const channelCategories: { id: ChannelCategory; name: string; color: string }[] = [
-  { id: 'digital', name: 'Цифровые', color: palette.blue },
-  { id: 'print', name: 'Печатные', color: palette.amber },
-  { id: 'oral', name: 'Устные', color: palette.teal },
+  { id: 'digital', name: 'Цифровые', color: palette.steel },
+  { id: 'print', name: 'Печатные', color: palette.graphite },
+  { id: 'oral', name: 'Устные', color: palette.black },
 ]
 
 /**

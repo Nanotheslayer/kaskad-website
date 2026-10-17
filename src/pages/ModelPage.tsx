@@ -8,7 +8,6 @@ import { LEVELS_DRAFT_NOTE, levels } from '../data/levels'
 import { channelCategories, channels } from '../data/channels'
 import { threeQuestions } from '../data/threeQuestions'
 import { crisisChannelsNote, crisisHeadquarters, crisisPhases, crisisSituations, crisisSummary } from '../data/crisis'
-import { alpha, palette } from '../theme/colors'
 import { DELIVERY_DAYS } from '../utils/cascadeEngine'
 import Card from '../components/ui/Card'
 
@@ -16,7 +15,6 @@ interface Stage {
   id: string
   title: string
   subtitle: string
-  color: string
   clause: string
   details: string[]
 }
@@ -29,7 +27,6 @@ const stages: Stage[] = [
     id: 'forming',
     title: 'Формирование',
     subtitle: 'На площадке смыслообразования принимаются решения и формулируются ключевые сообщения',
-    color: palette.orange,
     clause: 'п. 5.1–5.2',
     details: [
       ...sources.map((s) => `${s.name} — ${s.produces.toLowerCase()} (${s.frequency.toLowerCase()})`),
@@ -40,7 +37,6 @@ const stages: Stage[] = [
     id: 'channels',
     title: 'Выбор каналов',
     subtitle: 'Если сообщение нужно донести шире, тип коммуникации задаёт обязательные каналы и тональность',
-    color: palette.blue,
     clause: 'п. 5.3–5.4, 6',
     details: [
       'Тип определяет инициатор, при необходимости — с методической помощью Центра развития корпоративной культуры и бренда работодателя',
@@ -65,7 +61,6 @@ const stages: Stage[] = [
     id: 'understanding',
     title: 'Осмысление',
     subtitle: 'Руководитель адаптирует сообщение для своей команды',
-    color: palette.amber,
     clause: 'п. 7',
     details: [
       ...threeQuestions.map((q) => `Вопрос ${q.basis.toLowerCase()}: «${q.question}» (${q.hint.toLowerCase()})`),
@@ -77,7 +72,6 @@ const stages: Stage[] = [
     id: 'delivery',
     title: 'Доведение',
     subtitle: 'Руководители каждого уровня доводят сообщение до своих команд',
-    color: palette.green,
     clause: 'п. 3.2, 4, 7.6',
     details: [
       'Руководитель получает информацию раньше своей команды, чтобы успеть её адаптировать. Конечный адресат каскадирования — сотрудники уровня У6',
@@ -132,25 +126,20 @@ export default function ModelPage() {
                   type="button"
                   aria-expanded={isExpanded}
                   onClick={() => setExpandedId(isExpanded ? null : stage.id)}
-                  className="relative w-full rounded-2xl bg-white p-4 text-left shadow-card transition-all hover:shadow-lift"
-                  // Рамка цвета этапа: inline, потому что цвет приходит из данных
-                  style={isExpanded ? { boxShadow: `0 0 0 2px ${stage.color}` } : undefined}
+                  className={clsx(
+                    'relative w-full rounded-2xl bg-white p-4 text-left shadow-card transition-all hover:shadow-lift',
+                    isExpanded && 'ring-2 ring-brand-yellow',
+                  )}
                 >
                   <div className="flex items-center gap-4">
-                    <div
-                      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl font-display text-lg font-bold text-white"
-                      style={{ backgroundColor: stage.color }}
-                    >
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-yellow font-display text-lg font-bold text-brand-black">
                       {i + 1}
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="leading-snug font-medium text-ink">{stage.title}</div>
                       <div className="text-sm text-ink-soft">{stage.subtitle}</div>
                     </div>
-                    <span
-                      className="hidden rounded-full px-2 py-0.5 text-[11px] font-medium @xl:block"
-                      style={{ backgroundColor: alpha(stage.color, 0.12), color: stage.color }}
-                    >
+                    <span className="hidden rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-medium text-ink-soft @xl:block">
                       {stage.clause}
                     </span>
                     <ChevronRight
@@ -169,14 +158,11 @@ export default function ModelPage() {
                       transition={{ duration: 0.2 }}
                       className="overflow-hidden"
                     >
-                      <div className="mt-2 ml-16 rounded-2xl p-4" style={{ backgroundColor: alpha(stage.color, 0.06) }}>
+                      <div className="mt-2 ml-16 rounded-2xl bg-white p-4">
                         <ul className="space-y-2">
                           {stage.details.map((d) => (
                             <li key={d} className="flex items-start gap-2.5 text-sm text-ink-soft">
-                              <span
-                                className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full"
-                                style={{ backgroundColor: stage.color }}
-                              />
+                              <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gray-400" />
                               {d}
                             </li>
                           ))}
@@ -193,7 +179,7 @@ export default function ModelPage() {
 
       <Card>
         <SectionTitle
-          icon={<Users size={18} className="text-accent-sky" />}
+          icon={<Users size={18} className="text-brand-red" />}
           title="Кто за что отвечает"
           clause="п. 1.3"
         />
@@ -216,19 +202,19 @@ export default function ModelPage() {
 
         <div>
           <h3 className="mb-2 text-sm font-medium text-ink">Кризисной считается ситуация, которая</h3>
-          <BulletList items={crisisSituations} color={palette.crimson} />
+          <BulletList items={crisisSituations} />
         </div>
 
         <div>
           <h3 className="mb-2 text-sm font-medium text-ink">Оперативный штаб</h3>
-          <BulletList items={crisisHeadquarters} color={palette.crimson} />
+          <BulletList items={crisisHeadquarters} />
         </div>
 
         <div>
           <h3 className="mb-2 text-sm font-medium text-ink">Фазы</h3>
           <div className="grid grid-cols-1 gap-3 @2xl:grid-cols-3">
             {crisisPhases.map((phase, i) => (
-              <div key={phase.name} className="rounded-2xl bg-red-50/70 p-3">
+              <div key={phase.name} className="rounded-2xl bg-brand-red-light/60 p-3">
                 <div className="text-sm font-semibold text-ink">
                   {i + 1}. {phase.name}
                 </div>
@@ -243,7 +229,7 @@ export default function ModelPage() {
         <div>
           <h3 className="mb-1 text-sm font-medium text-ink">Еженедельная сводка штаба</h3>
           <p className="mb-2 text-sm text-ink-soft">{crisisSummary.schedule}.</p>
-          <BulletList items={crisisSummary.structure} color={palette.crimson} />
+          <BulletList items={crisisSummary.structure} />
         </div>
 
         <p className="rounded-xl bg-gray-50 px-3 py-2 text-sm text-ink-soft">{crisisChannelsNote}.</p>
@@ -262,12 +248,13 @@ function SectionTitle({ icon, title, clause }: { icon: ReactNode; title: string;
   )
 }
 
-function BulletList({ items, color }: { items: string[]; color: string }) {
+/** Список раздела об антикризисных коммуникациях: красные маркеры выделяют его среди остальных */
+function BulletList({ items }: { items: string[] }) {
   return (
     <ul className="space-y-1.5">
       {items.map((item) => (
         <li key={item} className="flex items-start gap-2.5 text-sm text-ink-soft">
-          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: color }} />
+          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-red" />
           {item}
         </li>
       ))}

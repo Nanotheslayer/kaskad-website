@@ -1,8 +1,6 @@
 import { Link, useLocation } from 'react-router'
 import { ChevronRight } from 'lucide-react'
-import clsx from 'clsx'
 import { routeMeta } from '../../routes'
-import { tintClasses } from '../../theme/tints'
 
 export default function PageHead() {
   const { pathname } = useLocation()
@@ -25,12 +23,7 @@ export default function PageHead() {
         )}
       </nav>
       <div className="flex items-start gap-3 @xl:gap-4">
-        <div
-          className={clsx(
-            'flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl @xl:h-12 @xl:w-12',
-            tintClasses[meta.tint],
-          )}
-        >
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-brand-yellow text-brand-black @xl:h-12 @xl:w-12">
           <Icon size={24} />
         </div>
         <div>

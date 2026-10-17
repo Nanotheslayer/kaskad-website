@@ -4,7 +4,6 @@ import { CalendarCheck2, HeartHandshake, TrendingUp, Users, type LucideIcon } fr
 import clsx from 'clsx'
 import { divisionKindLabels, divisions } from '../data/divisions'
 import { surveyAverage, surveyByDivision, surveyQuestions, surveyResults, type MetricId } from '../data/surveyResults'
-import { alpha } from '../theme/colors'
 import { getScoreBand, scoreBands } from '../utils/score'
 import { fmt } from '../utils/format'
 import Card from '../components/ui/Card'
@@ -46,7 +45,7 @@ export default function CompanyMapPage() {
         <div className="min-w-0 flex-1 basis-64 text-sm text-ink-soft">
           <span className="text-ink-muted">Фактор «{factor}»:</span> <span className="text-ink">{question}</span>
         </div>
-        <div className="rounded-xl bg-tint-lilac px-3 py-2 text-sm font-medium text-accent-lilac">
+        <div className="rounded-xl bg-gray-100 px-3 py-2 text-sm font-medium text-ink">
           В среднем по компании {average}%
         </div>
       </Card>
@@ -65,10 +64,9 @@ export default function CompanyMapPage() {
                   onClick={() => setSelectedId(div.id)}
                   whileHover={{ y: -2 }}
                   className={clsx(
-                    'relative flex h-32 flex-col justify-between overflow-hidden rounded-2xl p-4 text-left shadow-card transition-shadow',
+                    'relative flex h-32 flex-col justify-between overflow-hidden rounded-2xl bg-white p-4 text-left shadow-card transition-shadow',
                     selectedId === div.id ? 'shadow-lift ring-2 ring-brand-red' : 'hover:shadow-lift',
                   )}
-                  style={{ backgroundColor: alpha(band.color, 0.11) }}
                 >
                   <span className="absolute inset-y-0 left-0 w-1.5" style={{ backgroundColor: band.color }} />
                   <div className="pl-1">
@@ -98,7 +96,7 @@ export default function CompanyMapPage() {
 
           <Card className="space-y-3">
             <div className="flex items-center gap-2">
-              <HeartHandshake size={18} className="text-accent-lilac" />
+              <HeartHandshake size={18} className="text-brand-red" />
               <h3 className="font-display text-base font-semibold text-ink">Как оценивается каскадирование (п. 8)</h3>
             </div>
             <p className="text-sm text-ink-soft">
@@ -123,10 +121,7 @@ export default function CompanyMapPage() {
 
         <div className="grid grid-cols-1 content-start gap-4 @2xl:grid-cols-2 @4xl:grid-cols-1">
           <Card>
-            <div className="mb-1 flex items-center gap-2">
-              <span className="h-3 w-3 rounded-full" style={{ backgroundColor: selectedDivision.color }} />
-              <h3 className="font-display text-base font-semibold text-ink">{selectedDivision.name}</h3>
-            </div>
+            <h3 className="mb-1 font-display text-base font-semibold text-ink">{selectedDivision.name}</h3>
             <div className="mb-4 text-xs text-ink-muted">{divisionKindLabels[selectedDivision.kind]}</div>
 
             <div className="space-y-3">

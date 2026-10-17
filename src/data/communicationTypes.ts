@@ -13,7 +13,7 @@ export const communicationTypes: CommunicationType[] = [
     tone: 'Официальная + эмоциональная',
     channels: ['posters', 'team_meetings'],
     icon: Target,
-    color: palette.blue,
+    color: palette.steel,
   },
   {
     id: 'explanatory',
@@ -22,7 +22,7 @@ export const communicationTypes: CommunicationType[] = [
     tone: 'Официальная + экспертная',
     channels: ['petlocal_feed', 'email', 'team_meetings'],
     icon: MessageCircle,
-    color: palette.teal,
+    color: palette.petrol,
   },
   {
     id: 'directive',
@@ -31,7 +31,7 @@ export const communicationTypes: CommunicationType[] = [
     tone: 'Официальная',
     channels: ['email', 'team_meetings'],
     icon: FileCheck,
-    color: palette.orange,
+    color: palette.graphite,
   },
   {
     id: 'reporting',
@@ -49,7 +49,7 @@ export const communicationTypes: CommunicationType[] = [
     tone: 'Сдержанная + официальная',
     channels: ['petlocal_feed', 'email', 'posters', 'team_meetings', 'directorate_channels'],
     icon: Siren,
-    color: palette.crimson,
+    color: palette.brandRed,
   },
   {
     id: 'values',
@@ -58,7 +58,7 @@ export const communicationTypes: CommunicationType[] = [
     tone: 'Эмоциональная + неформальная',
     channels: ['vk', 'petlocal_feed', 'tv', 'magazine'],
     icon: Sparkles,
-    color: palette.pink,
+    color: palette.ochre,
   },
   {
     id: 'hr_social',
@@ -67,7 +67,7 @@ export const communicationTypes: CommunicationType[] = [
     tone: 'Неформальная + эмоциональная',
     channels: ['vk', 'petlocal_banner', 'petlocal_feed', 'email', 'tv', 'magazine', 'posters', 'digest'],
     icon: HeartHandshake,
-    color: palette.amber,
+    color: palette.plum,
   },
   {
     id: 'product',
@@ -76,7 +76,7 @@ export const communicationTypes: CommunicationType[] = [
     tone: 'Экспертная + неформальная',
     channels: ['petlocal_feed', 'tv', 'digest', 'team_meetings'],
     icon: ShoppingBag,
-    color: palette.sky,
+    color: palette.clay,
   },
 ]
 

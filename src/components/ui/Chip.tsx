@@ -1,6 +1,5 @@
 import clsx from 'clsx'
 import type { ReactNode } from 'react'
-import { alpha } from '../../theme/colors'
 
 interface ChipProps {
   active: boolean
@@ -10,7 +9,7 @@ interface ChipProps {
   count?: number
 }
 
-/** Переключаемая «пастельная» плашка — как в легенде календаря «Петлокала» */
+/** Переключаемая плашка фильтра: цвет категории — только у точки, сама плашка нейтральная */
 export default function Chip({ active, color, onClick, children, count }: ChipProps) {
   return (
     <button
@@ -19,9 +18,10 @@ export default function Chip({ active, color, onClick, children, count }: ChipPr
       onClick={onClick}
       className={clsx(
         'inline-flex shrink-0 items-center gap-2 rounded-full border px-3 py-1.5 text-sm whitespace-nowrap transition-all',
-        active ? 'font-medium text-ink' : 'border-transparent bg-gray-100 text-ink-muted hover:bg-gray-200',
+        active
+          ? 'border-gray-300 bg-white font-medium text-ink shadow-xs'
+          : 'border-transparent bg-gray-100 text-ink-muted hover:bg-gray-200',
       )}
-      style={active ? { backgroundColor: alpha(color, 0.14), borderColor: alpha(color, 0.5) } : undefined}
     >
       <span
         className="h-2.5 w-2.5 rounded-full transition-opacity"

@@ -1,39 +1,32 @@
 @import 'tailwindcss';
 
 /*
- * Тема для классов Tailwind: bg-brand-red, text-ink-muted, bg-tint-mint, shadow-card…
+ * Тема для классов Tailwind: bg-brand-red, text-ink-muted, bg-success-light, shadow-card…
  * Цвета из данных (типы, уровни, каналы, статусы) — в src/theme/colors.ts.
+ *
+ * Роли цветов — по брендбуку «Петровича» (brandsystem.petrovich.ru):
+ * жёлтый — фирменный фон и отметка «вы здесь», красный — действия и информация, которую нужно выделить,
+ * чёрный и графит — текст, иконки и структура. Остальной интерфейс нейтральный.
  */
 @theme {
   --color-brand-yellow: #ffcb05;
-  --color-brand-yellow-light: #fff4cc;
+  --color-brand-yellow-light: #fff5cc;
   --color-brand-yellow-dark: #e6b800;
   --color-brand-red: #ed1b24;
-  --color-brand-red-light: #fde7e8;
+  --color-brand-red-light: #fde8e9;
   --color-brand-red-dark: #c41920;
-  --color-brand-dark: #1f2430;
-  --color-brand-black: #161a23;
+  --color-brand-graphite: #343436;
+  --color-brand-black: #1a1b23;
 
-  --color-ink: #1f2430;
-  --color-ink-soft: #4b5263;
-  --color-ink-muted: #7b8294;
+  --color-ink: #1a1b23;
+  --color-ink-soft: #4a4b52;
+  --color-ink-muted: #74757c;
 
-  --color-page: #f1f2f6;
+  --color-page: #f3f3f4;
 
-  /* Пастельная палитра — цветовые акценты интерфейса */
-  --color-tint-sun: #fff1b8;
-  --color-tint-mint: #d6f0e0;
-  --color-tint-rose: #fcdcd6;
-  --color-tint-lilac: #e6defc;
-  --color-tint-sky: #d5e9fb;
-  --color-tint-peach: #ffe3c8;
-
-  --color-accent-sun: #b98900;
-  --color-accent-mint: #1d8a4a;
-  --color-accent-rose: #d4452f;
-  --color-accent-lilac: #6a4ccb;
-  --color-accent-sky: #1c6fc2;
-  --color-accent-peach: #d9631a;
+  /* Единственный не фирменный цвет интерфейса — «готово», «доведено» */
+  --color-success: #3d7d52;
+  --color-success-light: #e6f0e9;
 
   /* Начертания подключены в src/fonts.css */
   --font-sans: Roboto, system-ui, -apple-system, sans-serif;
@@ -52,8 +45,8 @@
   --text-3xl--line-height: 2.25rem;
   --text-4xl--line-height: 2.5rem;
 
-  --shadow-card: 0 1px 2px rgba(31, 36, 48, 0.04), 0 4px 16px rgba(31, 36, 48, 0.04);
-  --shadow-lift: 0 8px 28px rgba(31, 36, 48, 0.12);
+  --shadow-card: 0 1px 2px rgba(26, 27, 35, 0.05), 0 4px 16px rgba(26, 27, 35, 0.04);
+  --shadow-lift: 0 8px 28px rgba(26, 27, 35, 0.12);
 }
 
 /*
@@ -91,11 +84,11 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: #c9ccd6;
+    background: #c8c8cc;
     border-radius: 4px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #a3a8b8;
+    background: #a2a3a8;
   }
 
   /*

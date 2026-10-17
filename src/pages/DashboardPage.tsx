@@ -20,8 +20,7 @@ import { communicationTypes, typeById } from '../data/communicationTypes'
 import { currentUser } from '../data/currentUser'
 import { surveyAverage, surveyQuestions, surveyResults } from '../data/surveyResults'
 import { useNow } from '../hooks/useNow'
-import { alpha, palette } from '../theme/colors'
-import { tintClasses, type Tint } from '../theme/tints'
+import { levelShades, palette } from '../theme/colors'
 import { agendaFor, type AgendaItem } from '../utils/assignments'
 import { getScoreBand } from '../utils/score'
 import { fmt, pluralComm } from '../utils/format'
@@ -43,7 +42,8 @@ interface StatTile {
   label: string
   value: string | number
   icon: LucideIcon
-  tint: Tint
+  /** Показатель требует внимания — иконка красная */
+  alert?: boolean
 }
 
 export default function DashboardPage() {
@@ -59,12 +59,12 @@ export default function DashboardPage() {
     const planned = count((c) => c.status === 'planned')
     const crisis = count((c) => c.status === 'active' && c.typeId === 'crisis')
     return [
-      { label: 'За 30 дней', value: recent, icon: GalleryHorizontal, tint: 'sky' },
-      { label: 'Идёт каскад', value: active, icon: Radio, tint: 'peach' },
-      { label: 'Запланировано', value: planned, icon: CalendarClock, tint: 'lilac' },
-      { label: 'Антикризисных сейчас', value: crisis, icon: Siren, tint: 'rose' },
+      { label: 'За 30 дней', value: recent, icon: GalleryHorizontal },
+      { label: 'Идёт каскад', value: active, icon: Radio },
+      { label: 'Запланировано', value: planned, icon: CalendarClock },
+      { label: 'Антикризисных сейчас', value: crisis, icon: Siren, alert: crisis > 0 },
       // Мягкий перенос: длинное слово не вылезает из узкой плитки
-      { label: 'Информи\u00adрование', value: `${informAverage}%`, icon: TrendingUp, tint: 'mint' },
+      { label: 'Информи\u00adрование', value: `${informAverage}%`, icon: TrendingUp },
     ]
   }, [communications, now])
 
@@ -104,7 +104,7 @@ export default function DashboardPage() {
               <div
                 className={clsx(
                   'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl @[12rem]:h-11 @[12rem]:w-11',
-                  tintClasses[t.tint],
+                  t.alert ? 'bg-brand-red-light text-brand-red' : 'bg-gray-100 text-ink-soft',
                 )}
               >
                 <t.icon size={20} />
@@ -193,14 +193,14 @@ export default function DashboardPage() {
             const score = r[INFORM_METRIC]
             const { color } = getScoreBand(score, informAverage)
             return (
-              <div key={r.divisionId} className="rounded-2xl p-3" style={{ backgroundColor: alpha(color, 0.08) }}>
+              <div key={r.divisionId} className="rounded-2xl bg-gray-50 p-3">
                 <div className="flex items-baseline justify-between">
                   <span className="text-sm font-medium text-ink">{r.divisionName}</span>
                   <span className="font-display text-xl font-semibold" style={{ color }}>
                     {score}%
                   </span>
                 </div>
-                <ProgressBar percent={score} color={color} track="bg-white/80" className="mt-2" />
+                <ProgressBar percent={score} color={color} track="bg-gray-200/70" className="mt-2" />
               </div>
             )
           })}
@@ -213,27 +213,18 @@ export default function DashboardPage() {
   )
 }
 
+/** Баннер на жёлтом фоне: по брендбуку фирменный жёлтый «берёт на себя роль фона» */
 function HeroBanner() {
   return (
-    <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-brand-yellow-light via-[#fff7dd] to-tint-mint shadow-card">
-      {/* Холмы — фон по всей ширине, масштабируются вместе с баннером */}
-      <svg
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-16 w-full @3xl:h-24"
-        viewBox="0 0 600 100"
-        preserveAspectRatio="none"
-        aria-hidden="true"
-      >
-        <path d="M0 70 Q 150 20 300 55 T 600 35 V100 H0Z" fill="#9ccf6a" opacity="0.55" />
-        <path d="M0 88 Q 180 50 340 80 T 600 62 V100 H0Z" fill="#6bb54a" opacity="0.7" />
-      </svg>
-
-      <div className="relative grid grid-cols-1 items-center gap-4 p-6 pb-20 @xl:p-8 @xl:pb-24 @2xl:grid-cols-[minmax(0,1fr)_minmax(150px,30%)] @2xl:pb-10 @4xl:grid-cols-[minmax(0,1fr)_minmax(220px,38%)] @5xl:px-10">
+    <div className="overflow-hidden rounded-3xl bg-brand-yellow shadow-card">
+      <div className="grid grid-cols-1 items-center gap-4 p-6 @xl:p-8 @2xl:grid-cols-[minmax(0,1fr)_minmax(150px,30%)] @4xl:grid-cols-[minmax(0,1fr)_minmax(220px,38%)] @5xl:px-10">
         <div className="max-w-xl">
           <div className="mb-3 inline-flex rounded-full bg-white/80 px-3 py-1 text-xs font-medium text-ink-soft">
             Положение о каскадировании
           </div>
           <h2 className="font-display text-2xl leading-tight font-bold text-ink @xl:text-3xl/9 @6xl:text-4xl/10">
-            Будь первым <span className="text-brand-red">источником</span>
+            {/* Тёмный оттенок красного: обычный на жёлтом фоне недостаточно контрастен */}
+            Будь первым <span className="text-brand-red-dark">источником</span>
           </h2>
           <p className="mt-3 text-sm text-ink-soft @6xl:text-base">
             Информация идёт от генерального директора к каждому сотруднику. На каждом уровне руководитель узнаёт её
@@ -255,10 +246,10 @@ function HeroBanner() {
           viewBox="0 0 300 190"
           aria-hidden="true"
         >
-          <circle cx="232" cy="58" r="58" fill={palette.brandYellow} opacity="0.25" />
-          <circle cx="232" cy="58" r="42" fill={palette.brandYellow} />
-          {/* Ступени каскада: каждая следующая уже и ниже */}
-          {[palette.brandRed, palette.orange, palette.amber, palette.green].map((fill, i) => (
+          <circle cx="232" cy="58" r="58" fill="#fff" opacity="0.3" />
+          <circle cx="232" cy="58" r="42" fill="#fff" opacity="0.45" />
+          {/* Ступени каскада: красный источник, ниже — уровни в цветах уровней У1–У6 */}
+          {[palette.brandRed, levelShades[0], levelShades[2], levelShades[4]].map((fill, i) => (
             <g key={fill}>
               <rect x={20 + i * 40} y={22 + i * 36} width={190 - i * 40} height="26" rx="13" fill={fill} />
               <circle cx="190" cy={35 + i * 36} r="6" fill="#fff" />

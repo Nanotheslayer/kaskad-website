@@ -6,7 +6,6 @@ export interface Division {
   shortName: string
   kind: DivisionKind
   employeeCount: number
-  color: string
 }
 
 /** Результаты опроса вовлечённости по вопросам п. 8.2 Положения: доля положительных ответов, % */

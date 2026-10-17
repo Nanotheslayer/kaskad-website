@@ -76,7 +76,7 @@ export default function StepSource({ sourceId, initiatorName, directorate, onCha
               <div
                 className={clsx(
                   'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl',
-                  selected ? 'bg-brand-red text-white' : 'bg-tint-sun text-accent-sun',
+                  selected ? 'bg-brand-red text-white' : 'bg-gray-100 text-ink-soft',
                 )}
               >
                 <Icon size={20} />

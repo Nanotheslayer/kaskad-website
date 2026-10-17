@@ -4,11 +4,9 @@ import { BookOpenText, Compass, ListChecks, MessageSquareQuote } from 'lucide-re
 import { threeQuestions } from '../data/threeQuestions'
 import { managerRules } from '../data/managerRules'
 import { foundationOptions, strategyOptions, valueOptions, type Priority } from '../data/priorities'
-import { alpha, palette } from '../theme/colors'
 import Card from '../components/ui/Card'
 import Segmented from '../components/ui/Segmented'
-
-const ruleColors = [palette.azure, palette.amber, palette.green]
+import { eyebrowClass } from '../components/ui/styles'
 
 type PriorityGroupId = 'foundation' | 'strategy' | 'values'
 
@@ -29,7 +27,7 @@ export default function AlgorithmPage() {
   return (
     <div className="space-y-6">
       {/* Правило трёх вопросов */}
-      <Card className="bg-linear-to-br from-white to-brand-yellow-light/60">
+      <Card>
         <div className="mb-1 flex items-center gap-2">
           <MessageSquareQuote size={20} className="text-brand-red" />
           <h2 className="font-display text-lg font-semibold text-ink">Правило трёх вопросов</h2>
@@ -40,17 +38,12 @@ export default function AlgorithmPage() {
         </p>
         <div className="grid grid-cols-1 gap-3 @4xl:grid-cols-3">
           {threeQuestions.map((q, i) => (
-            <div key={q.key} className="rounded-2xl bg-white p-4 shadow-card">
+            <div key={q.key} className="rounded-2xl bg-gray-50 p-4">
               <div className="mb-2 flex items-center gap-2">
-                <span
-                  className="flex h-7 w-7 items-center justify-center rounded-full text-sm font-bold text-white"
-                  style={{ backgroundColor: q.color }}
-                >
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-yellow text-sm font-bold text-brand-black">
                   {i + 1}
                 </span>
-                <span className="text-xs font-medium tracking-wide uppercase" style={{ color: q.color }}>
-                  {q.basis}
-                </span>
+                <span className={eyebrowClass}>{q.basis}</span>
               </div>
               <div className="text-xs text-ink-muted">{q.purpose}</div>
               <div className="mt-2 text-[15px] leading-snug font-medium text-ink">«{q.question}»</div>
@@ -63,7 +56,7 @@ export default function AlgorithmPage() {
       {/* Правила доведения */}
       <div>
         <div className="mb-3 flex items-center gap-2">
-          <ListChecks size={20} className="text-accent-sun" />
+          <ListChecks size={20} className="text-brand-red" />
           <h2 className="font-display text-lg font-semibold text-ink">Правила доведения</h2>
           <span className="text-xs text-ink-muted">п. 7.6</span>
         </div>
@@ -75,12 +68,9 @@ export default function AlgorithmPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.07 }}
             >
-              <Card className="h-full" style={{ borderTop: `4px solid ${ruleColors[i]}` }}>
+              <Card className="h-full">
                 <div className="mb-3 flex items-center gap-3">
-                  <div
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-display text-lg font-bold text-white"
-                    style={{ backgroundColor: ruleColors[i] }}
-                  >
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-yellow font-display text-lg font-bold text-brand-black">
                     {i + 1}
                   </div>
                   <div className="font-display text-base leading-tight font-semibold text-ink">{rule.title}</div>
@@ -95,7 +85,7 @@ export default function AlgorithmPage() {
       {/* Фундамент, стратегия и ценности */}
       <Card>
         <div className="mb-1 flex items-center gap-2">
-          <BookOpenText size={20} className="text-accent-lilac" />
+          <BookOpenText size={20} className="text-brand-red" />
           <h2 className="font-display text-lg font-semibold text-ink">Язык приоритетов Компании</h2>
           <span className="text-xs text-ink-muted">п. 7.2–7.4, приложение</span>
         </div>
@@ -108,14 +98,12 @@ export default function AlgorithmPage() {
         </div>
         <div className="grid grid-cols-1 gap-3 @2xl:grid-cols-2 @6xl:grid-cols-4">
           {priorityGroups[group].blocks.map((block) => (
-            <div key={block.value} className="rounded-2xl p-4" style={{ backgroundColor: alpha(block.color, 0.08) }}>
-              <div className="mb-2 font-display text-sm font-semibold uppercase" style={{ color: block.color }}>
-                {block.label}
-              </div>
+            <div key={block.value} className="rounded-2xl bg-gray-50 p-4">
+              <div className="mb-2 font-display text-sm font-semibold text-ink uppercase">{block.label}</div>
               <ul className="space-y-1.5">
                 {block.items.map((item) => (
                   <li key={item} className="flex items-start gap-2 text-sm text-ink-soft">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: block.color }} />
+                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gray-400" />
                     {item}
                   </li>
                 ))}
@@ -125,13 +113,14 @@ export default function AlgorithmPage() {
         </div>
       </Card>
 
-      <Card className="flex items-start gap-3 bg-tint-mint/60">
-        <Compass size={20} className="mt-0.5 shrink-0 text-accent-mint" />
+      {/* Не Card: её белый фон перебил бы жёлтый — порядок одноимённых утилит задаёт Tailwind, а не className */}
+      <div className="flex items-start gap-3 rounded-2xl bg-brand-yellow-light p-5">
+        <Compass size={20} className="mt-0.5 shrink-0 text-brand-black" />
         <p className="text-sm text-ink-soft">
           Если руководителю самому не хватает информации, чтобы объяснить команде, что изменится в её работе, он
           запрашивает её у вышестоящего руководителя (п. 7.6).
         </p>
-      </Card>
+      </div>
     </div>
   )
 }
