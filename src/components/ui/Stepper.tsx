@@ -32,7 +32,7 @@ export default function Stepper({ steps, currentStep, onStepClick }: StepperProp
                 className={clsx(
                   'flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-semibold transition-colors @xl:h-8 @xl:w-8',
                   isCompleted && 'bg-brand-red text-white',
-                  isActive && 'bg-brand-yellow text-brand-dark ring-4 ring-brand-yellow/30',
+                  isActive && 'bg-brand-yellow text-brand-black ring-4 ring-brand-yellow/30',
                   !isCompleted && !isActive && 'bg-white text-ink-muted',
                 )}
               >

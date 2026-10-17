@@ -80,7 +80,7 @@ export default function Header({ onMenu }: HeaderProps) {
             )}
           </Link>
           <div className="flex items-center gap-2.5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-brand-yellow to-brand-red text-sm font-bold text-white shadow-card">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-graphite text-sm font-bold text-white shadow-card">
               {currentUser.initials}
             </div>
             <div className="hidden leading-tight md:block">

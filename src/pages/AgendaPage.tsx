@@ -21,7 +21,7 @@ import { levelById, levels } from '../data/levels'
 import { threeQuestions } from '../data/threeQuestions'
 import { useAllCommunications, useCommunicationsStore, useConfirmations } from '../store/communicationsStore'
 import { useNow } from '../hooks/useNow'
-import { alpha, palette } from '../theme/colors'
+import { palette } from '../theme/colors'
 import { CRISIS_DELIVERY_HOURS, DELIVERY_DAYS } from '../utils/cascadeEngine'
 import { agendaFor, allAssignees, type AgendaItem } from '../utils/assignments'
 import { getNode } from '../utils/orgTree'
@@ -121,8 +121,8 @@ export default function AgendaPage() {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 rounded-2xl bg-tint-sun/70 px-4 py-3">
-          <CalendarClock size={18} className="shrink-0 text-accent-sun" />
+        <div className="flex flex-wrap items-center gap-3 rounded-2xl bg-brand-yellow-light px-4 py-3">
+          <CalendarClock size={18} className="shrink-0 text-brand-black" />
           <p className="min-w-0 flex-1 basis-64 text-sm text-ink">
             Доводите на ближайшей встрече с командой, но не позднее {DELIVERY_DAYS} дней после получения задания;
             антикризисные — в первые {CRISIS_DELIVERY_HOURS} часа и по возможности лично (п. 7.6, 9.7).
@@ -146,7 +146,7 @@ export default function AgendaPage() {
         </h2>
         {agenda.pending.length === 0 ? (
           <Card className="flex items-center gap-3 text-sm text-ink-soft">
-            <PartyPopper size={20} className="shrink-0 text-accent-mint" />
+            <PartyPopper size={20} className="shrink-0 text-success" />
             Всё доведено — новых заданий о каскадировании нет.
           </Card>
         ) : (
@@ -225,7 +225,7 @@ export default function AgendaPage() {
 
 function Stat({ value, label, alert }: { value: number; label: string; alert?: boolean }) {
   return (
-    <div className={clsx('min-w-20 rounded-2xl px-3 py-2', alert ? 'bg-red-50' : 'bg-gray-50')}>
+    <div className={clsx('min-w-20 rounded-2xl px-3 py-2', alert ? 'bg-brand-red-light' : 'bg-gray-50')}>
       <div className={clsx('font-display text-2xl font-semibold', alert ? 'text-brand-red' : 'text-ink')}>{value}</div>
       <div className="text-[11px] text-ink-muted">{label}</div>
     </div>
@@ -267,7 +267,7 @@ function PendingCard({ item, now, canConfirm, onConfirm, onOpen }: PendingCardPr
             <TypeIcon size={16} />
             {type.name}
           </div>
-          <Badge color={hint.urgent ? (overdue ? palette.crimson : palette.orange) : undefined}>
+          <Badge color={hint.urgent ? (overdue ? palette.brandRed : palette.ochre) : undefined}>
             {overdue && <AlertTriangle size={12} />}
             {hint.text}
           </Badge>
@@ -275,7 +275,7 @@ function PendingCard({ item, now, canConfirm, onConfirm, onOpen }: PendingCardPr
 
         <h3 className="font-display text-base leading-snug font-semibold text-ink">{comm.title}</h3>
 
-        <div className="rounded-xl p-3" style={{ backgroundColor: alpha(type.color, 0.07) }}>
+        <div className="rounded-xl bg-brand-yellow-light p-3">
           <div className="mb-0.5 flex items-center gap-1.5 text-xs font-medium text-ink-muted">
             <Quote size={12} /> Главное для команды
           </div>

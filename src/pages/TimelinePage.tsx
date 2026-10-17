@@ -254,7 +254,7 @@ export default function TimelinePage() {
             </Button>
           </div>
 
-          <div className="ml-auto flex items-center gap-2 rounded-xl bg-tint-sky px-3 py-2 text-sm font-medium text-accent-sky">
+          <div className="ml-auto flex items-center gap-2 rounded-xl bg-gray-100 px-3 py-2 text-sm font-medium text-ink">
             <span className="text-lg font-bold tabular-nums">{visible.length}</span>
             {pluralCommWord(visible.length)} за период
           </div>
@@ -297,7 +297,7 @@ export default function TimelinePage() {
             <button
               type="button"
               onClick={() => setSearchParams({})}
-              className="inline-flex items-center gap-2 rounded-full bg-tint-sun px-3 py-1.5 text-sm text-ink"
+              className="inline-flex items-center gap-2 rounded-full bg-brand-yellow-light px-3 py-1.5 text-sm text-ink"
               aria-label={`Сбросить поиск «${rawQuery}»`}
             >
               <Search size={14} /> «{rawQuery}» <X size={14} />
@@ -425,7 +425,7 @@ function BucketColumn({ bucket, items, selected, layout, onToggle, onOpen }: Buc
       data-selected={selected}
       className={clsx(
         'relative flex min-w-0 flex-1 flex-col items-center rounded-2xl transition-colors',
-        selected ? 'bg-tint-sky/60' : bucket.hasToday ? 'bg-brand-red-light/50' : bucket.weekend && 'bg-gray-50',
+        selected ? 'bg-gray-100' : bucket.hasToday ? 'bg-brand-red-light/50' : bucket.weekend && 'bg-gray-50',
       )}
       style={{ minWidth: colWidth }}
     >
@@ -481,7 +481,7 @@ function BucketColumn({ bucket, items, selected, layout, onToggle, onOpen }: Buc
           className={clsx(
             'rounded-md leading-5 font-medium',
             compact ? 'px-1 text-xs' : 'px-1.5 text-sm',
-            bucket.hasToday ? 'bg-brand-red text-white' : bucket.weekend ? 'text-accent-rose' : 'text-ink',
+            bucket.hasToday ? 'bg-brand-red text-white' : bucket.weekend ? 'text-ink-muted' : 'text-ink',
           )}
         >
           {bucket.top}

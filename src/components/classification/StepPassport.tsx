@@ -2,7 +2,6 @@ import clsx from 'clsx'
 import type { Binding, ThreeQuestions } from '../../types/communication'
 import { foundationOptions, strategyOptions, valueOptions, type Priority } from '../../data/priorities'
 import { threeQuestions } from '../../data/threeQuestions'
-import { alpha } from '../../theme/colors'
 import { toggleItem } from '../../utils/collections'
 import { eyebrowClass, fieldClass, labelClass } from '../ui/styles'
 import StepHeading from './StepHeading'
@@ -77,15 +76,10 @@ export default function StepPassport({ title, essence, keyMessage, questions, bi
           {threeQuestions.map((q, i) => (
             <div key={q.key} className="rounded-2xl bg-white p-4 shadow-card">
               <div className="mb-2 flex items-center gap-2">
-                <span
-                  className="flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold text-white"
-                  style={{ backgroundColor: q.color }}
-                >
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-yellow text-xs font-bold text-brand-black">
                   {i + 1}
                 </span>
-                <span className="text-xs font-medium tracking-wide uppercase" style={{ color: q.color }}>
-                  {q.basis}
-                </span>
+                <span className={eyebrowClass}>{q.basis}</span>
               </div>
               <label className="block text-[13px] leading-snug font-medium text-ink" htmlFor={`q-${q.key}`}>
                 {q.question}
@@ -156,11 +150,10 @@ function BindingGroup<T extends string>({ label, options, value, onToggle }: Bin
               onClick={() => onToggle(o.value)}
               className={clsx(
                 'rounded-full border px-3 py-1.5 text-sm transition-all',
-                active ? 'font-medium' : 'border-transparent bg-gray-100 text-ink-soft hover:bg-gray-200',
+                active
+                  ? 'border-brand-red bg-brand-red-light/50 font-medium text-ink'
+                  : 'border-transparent bg-gray-100 text-ink-soft hover:bg-gray-200',
               )}
-              style={
-                active ? { borderColor: o.color, backgroundColor: alpha(o.color, 0.18), color: o.color } : undefined
-              }
             >
               {o.label}
             </button>

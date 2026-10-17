@@ -1,7 +1,6 @@
 import clsx from 'clsx'
 import type { CommunicationTypeId } from '../../types/communication'
 import { communicationTypes } from '../../data/communicationTypes'
-import { alpha } from '../../theme/colors'
 import StepHeading from './StepHeading'
 
 interface StepTypeProps {
@@ -30,10 +29,9 @@ export default function StepType({ selected, onSelect }: StepTypeProps) {
               className={clsx(
                 'flex flex-col gap-2 rounded-2xl border-2 p-4 text-left transition-all',
                 isSelected
-                  ? 'shadow-xs'
+                  ? 'border-brand-red bg-brand-red-light/50 shadow-xs'
                   : 'border-transparent bg-white shadow-card hover:-translate-y-0.5 hover:shadow-lift',
               )}
-              style={isSelected ? { borderColor: type.color, backgroundColor: alpha(type.color, 0.07) } : undefined}
             >
               <div className="flex items-center gap-3">
                 <div
@@ -46,10 +44,7 @@ export default function StepType({ selected, onSelect }: StepTypeProps) {
               </div>
               <div className="text-xs leading-snug text-ink-soft">{type.includes}</div>
               <div className="mt-auto flex flex-wrap items-center gap-1.5 pt-1">
-                <span
-                  className="rounded-md px-1.5 py-0.5 text-[11px] font-bold"
-                  style={{ backgroundColor: alpha(type.color, 0.13), color: type.color }}
-                >
+                <span className="rounded-md bg-gray-100 px-1.5 py-0.5 text-[11px] font-bold text-ink-soft">
                   {type.tone}
                 </span>
                 <span className="text-[11px] text-ink-muted">обязательных каналов: {type.channels.length}</span>

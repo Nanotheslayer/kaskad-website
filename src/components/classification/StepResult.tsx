@@ -5,7 +5,6 @@ import { typeById } from '../../data/communicationTypes'
 import { levels } from '../../data/levels'
 import { managerRules } from '../../data/managerRules'
 import { crisisChannelsNote } from '../../data/crisis'
-import { alpha } from '../../theme/colors'
 import { deliveryDeadline, describeDeliveryRule } from '../../utils/cascadeEngine'
 import { fmt } from '../../utils/format'
 import ChannelList from '../communication/ChannelList'
@@ -47,10 +46,7 @@ export default function StepResult({
         description="Тип определил тональность и обязательные каналы. Проверьте, добавьте свои каналы и запустите каскад."
       />
 
-      <div
-        className="mb-5 flex items-center gap-3 rounded-2xl p-4"
-        style={{ backgroundColor: alpha(type.color, 0.08) }}
-      >
+      <div className="mb-5 flex items-center gap-3 rounded-2xl bg-white p-4 shadow-card">
         <div
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-white"
           style={{ backgroundColor: type.color }}
@@ -107,16 +103,16 @@ export default function StepResult({
           </div>
 
           {isCrisis ? (
-            <div className="flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4">
+            <div className="flex items-start gap-3 rounded-2xl border border-brand-red/25 bg-brand-red-light p-4">
               <AlertTriangle size={20} className="mt-0.5 shrink-0 text-brand-red" />
               <div>
-                <div className="text-sm font-medium text-red-800">Антикризисная коммуникация (раздел 9)</div>
-                <div className="text-xs text-red-700">{crisisChannelsNote}.</div>
+                <div className="text-sm font-medium text-brand-red-dark">Антикризисная коммуникация (раздел 9)</div>
+                <div className="text-xs text-ink-soft">{crisisChannelsNote}.</div>
               </div>
             </div>
           ) : (
-            <div className="flex items-start gap-3 rounded-2xl bg-tint-mint/70 p-4">
-              <ListChecks size={20} className="mt-0.5 shrink-0 text-accent-mint" />
+            <div className="flex items-start gap-3 rounded-2xl bg-brand-yellow-light p-4">
+              <ListChecks size={20} className="mt-0.5 shrink-0 text-brand-black" />
               <div>
                 <div className="text-sm font-medium text-ink">Правила доведения (п. 7.6)</div>
                 <ul className="mt-1 space-y-0.5 text-xs text-ink-soft">

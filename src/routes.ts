@@ -9,7 +9,6 @@ import {
   Route,
   type LucideIcon,
 } from 'lucide-react'
-import type { Tint } from './theme/tints'
 
 /** Разделы портала: пункты меню, заголовки и подзаголовки страниц */
 export interface RouteMeta {
@@ -18,7 +17,6 @@ export interface RouteMeta {
   title: string
   subtitle: string
   icon: LucideIcon
-  tint: Tint
 }
 
 export const routeMeta: RouteMeta[] = [
@@ -28,7 +26,6 @@ export const routeMeta: RouteMeta[] = [
     title: 'Обзор каскадирования',
     subtitle: 'Что доносим до команд, что уже доведено и где сотрудники знают меньше всего',
     icon: LayoutDashboard,
-    tint: 'sun',
   },
   {
     path: '/agenda',
@@ -36,7 +33,6 @@ export const routeMeta: RouteMeta[] = [
     title: 'Моя повестка',
     subtitle: 'Все задания о каскадировании одним списком: что довести до команды на ближайшей встрече',
     icon: ListTodo,
-    tint: 'peach',
   },
   {
     path: '/cascade',
@@ -44,7 +40,6 @@ export const routeMeta: RouteMeta[] = [
     title: 'Структура каскада',
     subtitle: 'Пилот на реальной структуре Дирекции по персоналу: от генерального директора до специалистов',
     icon: GitBranch,
-    tint: 'mint',
   },
   {
     path: '/classify',
@@ -52,7 +47,6 @@ export const routeMeta: RouteMeta[] = [
     title: 'Паспорт инфоповода',
     subtitle: 'Заполните форму — тип коммуникации задаст тональность и обязательные каналы, срок посчитается сам',
     icon: FileSignature,
-    tint: 'rose',
   },
   {
     path: '/timeline',
@@ -60,7 +54,6 @@ export const routeMeta: RouteMeta[] = [
     title: 'Таймлайн коммуникаций',
     subtitle: 'Все коммуникации компании по хронологии — выберите период и типы',
     icon: GalleryHorizontal,
-    tint: 'sky',
   },
   {
     path: '/map',
@@ -68,7 +61,6 @@ export const routeMeta: RouteMeta[] = [
     title: 'Оценка эффективности',
     subtitle: 'Результаты опроса вовлечённости по подразделениям в сравнении со средним по компании',
     icon: MapIcon,
-    tint: 'lilac',
   },
   {
     path: '/model',
@@ -76,7 +68,6 @@ export const routeMeta: RouteMeta[] = [
     title: 'Модель каскадирования',
     subtitle: 'Четыре этапа, через которые проходит каждое сообщение, и порядок действий в кризисе',
     icon: Layers,
-    tint: 'peach',
   },
   {
     path: '/algorithm',
@@ -84,6 +75,5 @@ export const routeMeta: RouteMeta[] = [
     title: 'Алгоритм руководителя',
     subtitle: 'Осмысленное каскадирование: правило трёх вопросов, правила доведения и язык приоритетов Компании',
     icon: Route,
-    tint: 'mint',
   },
 ]

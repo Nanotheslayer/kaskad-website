@@ -8,7 +8,6 @@ import { sourceById } from '../../data/sources'
 import { statusColors, statusLabels } from '../../data/statuses'
 import { threeQuestions } from '../../data/threeQuestions'
 import { foundationById, strategyById, valueById } from '../../data/priorities'
-import { alpha } from '../../theme/colors'
 import { useConfirmations } from '../../store/communicationsStore'
 import { describeDeliveryRule } from '../../utils/cascadeEngine'
 import { assigneesOf, describeAudience } from '../../utils/assignments'
@@ -101,14 +100,11 @@ function PassportBody({ comm, onClose }: { comm: TrackedCommunication; onClose: 
 
   return (
     <>
-      <div
-        className="relative shrink-0 px-6 pt-6 pb-5"
-        style={{ background: `linear-gradient(135deg, ${alpha(type.color, 0.15)}, ${alpha(type.color, 0.03)})` }}
-      >
+      <div className="relative shrink-0 border-b border-gray-100 bg-gray-50 px-6 pt-6 pb-5">
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-4 right-4 rounded-lg p-1.5 text-ink-soft hover:bg-white/70"
+          className="absolute top-4 right-4 rounded-lg p-1.5 text-ink-soft hover:bg-gray-200/70"
           aria-label="Закрыть"
         >
           <X size={20} />
@@ -133,7 +129,7 @@ function PassportBody({ comm, onClose }: { comm: TrackedCommunication; onClose: 
 
       <div className="flex-1 space-y-6 overflow-y-auto px-6 py-5">
         <div className="rounded-2xl bg-brand-yellow-light p-4">
-          <div className="mb-1 flex items-center gap-1.5 text-xs font-medium tracking-wide text-accent-sun uppercase">
+          <div className="mb-1 flex items-center gap-1.5 text-xs font-medium tracking-wide text-ink-soft uppercase">
             <Quote size={13} /> Ключевое сообщение
           </div>
           <p className="text-[15px] leading-snug font-medium text-ink">{comm.keyMessage}</p>
@@ -181,19 +177,13 @@ function PassportBody({ comm, onClose }: { comm: TrackedCommunication; onClose: 
           <Section title="Привязка к приоритетам (п. 7.2–7.3)">
             <div className="flex flex-wrap gap-1.5">
               {foundation.map((id) => (
-                <Badge key={id} color={foundationById[id].color}>
-                  Фундамент · {foundationById[id].label}
-                </Badge>
+                <Badge key={id}>Фундамент · {foundationById[id].label}</Badge>
               ))}
               {strategy.map((id) => (
-                <Badge key={id} color={strategyById[id].color}>
-                  Стратегия · {strategyById[id].label}
-                </Badge>
+                <Badge key={id}>Стратегия · {strategyById[id].label}</Badge>
               ))}
               {values.map((id) => (
-                <Badge key={id} color={valueById[id].color}>
-                  Ценность · {valueById[id].label}
-                </Badge>
+                <Badge key={id}>Ценность · {valueById[id].label}</Badge>
               ))}
             </div>
           </Section>
@@ -215,7 +205,7 @@ function PassportBody({ comm, onClose }: { comm: TrackedCommunication; onClose: 
             </div>
             <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-white">
               <div
-                className="h-full rounded-full bg-accent-mint"
+                className="h-full rounded-full bg-success"
                 style={{ width: `${total > 0 ? (done / total) * 100 : 0}%` }}
               />
             </div>

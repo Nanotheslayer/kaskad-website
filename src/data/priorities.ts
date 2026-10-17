@@ -1,5 +1,4 @@
 import type { FoundationId, StrategyId, ValueId } from '../types/communication'
-import { palette } from '../theme/colors'
 
 export interface Priority<T extends string> {
   value: T
@@ -8,7 +7,6 @@ export interface Priority<T extends string> {
   description: string
   /** Содержание блока по приложению Положения */
   items: string[]
-  color: string
 }
 
 /** Фундамент, стратегия и ценности Компании — приложение Положения (п. 7.2–7.3) */
@@ -22,7 +20,6 @@ export const foundationOptions: Priority<FoundationId>[] = [
       'Удержание и мотивация Истинных Петровичей через категорийность',
       'Забота о благополучии: «Система 6 опор»',
     ],
-    color: palette.pink,
   },
   {
     value: 'cjm',
@@ -35,7 +32,6 @@ export const foundationOptions: Priority<FoundationId>[] = [
       'Продажи с планшетов для специалистов торгового зала',
       'Карточка товара: полный редизайн и карточки комплектов, где весь набор попадает в корзину одним кликом',
     ],
-    color: palette.violet,
   },
   {
     value: 'it',
@@ -47,7 +43,6 @@ export const foundationOptions: Priority<FoundationId>[] = [
       '«Гаусс»: новый отказоустойчивый расчёт стоимости доставки, в среднем на 4 секунды быстрее',
       'OMS: планируем внедрить систему управления заказами, чтобы разгрузить 1С',
     ],
-    color: palette.blue,
   },
   {
     value: 'service',
@@ -59,7 +54,6 @@ export const foundationOptions: Priority<FoundationId>[] = [
       'Частичная децентрализация',
       'Баланс запасов в торговом зале: оптимальный объём и частота пополнения',
     ],
-    color: palette.teal,
   },
 ]
 
@@ -74,7 +68,6 @@ export const strategyOptions: Priority<StrategyId>[] = [
       'Планы: довести матрицу до 12,5 тыс. SKU, расширить круг ситуаций, в которых помогаем клиенту, и вырасти в категории на 14%',
       'Москва: запустили Можайское ш. и РЦ Домодедово, прошли стабилизацию, оптимизировали площадь и вышли на нормальные операционные показатели',
     ],
-    color: palette.orange,
   },
   {
     value: 'geography',
@@ -85,7 +78,6 @@ export const strategyOptions: Priority<StrategyId>[] = [
       '«Петрович.Рядом»: в 2026 году откроем два объекта в Екатеринбурге',
       'Проект «Умелец» и переосмысление электронной франшизы',
     ],
-    color: palette.sky,
   },
   {
     value: 'assortment',
@@ -96,7 +88,6 @@ export const strategyOptions: Priority<StrategyId>[] = [
       'Планы: сбалансировать запасы по типам остатка и проработать асимметричное хранение. Во II квартале дадим СТЦ возможность работать с Т1 через ТСД',
       'Ключевой показатель — «От клика до получения»',
     ],
-    color: palette.green,
   },
   {
     value: 'renovation',
@@ -109,7 +100,6 @@ export const strategyOptions: Priority<StrategyId>[] = [
       'Запустили онлайн-аренду оборудования с полным оформлением на сайте и в приложении',
       'На сайте полностью перестроили страницы сервисов, добавили карточки услуг в карточки товаров и в путь покупателя. Зоны и стоимость доставки теперь рассчитываются автоматически, а заказать онлайн можно больше услуг',
     ],
-    color: palette.amber,
   },
 ]
 
@@ -125,7 +115,6 @@ export const valueOptions: Priority<ValueId>[] = [
       'Создавай условия и атмосферу',
       'Признавай право на ошибки',
     ],
-    color: palette.pink,
   },
   {
     value: 'development',
@@ -137,14 +126,12 @@ export const valueOptions: Priority<ValueId>[] = [
       'Ищи возможности для улучшений',
       'Интересуйся технологиями',
     ],
-    color: palette.green,
   },
   {
     value: 'overcoming',
     label: 'Преодоление',
     description: 'Будь готов! Проявляй волю. Действуй осознанно',
     items: ['Будь готов!', 'Проявляй волю', 'Действуй осознанно'],
-    color: palette.orange,
   },
 ]
 

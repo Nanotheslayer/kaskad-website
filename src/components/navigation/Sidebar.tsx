@@ -4,7 +4,6 @@ import { Bookmark, ChevronUp, Pencil, X } from 'lucide-react'
 import clsx from 'clsx'
 import Logo from './Logo'
 import { routeMeta } from '../../routes'
-import { tintClasses } from '../../theme/tints'
 
 const quickLinks = [
   { to: '/classify', label: 'Новый инфоповод' },
@@ -80,7 +79,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
           <div className="mx-2 my-3 border-t border-gray-200" />
 
           <nav className="space-y-0.5">
-            {routeMeta.map(({ path, icon: Icon, label, tint }) => (
+            {routeMeta.map(({ path, icon: Icon, label }) => (
               <NavLink
                 key={path}
                 to={path}
@@ -95,11 +94,13 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
               >
                 {({ isActive }) => (
                   <>
+                    {/* Жёлтая плашка — фирменная отметка текущего раздела */}
                     <div
                       className={clsx(
-                        'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-all',
-                        tintClasses[tint],
-                        isActive && 'shadow-xs ring-2 ring-white',
+                        'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-colors',
+                        isActive
+                          ? 'bg-brand-yellow text-brand-black'
+                          : 'bg-gray-100 text-ink-soft group-hover:text-ink',
                       )}
                     >
                       <Icon size={18} />

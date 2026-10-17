@@ -8,7 +8,7 @@ export const statusLabels: Record<CommunicationStatus, string> = {
 }
 
 export const statusColors: Record<CommunicationStatus, string> = {
-  planned: palette.azure,
-  active: palette.tangerine,
+  planned: palette.steel,
+  active: palette.ochre,
   completed: palette.green,
 }
