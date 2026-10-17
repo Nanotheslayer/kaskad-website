@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink } from 'react-router'
 import { Bookmark, ChevronUp, Pencil, X } from 'lucide-react'
 import clsx from 'clsx'
 import Logo from './Logo'

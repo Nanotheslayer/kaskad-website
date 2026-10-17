@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import type { ButtonHTMLAttributes } from 'react'
-import { Link, type LinkProps } from 'react-router-dom'
+import { Link, type LinkProps } from 'react-router'
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'yellow'
 type Size = 'sm' | 'md' | 'lg'
