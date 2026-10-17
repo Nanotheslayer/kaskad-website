@@ -1,22 +1,19 @@
-import { CalendarCheck2, Clock3 } from 'lucide-react'
+import { CalendarCheck2, Clock3, UsersRound } from 'lucide-react'
 import clsx from 'clsx'
-import type { Communication } from '../../types/communication'
+import type { TrackedCommunication } from '../../types/communication'
 import { typeById } from '../../data/communicationTypes'
-import { urgencyById } from '../../data/classificationOptions'
-import { levelById } from '../../data/levels'
 import { statusColors, statusLabels } from '../../data/statuses'
 import { fmt } from '../../utils/format'
 import Badge from '../ui/Badge'
 
 interface CommunicationCardProps {
-  comm: Communication
+  comm: TrackedCommunication
   selected?: boolean
   onClick: () => void
 }
 
 export default function CommunicationCard({ comm, selected, onClick }: CommunicationCardProps) {
   const type = typeById(comm.typeId)
-  const urgency = urgencyById[comm.classification.urgency]
   const TypeIcon = type.icon
 
   return (
@@ -44,8 +41,6 @@ export default function CommunicationCard({ comm, selected, onClick }: Communica
         <p className="mt-1 line-clamp-2 text-sm text-ink-soft">{comm.essence}</p>
         <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
           <Badge color={type.color}>{type.name}</Badge>
-          <Badge color={urgency.color}>{urgency.label}</Badge>
-          <Badge>до {levelById(comm.cascadeDepth).short}</Badge>
         </div>
         <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-ink-muted">
           <span className="flex items-center gap-1">
@@ -56,6 +51,12 @@ export default function CommunicationCard({ comm, selected, onClick }: Communica
             <CalendarCheck2 size={12} />
             довести до {fmt(comm.deadline, 'd MMM')}
           </span>
+          {comm.status !== 'planned' && comm.progress.total > 0 && (
+            <span className="flex items-center gap-1">
+              <UsersRound size={12} />
+              довели {comm.progress.done} из {comm.progress.total}
+            </span>
+          )}
         </div>
       </div>
     </button>

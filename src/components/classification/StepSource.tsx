@@ -23,7 +23,7 @@ export default function StepSource({ sourceId, initiatorName, directorate, onCha
       <StepHeading
         className="mb-4"
         title="Инициатор и площадка смыслообразования"
-        description="Информация попадает в систему только через площадки смыслообразования (п. 5.2 Положения). Откуда она пришла?"
+        description="Информация для каскадирования формируется на площадках смыслообразования: там принимаются решения и формулируются ключевые сообщения (п. 5.1 Положения). Откуда она пришла?"
       />
 
       <div className="mb-5 grid max-w-2xl grid-cols-1 gap-3 @xl:grid-cols-2">

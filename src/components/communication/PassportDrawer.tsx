@@ -1,32 +1,24 @@
 import { useEffect, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Paperclip, Quote, ShieldAlert, X } from 'lucide-react'
-import type { Communication } from '../../types/communication'
+import { Paperclip, Quote, X } from 'lucide-react'
+import type { TrackedCommunication } from '../../types/communication'
 import { typeById } from '../../data/communicationTypes'
 import { sourceById } from '../../data/sources'
-import { levelById } from '../../data/levels'
 import { statusColors, statusLabels } from '../../data/statuses'
 import { threeQuestions } from '../../data/threeQuestions'
-import {
-  confidentialityLabels,
-  foundationById,
-  impactTypeLabels,
-  scaleLabels,
-  strategyById,
-  toneLabels,
-  urgencyById,
-  valueById,
-} from '../../data/classificationOptions'
+import { foundationById, strategyById, valueById } from '../../data/priorities'
 import { alpha } from '../../theme/colors'
+import { useConfirmations } from '../../store/communicationsStore'
+import { describeDeliveryRule } from '../../utils/cascadeEngine'
+import { assigneesOf, describeAudience } from '../../utils/assignments'
 import { fmt } from '../../utils/format'
 import Badge from '../ui/Badge'
-import DepthScale from './DepthScale'
 import ChannelList from './ChannelList'
 import { eyebrowClass } from '../ui/styles'
 
 interface PassportDrawerProps {
-  comm: Communication | null
+  comm: TrackedCommunication | null
   /** Желательно стабильная функция (useCallback): иначе подписка на Escape пересоздаётся при каждом рендере */
   onClose: () => void
 }
@@ -92,12 +84,16 @@ function Field({ label, value }: { label: string; value: ReactNode }) {
   )
 }
 
-function PassportBody({ comm, onClose }: { comm: Communication; onClose: () => void }) {
+/** Сколько отстающих руководителей перечислять по именам */
+const PENDING_NAMES_LIMIT = 6
+
+function PassportBody({ comm, onClose }: { comm: TrackedCommunication; onClose: () => void }) {
   const type = typeById(comm.typeId)
   const source = sourceById(comm.sourceId)
-  const depth = levelById(comm.cascadeDepth)
-  const urgency = urgencyById[comm.classification.urgency]
-  const { impactScale, impactType, tone } = comm.classification
+  const confirmed = useConfirmations()[comm.id] ?? {}
+  const pending = assigneesOf(comm.audience).filter((a) => !confirmed[a.id])
+  const { done, total } = comm.progress
+  const timeFormat = comm.typeId === 'crisis' ? 'd MMM, HH:mm' : 'd MMM yyyy'
   const { foundation, strategy, values } = comm.binding
   const answeredQuestions = threeQuestions.filter((q) => comm.questions[q.key])
   const hasBinding = foundation.length + strategy.length + values.length > 0
@@ -131,8 +127,7 @@ function PassportBody({ comm, onClose }: { comm: Communication; onClose: () => v
         <h2 className="mt-3 pr-8 font-display text-xl font-semibold leading-snug text-ink">{comm.title}</h2>
         <div className="mt-3 flex flex-wrap gap-1.5">
           <Badge color={statusColors[comm.status]}>{statusLabels[comm.status]}</Badge>
-          <Badge color={urgency.color}>{urgency.label}</Badge>
-          <Badge>до {depth.short}</Badge>
+          <Badge>Тональность: {type.tone.toLowerCase()}</Badge>
         </div>
       </div>
 
@@ -163,32 +158,12 @@ function PassportBody({ comm, onClose }: { comm: Communication; onClose: () => v
           </div>
         </Section>
 
-        <Section title="Классификация (п. 5.3)">
-          <div className="grid grid-cols-2 gap-2 text-sm">
-            <Field label="Масштаб влияния" value={scaleLabels[impactScale]} />
-            <Field label="Срочность" value={urgency.label} />
-            <Field label="Тип воздействия" value={impactTypeLabels[impactType]} />
-            <Field label="Тональность" value={toneLabels[tone]} />
-          </div>
-        </Section>
-
-        <Section title={`Глубина каскада — до ${depth.short}`}>
-          <DepthScale depth={comm.cascadeDepth} extended={comm.depthExtended} />
-          <p className="mt-2 text-xs text-ink-muted">Нижний уровень: {depth.title}</p>
-        </Section>
-
         <Section title="Каналы распространения">
           <ChannelList required={comm.requiredChannels} extra={comm.extraChannels} />
-          {comm.confidentiality === 'restricted' && (
-            <div className="mt-3 flex items-start gap-2 rounded-xl bg-red-50 px-3 py-2 text-xs text-accent-rose">
-              <ShieldAlert size={14} className="mt-0.5 shrink-0" />
-              Метка «Ограниченный доступ»: каналы широкого охвата отключены
-            </div>
-          )}
         </Section>
 
         {answeredQuestions.length > 0 && (
-          <Section title="Правило трёх вопросов (п. 5.7)">
+          <Section title="Правило трёх вопросов (п. 7.5)">
             <ol className="space-y-2">
               {answeredQuestions.map((q) => (
                 <li key={q.key} className="rounded-xl bg-gray-50 p-3">
@@ -203,7 +178,7 @@ function PassportBody({ comm, onClose }: { comm: Communication; onClose: () => v
         )}
 
         {hasBinding && (
-          <Section title="Привязка (прил. 2)">
+          <Section title="Привязка к приоритетам (п. 7.2–7.3)">
             <div className="flex flex-wrap gap-1.5">
               {foundation.map((id) => (
                 <Badge key={id} color={foundationById[id].color}>
@@ -224,11 +199,36 @@ function PassportBody({ comm, onClose }: { comm: Communication; onClose: () => v
           </Section>
         )}
 
-        <Section title="Сроки и конфиденциальность">
-          <div className="grid grid-cols-2 gap-2 text-sm min-[480px]:grid-cols-3">
-            <Field label="Создана" value={fmt(comm.createdAt, 'd MMM, HH:mm')} />
-            <Field label="Довести до" value={fmt(comm.deadline, 'd MMM yyyy')} />
-            <Field label="Метка" value={confidentialityLabels[comm.confidentiality]} />
+        <Section title="Доведение (п. 7.6)">
+          <div className="grid grid-cols-2 gap-2 text-sm">
+            <Field label="Запуск каскада" value={fmt(comm.createdAt, 'd MMM, HH:mm')} />
+            <Field label="Довести не позднее" value={fmt(comm.deadline, timeFormat)} />
+          </div>
+          <p className="mt-2 text-xs text-ink-muted">Руководители доводят {describeDeliveryRule(comm.typeId)}</p>
+          <div className="mt-3 rounded-xl bg-gray-50 p-3 text-sm">
+            <div className="text-xs text-ink-muted">Кому: {describeAudience(comm.audience)}</div>
+            <div className="mt-1 flex items-baseline justify-between gap-2">
+              <span className="font-medium text-ink">Довели руководителей</span>
+              <span className="tabular-nums text-ink">
+                {done} из {total}
+              </span>
+            </div>
+            <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-white">
+              <div
+                className="h-full rounded-full bg-accent-mint"
+                style={{ width: `${total > 0 ? (done / total) * 100 : 0}%` }}
+              />
+            </div>
+            {comm.status === 'active' && pending.length > 0 && (
+              <p className="mt-2 text-xs text-ink-soft">
+                Ещё не довели:{' '}
+                {pending
+                  .slice(0, PENDING_NAMES_LIMIT)
+                  .map((a) => a.name)
+                  .join(', ')}
+                {pending.length > PENDING_NAMES_LIMIT && ` и ещё ${pending.length - PENDING_NAMES_LIMIT}`}
+              </p>
+            )}
           </div>
         </Section>
 

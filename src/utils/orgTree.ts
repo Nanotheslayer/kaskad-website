@@ -1,7 +1,7 @@
 import type { CascadeLevel } from '../types/communication'
 import type { OrgNode } from '../types/organization'
 import { orgById, orgNodes } from '../data/orgStructure'
-import { LEVEL_ORDER, isWithinDepth } from '../data/levels'
+import { LEVEL_ORDER } from '../data/levels'
 
 const parentById = new Map<string, OrgNode>(orgNodes.flatMap((n) => n.children.map((childId) => [childId, n] as const)))
 
@@ -47,13 +47,6 @@ export function reachByLevel(rootId: string): LevelReach[] {
     if (node.kind !== 'team') row.units += 1
   }
   return [...reach.values()]
-}
-
-/** Сколько человек в поддереве узла получат информацию при глубине каскада depth */
-export function peopleReached(rootId: string, depth: CascadeLevel): number {
-  return reachByLevel(rootId)
-    .filter((r) => isWithinDepth(r.level, depth))
-    .reduce((sum, r) => sum + r.people, 0)
 }
 
 /** Руководители подразделений в поддереве узла, включая сам узел */

@@ -1,7 +1,10 @@
 import { palette } from '../theme/colors'
 
-/** Отставание от цели (п.п.), в пределах которого показатель считается «близким к цели» */
-const NEAR_TARGET_GAP = 12
+/**
+ * Отставание от среднего по компании (п.п.), в пределах которого показатель считается «около среднего».
+ * Правило портала: целевых значений в п. 8 Положения нет, поэтому сравниваем со средним.
+ */
+const NEAR_AVERAGE_GAP = 5
 
 export interface ScoreBand {
   color: string
@@ -10,15 +13,15 @@ export interface ScoreBand {
   legend: string
 }
 
-/** Оценка показателя относительно целевого значения (п. 8.3 Положения) */
+/** Оценка показателя подразделения относительно среднего по компании */
 export const scoreBands = {
-  met: { color: palette.green, label: 'Цель достигнута', legend: 'достигнута' },
-  near: { color: palette.amber, label: 'Близко к цели', legend: `до ${NEAR_TARGET_GAP} п.п. ниже` },
-  below: { color: palette.coral, label: 'Ниже цели', legend: `более ${NEAR_TARGET_GAP} п.п. ниже` },
+  above: { color: palette.green, label: 'Не ниже среднего', legend: 'не ниже среднего' },
+  near: { color: palette.amber, label: 'Чуть ниже среднего', legend: `до ${NEAR_AVERAGE_GAP} п.п. ниже` },
+  below: { color: palette.coral, label: 'Ниже среднего', legend: `более ${NEAR_AVERAGE_GAP} п.п. ниже` },
 } satisfies Record<string, ScoreBand>
 
-export function getScoreBand(score: number, target: number): ScoreBand {
-  if (score >= target) return scoreBands.met
-  if (score >= target - NEAR_TARGET_GAP) return scoreBands.near
+export function getScoreBand(score: number, average: number): ScoreBand {
+  if (score >= average) return scoreBands.above
+  if (score >= average - NEAR_AVERAGE_GAP) return scoreBands.near
   return scoreBands.below
 }

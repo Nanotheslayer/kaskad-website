@@ -14,14 +14,15 @@ import {
   TrendingUp,
   type LucideIcon,
 } from 'lucide-react'
-import type { Communication, CommunicationTypeId } from '../types/communication'
-import { useAllCommunications, useCommunicationsStore } from '../store/communicationsStore'
+import type { CommunicationTypeId, TrackedCommunication } from '../types/communication'
+import { useAllCommunications, useCommunicationsStore, useConfirmations } from '../store/communicationsStore'
 import { communicationTypes, typeById } from '../data/communicationTypes'
-import { levelById } from '../data/levels'
-import { surveyResults, surveyTargets } from '../data/surveyResults'
+import { currentUser } from '../data/currentUser'
+import { surveyAverage, surveyQuestions, surveyResults } from '../data/surveyResults'
 import { useNow } from '../hooks/useNow'
 import { alpha, palette } from '../theme/colors'
 import { tintClasses, type Tint } from '../theme/tints'
+import { agendaFor, type AgendaItem } from '../utils/assignments'
 import { getScoreBand } from '../utils/score'
 import { fmt, pluralComm } from '../utils/format'
 import Card from '../components/ui/Card'
@@ -33,7 +34,10 @@ const DAY_MS = 86_400_000
 const RECENT_WINDOW_MS = 30 * DAY_MS
 const DELIVERY_LIST_SIZE = 5
 const TYPE_STATS_SIZE = 6
-const LOWEST_AWARENESS_SIZE = 4
+const LOWEST_SCORES_SIZE = 4
+/** Вопрос опроса вовлечённости, ближе всего связанный с каскадированием, — п. 8.2 */
+const INFORM_METRIC = 'directorsInform'
+const informAverage = surveyAverage(INFORM_METRIC)
 
 interface StatTile {
   label: string
@@ -44,33 +48,29 @@ interface StatTile {
 
 export default function DashboardPage() {
   const communications = useAllCommunications()
-  const updateStatus = useCommunicationsStore((s) => s.updateStatus)
+  const confirmations = useConfirmations()
+  const confirmDelivery = useCommunicationsStore((s) => s.confirmDelivery)
   const now = useNow()
 
   const tiles = useMemo<StatTile[]>(() => {
-    const count = (predicate: (c: Communication) => boolean) => communications.filter(predicate).length
+    const count = (predicate: (c: TrackedCommunication) => boolean) => communications.filter(predicate).length
     const recent = count((c) => Math.abs(new Date(c.createdAt).getTime() - now.getTime()) <= RECENT_WINDOW_MS)
     const active = count((c) => c.status === 'active')
     const planned = count((c) => c.status === 'planned')
-    const crisis = count((c) => c.status === 'active' && c.classification.urgency === 'crisis')
-    const avgAwareness = Math.round(surveyResults.reduce((sum, r) => sum + r.awareness, 0) / surveyResults.length)
+    const crisis = count((c) => c.status === 'active' && c.typeId === 'crisis')
     return [
       { label: 'За 30 дней', value: recent, icon: GalleryHorizontal, tint: 'sky' },
       { label: 'Идёт каскад', value: active, icon: Radio, tint: 'peach' },
       { label: 'Запланировано', value: planned, icon: CalendarClock, tint: 'lilac' },
-      { label: 'Кризисных сейчас', value: crisis, icon: Siren, tint: 'rose' },
+      { label: 'Антикризисных сейчас', value: crisis, icon: Siren, tint: 'rose' },
       // Мягкий перенос: длинное слово не вылезает из узкой плитки
-      { label: 'Информи\u00adрованность', value: `${avgAwareness}%`, icon: TrendingUp, tint: 'mint' },
+      { label: 'Информи\u00adрование', value: `${informAverage}%`, icon: TrendingUp, tint: 'mint' },
     ]
   }, [communications, now])
 
-  const toDeliver = useMemo(
-    () =>
-      communications
-        .filter((c) => c.status === 'active')
-        .sort((a, b) => +new Date(a.deadline) - +new Date(b.deadline))
-        .slice(0, DELIVERY_LIST_SIZE),
-    [communications],
+  const myPending = useMemo(
+    () => agendaFor(currentUser.nodeId, communications, confirmations, now).pending,
+    [communications, confirmations, now],
   )
 
   const typeStats = useMemo(() => {
@@ -83,8 +83,8 @@ export default function DashboardPage() {
   }, [communications])
   const maxTypeCount = Math.max(1, ...typeStats.map((t) => t.count))
 
-  const lowestAwareness = useMemo(
-    () => [...surveyResults].sort((a, b) => a.awareness - b.awareness).slice(0, LOWEST_AWARENESS_SIZE),
+  const lowestScores = useMemo(
+    () => [...surveyResults].sort((a, b) => a[INFORM_METRIC] - b[INFORM_METRIC]).slice(0, LOWEST_SCORES_SIZE),
     [],
   )
 
@@ -124,25 +124,29 @@ export default function DashboardPage() {
         <Card className="@4xl:col-span-2" padding={false}>
           <div className="flex flex-wrap items-center justify-between gap-2 px-5 pb-3 pt-5">
             <div>
-              <h2 className="font-display text-lg font-semibold text-ink">Донести команде</h2>
+              <h2 className="font-display text-lg font-semibold text-ink">
+                Моя повестка
+                {myPending.length > 0 && (
+                  <span className="ml-2 text-sm font-normal text-ink-muted">{pluralComm(myPending.length)}</span>
+                )}
+              </h2>
               <p className="text-xs text-ink-muted">
-                Ближайшие сроки доведения. Подтвердите, когда информация доведена
+                Довести до команды на ближайшей встрече. Отметьте, когда информация доведена
               </p>
             </div>
-            <Link to="/timeline" className="flex items-center gap-1 text-sm font-medium text-brand-red hover:underline">
-              Таймлайн <ArrowRight size={14} />
+            <Link to="/agenda" className="flex items-center gap-1 text-sm font-medium text-brand-red hover:underline">
+              Вся повестка <ArrowRight size={14} />
             </Link>
           </div>
           <div className="divide-y divide-gray-100">
-            {toDeliver.length === 0 && (
+            {myPending.length === 0 && (
               <div className="px-5 py-10 text-center text-sm text-ink-muted">Всё доведено — отличная работа!</div>
             )}
-            {toDeliver.map((c) => (
+            {myPending.slice(0, DELIVERY_LIST_SIZE).map((item) => (
               <DeliveryRow
-                key={c.id}
-                comm={c}
-                overdue={new Date(c.deadline) < now}
-                onConfirm={() => updateStatus(c.id, 'completed')}
+                key={item.comm.id}
+                item={item}
+                onConfirm={() => confirmDelivery(item.comm.id, currentUser.nodeId)}
               />
             ))}
           </div>
@@ -156,7 +160,7 @@ export default function DashboardPage() {
                 <Send size={16} /> Новый инфоповод
               </LinkButton>
               <LinkButton to="/map" variant="secondary" className="w-full justify-start">
-                <BadgeCheck size={16} /> Карта осведомлённости
+                <BadgeCheck size={16} /> Оценка эффективности
               </LinkButton>
             </div>
           </Card>
@@ -180,21 +184,23 @@ export default function DashboardPage() {
 
       <Card>
         <div className="mb-3 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-          <h2 className="font-display text-lg font-semibold text-ink">Где информированность ниже цели</h2>
-          <span className="text-xs text-ink-muted">Цель — не менее {surveyTargets.awareness.target}% (п. 8.3)</span>
+          <h2 className="font-display text-lg font-semibold text-ink">Где информирование ниже среднего</h2>
+          <span className="text-xs text-ink-muted">Опрос вовлечённости, п. 8.2 · в среднем {informAverage}%</span>
         </div>
+        <p className="-mt-1 mb-3 text-xs text-ink-soft">{surveyQuestions[INFORM_METRIC].question}</p>
         <div className="grid grid-cols-2 gap-3 @3xl:grid-cols-4">
-          {lowestAwareness.map((r) => {
-            const { color } = getScoreBand(r.awareness, surveyTargets.awareness.target)
+          {lowestScores.map((r) => {
+            const score = r[INFORM_METRIC]
+            const { color } = getScoreBand(score, informAverage)
             return (
               <div key={r.divisionId} className="rounded-2xl p-3" style={{ backgroundColor: alpha(color, 0.08) }}>
                 <div className="flex items-baseline justify-between">
                   <span className="text-sm font-medium text-ink">{r.divisionName}</span>
                   <span className="font-display text-xl font-semibold" style={{ color }}>
-                    {r.awareness}%
+                    {score}%
                   </span>
                 </div>
-                <ProgressBar percent={r.awareness} color={color} track="bg-white/80" className="mt-2" />
+                <ProgressBar percent={score} color={color} track="bg-white/80" className="mt-2" />
               </div>
             )
           })}
@@ -227,11 +233,11 @@ function HeroBanner() {
             Положение о каскадировании
           </div>
           <h2 className="font-display text-2xl font-bold leading-tight text-ink @xl:text-3xl @6xl:text-4xl">
-            Переводи, <span className="text-brand-red">а не пересылай</span>
+            Будь первым <span className="text-brand-red">источником</span>
           </h2>
           <p className="mt-3 text-sm text-ink-soft @6xl:text-base">
-            Информация идёт от генерального директора к каждому сотруднику. На каждом уровне руководитель объясняет, что
-            она значит для его команды.
+            Информация идёт от генерального директора к каждому сотруднику. На каждом уровне руководитель узнаёт её
+            раньше команды, объясняет, что она значит для работы, и отвечает на вопросы.
           </p>
           <div className="mt-5 flex flex-wrap gap-3">
             <LinkButton to="/classify">
@@ -265,12 +271,12 @@ function HeroBanner() {
 }
 
 interface DeliveryRowProps {
-  comm: Communication
-  overdue: boolean
+  item: AgendaItem
   onConfirm: () => void
 }
 
-function DeliveryRow({ comm, overdue, onConfirm }: DeliveryRowProps) {
+function DeliveryRow({ item, onConfirm }: DeliveryRowProps) {
+  const { comm, overdue } = item
   const type = typeById(comm.typeId)
   const TypeIcon = type.icon
   return (
@@ -286,13 +292,13 @@ function DeliveryRow({ comm, overdue, onConfirm }: DeliveryRowProps) {
         <div className="mt-0.5 flex flex-wrap items-center gap-x-2 text-xs text-ink-muted">
           <span style={{ color: type.color }}>{type.name}</span>
           <span>·</span>
-          <span>до {levelById(comm.cascadeDepth).short}</span>
-          <span>·</span>
-          <span className={clsx(overdue && 'font-medium text-brand-red')}>срок {fmt(comm.deadline, 'd MMM')}</span>
+          <span className={clsx(overdue && 'font-medium text-brand-red')}>
+            {overdue ? 'просрочено, ' : ''}срок {fmt(comm.deadline, 'd MMM')}
+          </span>
         </div>
       </div>
       <Button variant="secondary" size="sm" onClick={onConfirm}>
-        <CheckCheck size={14} /> <span className="hidden @xl:inline">Подтвердить доведение</span>
+        <CheckCheck size={14} /> <span className="hidden @xl:inline">Довёл до команды</span>
         <span className="@xl:hidden">Готово</span>
       </Button>
     </div>

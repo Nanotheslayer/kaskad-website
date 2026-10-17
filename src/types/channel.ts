@@ -1,30 +1,23 @@
 import type { LucideIcon } from 'lucide-react'
 
-/** Направления каналов (п. 6.2 Положения) */
-export type ChannelCategory = 'digital' | 'print' | 'oral' | 'mass' | 'management'
+/** Группы каналов (п. 6.1 Положения) */
+export type ChannelCategory = 'digital' | 'print' | 'oral'
 
 export type ChannelId =
-  | 'petlocal_banner'
   | 'petlocal_feed'
+  | 'petlocal_banner'
   | 'petlocal_board'
   | 'email'
   | 'vk'
   | 'tv'
   | 'digest'
-  | 'digest_hr'
+  | 'directorate_channels'
   | 'magazine'
   | 'posters'
   | 'table_tents'
   | 'info_boards'
-  | 'oral'
+  | 'team_meetings'
   | 'one_on_one'
-  | 'conference'
-  | 'live_stream'
-  | 'management_meeting'
-  | 'committee'
-  | 'protocol'
-  | 'order'
-  | 'info_letter'
 
 export interface Channel {
   id: ChannelId
