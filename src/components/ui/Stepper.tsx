@@ -52,7 +52,7 @@ export default function Stepper({ steps, currentStep, onStepClick }: StepperProp
             {i < steps.length - 1 && (
               <div
                 className={clsx(
-                  'h-0.5 min-w-2 flex-1 rounded @5xl:w-6 @5xl:flex-none',
+                  'h-0.5 min-w-2 flex-1 rounded-sm @5xl:w-6 @5xl:flex-none',
                   i < currentStep ? 'bg-brand-red' : 'bg-gray-200',
                 )}
               />

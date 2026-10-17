@@ -98,7 +98,7 @@ export default function DashboardPage() {
         {tiles.map((t, i) => (
           <Card
             key={t.label}
-            className={clsx('!p-4 @container', i === tiles.length - 1 && 'col-span-2 @2xl:col-span-1')}
+            className={clsx('p-4! @container', i === tiles.length - 1 && 'col-span-2 @2xl:col-span-1')}
           >
             <div className="flex flex-col gap-2.5 @[12rem]:flex-row @[12rem]:items-center @[12rem]:gap-3">
               <div
@@ -110,10 +110,10 @@ export default function DashboardPage() {
                 <t.icon size={20} />
               </div>
               <div className="min-w-0">
-                <div className="font-display text-xl font-semibold leading-none text-ink @[12rem]:text-2xl">
+                <div className="font-display text-xl font-semibold leading-none text-ink @[12rem]:text-2xl/8">
                   {t.value}
                 </div>
-                <div className="mt-1 text-xs leading-tight text-ink-muted [overflow-wrap:anywhere]">{t.label}</div>
+                <div className="mt-1 text-xs leading-tight text-ink-muted wrap-anywhere">{t.label}</div>
               </div>
             </div>
           </Card>
@@ -156,10 +156,10 @@ export default function DashboardPage() {
           <Card>
             <h2 className="mb-3 font-display text-lg font-semibold text-ink">Быстрые действия</h2>
             <div className="grid gap-2">
-              <LinkButton to="/classify" className="w-full justify-start">
+              <LinkButton to="/classify" className="w-full">
                 <Send size={16} /> Новый инфоповод
               </LinkButton>
-              <LinkButton to="/map" variant="secondary" className="w-full justify-start">
+              <LinkButton to="/map" variant="secondary" className="w-full">
                 <BadgeCheck size={16} /> Оценка эффективности
               </LinkButton>
             </div>
@@ -215,7 +215,7 @@ export default function DashboardPage() {
 
 function HeroBanner() {
   return (
-    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-yellow-light via-[#fff7dd] to-tint-mint shadow-card">
+    <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-brand-yellow-light via-[#fff7dd] to-tint-mint shadow-card">
       {/* Холмы — фон по всей ширине, масштабируются вместе с баннером */}
       <svg
         className="pointer-events-none absolute inset-x-0 bottom-0 h-16 w-full @3xl:h-24"
@@ -232,7 +232,7 @@ function HeroBanner() {
           <div className="mb-3 inline-flex rounded-full bg-white/80 px-3 py-1 text-xs font-medium text-ink-soft">
             Положение о каскадировании
           </div>
-          <h2 className="font-display text-2xl font-bold leading-tight text-ink @xl:text-3xl @6xl:text-4xl">
+          <h2 className="font-display text-2xl font-bold leading-tight text-ink @xl:text-3xl/9 @6xl:text-4xl/10">
             Будь первым <span className="text-brand-red">источником</span>
           </h2>
           <p className="mt-3 text-sm text-ink-soft @6xl:text-base">

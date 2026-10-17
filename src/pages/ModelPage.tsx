@@ -122,7 +122,7 @@ export default function ModelPage() {
           Каждое сообщение проходит четыре этапа — нажмите на этап, чтобы увидеть, что на нём определяет Положение.
         </p>
 
-        <div className="relative space-y-3">
+        <div className="relative flex flex-col gap-3">
           <div className="absolute bottom-6 left-[2.15rem] top-6 w-0.5 bg-gray-200" aria-hidden="true" />
           {stages.map((stage, i) => {
             const isExpanded = expandedId === stage.id
@@ -197,7 +197,7 @@ export default function ModelPage() {
           title="Кто за что отвечает"
           clause="п. 1.3"
         />
-        <dl className="divide-y divide-gray-100">
+        <dl className="mt-3 divide-y divide-gray-100">
           {responsibilities.map(([who, what]) => (
             <div key={who} className="grid gap-1 py-2.5 @xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] @xl:gap-4">
               <dt className="text-sm font-medium text-ink">{who}</dt>
@@ -254,7 +254,7 @@ export default function ModelPage() {
 
 function SectionTitle({ icon, title, clause }: { icon: ReactNode; title: string; clause: string }) {
   return (
-    <div className="mb-3 flex items-center gap-2">
+    <div className="flex items-center gap-2">
       {icon}
       <h2 className="font-display text-lg font-semibold text-ink">{title}</h2>
       <span className="text-xs text-ink-muted">{clause}</span>

@@ -314,7 +314,7 @@ export default function TimelinePage() {
           <div className="relative flex" style={{ minWidth: buckets.length * layout.colWidth }}>
             {/* Линия */}
             <div
-              className="pointer-events-none absolute left-0 right-0 z-[1] h-[4px] rounded-full bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200"
+              className="pointer-events-none absolute left-0 right-0 z-1 h-[4px] rounded-full bg-linear-to-r from-gray-200 via-gray-300 to-gray-200"
               style={{ top: layout.zoneHeight + 16 - 2 }}
             />
             {buckets.map((b) => (
@@ -396,7 +396,7 @@ function ScrollShade({ side, visible }: { side: 'left' | 'right'; visible: boole
     <div
       className={clsx(
         'pointer-events-none absolute bottom-10 top-0 z-20 w-10 from-white to-transparent transition-opacity',
-        side === 'left' ? 'left-0 bg-gradient-to-r' : 'right-0 bg-gradient-to-l',
+        side === 'left' ? 'left-0 bg-linear-to-r' : 'right-0 bg-linear-to-l',
         visible ? 'opacity-100' : 'opacity-0',
       )}
     />
@@ -443,7 +443,7 @@ function BucketColumn({ bucket, items, selected, layout, onToggle, onOpen }: Buc
               title={`${type.name}: ${c.title}`}
               aria-label={c.title}
               onClick={() => onOpen(c.id)}
-              className="shrink-0 rounded-full border-2 border-white shadow transition-transform hover:z-10 hover:scale-125"
+              className="shrink-0 rounded-full border-2 border-white shadow-sm transition-transform hover:z-10 hover:scale-125"
               style={{ width: beadSize, height: beadSize, backgroundColor: type.color }}
             />
           )

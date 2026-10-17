@@ -28,7 +28,7 @@ export default function Segmented<T extends string>({ options, value, onChange, 
           onClick={() => onChange(o.value)}
           className={clsx(
             'shrink-0 whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium transition-all @xl:px-4',
-            value === o.value ? 'bg-white text-ink shadow-sm' : 'text-ink-muted hover:text-ink',
+            value === o.value ? 'bg-white text-ink shadow-xs' : 'text-ink-muted hover:text-ink',
           )}
         >
           {o.label}

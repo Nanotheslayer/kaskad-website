@@ -69,7 +69,7 @@ export default function StepSource({ sourceId, initiatorName, directorate, onCha
               className={clsx(
                 'flex items-start gap-3 rounded-2xl border-2 p-4 text-left transition-all',
                 selected
-                  ? 'border-brand-red bg-brand-red-light/50 shadow-sm'
+                  ? 'border-brand-red bg-brand-red-light/50 shadow-xs'
                   : 'border-transparent bg-white shadow-card hover:-translate-y-0.5 hover:shadow-lift',
               )}
             >

@@ -29,7 +29,7 @@ export default function AlgorithmPage() {
   return (
     <div className="space-y-6">
       {/* Правило трёх вопросов */}
-      <Card className="bg-gradient-to-br from-white to-brand-yellow-light/60">
+      <Card className="bg-linear-to-br from-white to-brand-yellow-light/60">
         <div className="mb-1 flex items-center gap-2">
           <MessageSquareQuote size={20} className="text-brand-red" />
           <h2 className="font-display text-lg font-semibold text-ink">Правило трёх вопросов</h2>

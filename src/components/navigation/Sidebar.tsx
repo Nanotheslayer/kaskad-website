@@ -55,7 +55,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
               <button
                 type="button"
                 onClick={() => setQuickOpen((v) => !v)}
-                className="rounded p-1 text-ink-soft hover:bg-gray-100"
+                className="rounded-sm p-1 text-ink-soft hover:bg-gray-100"
                 aria-label={quickOpen ? 'Свернуть' : 'Развернуть'}
               >
                 <ChevronUp size={18} className={clsx('transition-transform', !quickOpen && 'rotate-180')} />
@@ -99,7 +99,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
                       className={clsx(
                         'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-all',
                         tintClasses[tint],
-                        isActive && 'shadow-sm ring-2 ring-white',
+                        isActive && 'shadow-xs ring-2 ring-white',
                       )}
                     >
                       <Icon size={18} />

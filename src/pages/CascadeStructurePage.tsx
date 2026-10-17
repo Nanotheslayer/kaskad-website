@@ -102,7 +102,7 @@ export default function CascadeStructurePage() {
   return (
     <div className="space-y-5">
       {/* Пилотный баннер + уровни */}
-      <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-brand-yellow-light via-white to-tint-mint/60 p-4 shadow-card @xl:p-5">
+      <div className="overflow-hidden rounded-3xl bg-linear-to-br from-brand-yellow-light via-white to-tint-mint/60 p-4 shadow-card @xl:p-5">
         <div className="max-w-3xl">
           <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-brand-yellow px-3 py-1 text-xs font-bold uppercase tracking-wide text-brand-dark">
             Пилот
@@ -116,7 +116,7 @@ export default function CascadeStructurePage() {
 
         <div className="mt-4 grid grid-cols-2 gap-2 @2xl:grid-cols-3 @6xl:grid-cols-6">
           {levels.map((l, i) => (
-            <div key={l.id} className="rounded-2xl bg-white/80 p-3 backdrop-blur">
+            <div key={l.id} className="rounded-2xl bg-white/80 p-3 backdrop-blur-sm">
               <div className="flex items-center justify-between">
                 <LevelPill level={l.id} />
                 {pilotReach[i].people > 0 && (
@@ -192,7 +192,7 @@ export default function CascadeStructurePage() {
           </div>
         </Card>
 
-        <div className="order-first grid grid-cols-1 gap-4 @2xl:grid-cols-2 @4xl:sticky @4xl:top-2 @4xl:order-none @4xl:grid-cols-1">
+        <div className="order-first grid grid-cols-1 gap-4 @2xl:grid-cols-2 @4xl:sticky @4xl:top-2 @4xl:order-0 @4xl:grid-cols-1">
           <NodeDetails node={getNode(selectedId)} path={path} onSelect={select} />
         </div>
       </div>
@@ -249,7 +249,7 @@ function TreeNode({ node, tree }: { node: OrgNode; tree: TreeState }) {
           className="flex min-w-0 flex-1 flex-wrap items-start gap-x-2.5 gap-y-1 text-left"
         >
           <LevelPill level={node.level} muted={dimmed} className="mt-0.5" />
-          <div className="min-w-[9rem] flex-1">
+          <div className="min-w-36 flex-1">
             <div
               className={clsx(
                 'text-[14px] leading-snug',
