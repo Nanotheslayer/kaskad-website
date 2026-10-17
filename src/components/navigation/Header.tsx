@@ -1,5 +1,5 @@
 import { useMemo, useState, type FormEvent } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router'
 import { Bell, Menu, Search } from 'lucide-react'
 import clsx from 'clsx'
 import Logo from './Logo'

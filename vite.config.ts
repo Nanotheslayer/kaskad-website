@@ -13,4 +13,15 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        // Библиотеки меняются реже кода портала: отдельные чанки дольше живут в кэше браузера
+        manualChunks: {
+          react: ['react', 'react-dom', 'react-router'],
+          motion: ['framer-motion'],
+        },
+      },
+    },
+  },
 })

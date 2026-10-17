@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router'
 import { isSameDay, isWithinInterval, startOfDay } from 'date-fns'
 import { CalendarDays, ChevronLeft, ChevronRight, Search, X } from 'lucide-react'
 import clsx from 'clsx'
